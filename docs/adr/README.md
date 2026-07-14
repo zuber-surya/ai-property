@@ -258,6 +258,24 @@ The thing being bought with that architectural exception is **three seconds** �
 
 ---
 
+## ADR-0019 — Playwright for browser verification; the Stitch render is not a gate
+
+**Context.** `18-test-strategy.md` §8 left E2E tooling open (*"Playwright assumed, not confirmed"*), and the build loop needs a way to answer *"does this page actually work in a browser?"* — a question `vitest` + jsdom **cannot** answer. jsdom will pass while the page renders blank, the Kanban drag is broken, or the layout bears no resemblance to the design.
+
+**Decision.** **Playwright.** It drives a real browser, has both a Python binding (so E2E can live alongside `pytest`) and a Node one, and can produce a screenshot an agent or a human can actually *look at*. A project `verify` skill (`.claude/skills/verify/`) wraps it: launch the app, drive the flow, screenshot.
+
+**And the part that matters more: the Stitch render is NOT a pass/fail gate.**
+
+It is tempting to pixel-diff each page against `docs/stitch_design/<screen>/screen.png` and call that "design compliance". **Don't.** That render is a *reference*, not pixel-truth. The real page legitimately differs — real data instead of lorem, real fonts, real empty states, real overflow, a real tenant name. Diffing against it produces false failures until you loosen the threshold so far that it catches nothing, at which point you have a gate everyone ignores — the exact failure mode ADR-0016 was written to prevent.
+
+**So the screenshot is a human-reviewed artifact attached to the PR, not an assertion.** What *is* asserted: the flow works, the drift check passes, and no hex literal reached the source.
+
+**Consequences.** One more dev dependency and a browser download in CI. E2E stays deliberately thin — only the four money paths (`18-test-strategy.md` §2.5), because E2E is expensive and brittle and you should buy only what protects revenue. We give up automated pixel-perfect design enforcement; we get a verification step that catches the failures that actually happen.
+
+**Status:** Accepted.
+
+---
+
 ## Decisions still open
 
 These are not ADRs yet because nobody has decided. They live in `GAPS.md`:

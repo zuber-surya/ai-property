@@ -84,12 +84,19 @@ def is_meta(path: Path) -> bool:
     return path.relative_to(ROOT).as_posix() in META_PATHS
 
 
+# Vendored / generated trees. Their contents are not ours and not our problem:
+# a chalk README full of ANSI hex codes is not a design-system fork.
+IGNORED_DIRS = {".git", "node_modules", ".venv", "dist", "__pycache__", ".pytest_cache"}
+
+
+def _vendored(path: Path) -> bool:
+    return bool(IGNORED_DIRS.intersection(path.parts))
+
+
 def md_files() -> list[Path]:
-    """Every markdown file in the project, excluding the meta layer."""
+    """Every markdown file we actually own, excluding the meta layer."""
     return sorted(
-        p
-        for p in ROOT.rglob("*.md")
-        if ".git" not in p.parts and not is_meta(p)
+        p for p in ROOT.rglob("*.md") if not _vendored(p) and not is_meta(p)
     )
 
 
@@ -348,8 +355,8 @@ def check_async_violation() -> Check:
     )
     targets = (
         list(md_files())
-        + [p for p in ROOT.rglob("requirements*.txt") if ".git" not in p.parts]
-        + [p for p in ROOT.rglob("package.json") if "node_modules" not in p.parts]
+        + [p for p in ROOT.rglob("requirements*.txt") if not _vendored(p)]
+        + [p for p in ROOT.rglob("package.json") if not _vendored(p)]
     )
     for path in targets:
         if is_meta(path):
@@ -430,6 +437,55 @@ def check_false_gaps() -> Check:
     return c
 
 
+# ---------------------------------------------------------------------------
+# CHECK — a hex literal in frontend source
+#
+# The Stitch HTML carries ~55 hardcoded hexes per screen (≈550 across the admin
+# portal). It looks right, so the temptation to paste it is enormous. One pasted
+# line and DESIGN.md stops being the source of truth.
+#
+# gen_tokens.py generates the token files FROM DESIGN.md; this check makes sure
+# nobody routes around them. The generated files are the only exception, and
+# they carry a banner saying so.
+# ---------------------------------------------------------------------------
+
+FRONTEND_APPS = ["admin-portal", "public-site"]
+GENERATED_MARK = "GENERATED FROM docs/DESIGN.md"
+SRC_SUFFIXES = {".tsx", ".ts", ".jsx", ".js", ".css", ".scss"}
+
+
+def check_forked_hex_frontend() -> Check:
+    c = Check(
+        "forked-hex-frontend",
+        "A hex literal in frontend source. DESIGN.md is the only file that "
+        "defines a colour; the token files are generated from it. Pasting Stitch "
+        "HTML forks the design system ~550 ways.",
+    )
+    for app in FRONTEND_APPS:
+        src = ROOT / app / "src"
+        if not src.exists():
+            continue
+        for path in src.rglob("*"):
+            if path.suffix not in SRC_SUFFIXES or _vendored(path):
+                continue
+            text = path.read_text(encoding="utf-8", errors="replace")
+            if GENERATED_MARK in text:
+                continue  # generated from DESIGN.md — that's the whole point
+            for n, line in enumerate(text.splitlines(), start=1):
+                for hx in HEX.findall(line):
+                    c.findings.append(
+                        Finding(
+                            c.name,
+                            path,
+                            n,
+                            line,
+                            f"{hx} — use a token class (bg-primary, .chip-status-published). "
+                            "If the colour isn't in DESIGN.md, it goes there FIRST.",
+                        )
+                    )
+    return c
+
+
 def check_design_copy_identical() -> Check:
     """docs/stitch_design/design.md must be byte-identical to DESIGN.md."""
     c = Check(
@@ -460,6 +516,7 @@ def check_design_copy_identical() -> Check:
 CHECKS = [
     check_dead_design_system,
     check_forked_hex,
+    check_forked_hex_frontend,
     check_generated_prompts_current,
     check_design_copy_identical,
     check_mono_serif,

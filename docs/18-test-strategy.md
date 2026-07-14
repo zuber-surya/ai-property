@@ -136,5 +136,5 @@ Instead, **required coverage by kind**:
 ## 8. Open questions
 
 - [ ] Which Postgres does the integration suite run against — a dedicated Supabase test project, or ephemeral Postgres + `pgvector` in CI? Supabase is more faithful (RLS behaves identically); a container is faster and free. **Faithfulness probably wins here, because RLS is the thing being tested.**
-- [ ] E2E tooling (Playwright assumed, not confirmed).
+- [x] ~~E2E tooling (Playwright assumed, not confirmed).~~ **DECIDED — Playwright (ADR-0019).** A project `verify` skill wraps it: launch the app, drive the flow, screenshot. ⚠️ **The Stitch render (`stitch_design/<screen>/screen.png`) is a human-reviewed reference, NOT a pixel-diff gate** — it is not pixel-truth, and diffing it produces false failures until the threshold is so loose it catches nothing.
 - [ ] Where the AI eval baselines are stored so a regression is mechanically detectable rather than eyeballed.
