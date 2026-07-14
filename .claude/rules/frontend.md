@@ -3,8 +3,9 @@
 Applies to: `public-site/` and `admin-portal/`. Source: `docs/02-architecture.md` §5, `docs/09-coding-standards.md` §3.
 
 ## Two separate apps
-- `public-site/` — public site + customer portal (shared auth context; the portal is an authenticated view of the public site). Tenant-branded.
-- `admin-portal/` — admin/agent/super-admin CRM. Not tenant-branded.
+- `public-site/` — public site + customer portal (shared auth context; the portal is an authenticated view of the public site).
+- `admin-portal/` — admin/agent/super-admin CRM.
+- **Neither is tenant-branded in the MVP** (decided 2026-07-13). Both ship the single fixed palette in `docs/DESIGN.md` — no theming layer, no runtime overrides. Per-tenant branding is post-MVP (PRD FR16.2); when it lands, a tenant may override `primary` only, and `tertiary` (the AI layer) stays platform-owned.
 - Both use Vite + React + TypeScript and share the same folder shape (`pages/` + `components/` + `hooks/` + `api/` + `context/`).
 
 ## Style & tooling

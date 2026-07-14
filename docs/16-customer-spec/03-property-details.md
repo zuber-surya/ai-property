@@ -70,7 +70,7 @@ Mobile: CTA card is NOT a sidebar — it becomes a fixed bottom bar
 | Region | Contents |
 |---|---|
 | Gallery | Images from `property_media` (`media_type = 'image'`, ordered by `sort_order`); lightbox on click; favorite heart overlaid |
-| Title block | Title, type, beds/baths/area, status badge (colors per `13-ui-ux-flows.md` §4.5) |
+| Title block | Title, type, beds/baths/area, status badge (colors per `DESIGN.md` → Semantic Status Colors) |
 | Tabs | Overview (description + price breakdown), Amenities, Floor Plan, Location (map + landmarks), EMI Calculator |
 | Sticky CTA card | Price, per-sqft, **Schedule Visit** (primary) + **Request Callback** (secondary), agent contact |
 | Similar properties | Carousel from `GET /properties/{id}/similar` |

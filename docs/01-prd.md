@@ -263,8 +263,11 @@
     > **Accepted trade-off:** a suspended tenant's buyers see no outage — so we keep serving, and keep paying Bedrock for, a tenant who isn't paying us. Their staff meanwhile cannot log in to work the leads their live site keeps generating. Reactivate promptly.
   - FR16.1a Creating a tenant must also provision, in one transaction: a default `ai_config`, default `notification_rules`, starter CMS page drafts, and the first admin invite. A tenant without these is a workspace that appears to exist and doesn't work.
 - FR16.2 Tenant admin: configure branding (logo, colors, custom domain) with live preview. A custom domain must be **DNS-verified before it is routed** — an unverified domain is a hijacking vector.
+  - 🕓 **POST-MVP (decided 2026-07-13).** MVP ships a **single fixed palette** for every tenant — the design system in `docs/DESIGN.md`. There is no theming layer, and the public site is **not** tenant-branded at launch.
+  - Nothing is removed to support this: the `tenants.branding_logo_url` / `branding_primary_color` / `branding_accent_color` columns (`03-database-schema.md` §2), `PUT /admin/tenant/branding` (`04-api-spec.md` §15), and the custom-domain infrastructure (`10-deployment-devops.md` §8) all stay specced. They are simply not built in the MVP sprints.
+  - **Constraint for when this does land:** a tenant may override `primary` and its derived ramp only. The `tertiary` family is PropVista's AI-intelligence signal and stays **platform-owned** — it must read identically across every tenant, so a tenant's brand color must never be able to land on it. See `docs/DESIGN.md` → Colors.
 
-**Acceptance Criteria:** Branding changes apply immediately to that tenant's public site only; no leakage to other tenants; two tenants cannot claim the same domain.
+**Acceptance Criteria (post-MVP):** Branding changes apply immediately to that tenant's public site only; no leakage to other tenants; two tenants cannot claim the same domain; a tenant's brand color cannot be applied to the `tertiary` AI layer.
 
 ---
 

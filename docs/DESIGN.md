@@ -33,6 +33,18 @@ colors:
   on-error: '#ffffff'
   error-container: '#ffdad6'
   on-error-container: '#93000a'
+  success: '#026e4f'
+  on-success: '#ffffff'
+  success-container: '#c3f0da'
+  on-success-container: '#00522f'
+  warning: '#8a5300'
+  on-warning: '#ffffff'
+  warning-container: '#ffddb0'
+  on-warning-container: '#2c1700'
+  neutral: '#5b5b6b'
+  on-neutral: '#ffffff'
+  neutral-container: '#e2e1ec'
+  on-neutral-container: '#1a1a24'
   primary-fixed: '#e2dfff'
   primary-fixed-dim: '#c3c0ff'
   on-primary-fixed: '#0f0069'
@@ -161,6 +173,16 @@ Every token has a job. Ones without a stated job get used arbitrarily by whateve
 
 The two redundant aliases are left in the YAML rather than deleted, so an already-imported Stitch theme doesn't break on a missing key. Treat them as deprecated.
 
+### Scope — one palette, no theming layer
+
+**PropVista is multi-tenant, but this design system is not (decided 2026-07-13).** Every tenant's public site and the admin portal ship these exact tokens. There is no per-tenant theming layer in the MVP, and nothing in this file is overridable at runtime.
+
+Per-tenant branding is **post-MVP** (PRD FR16.2). When it lands, the constraint is already fixed:
+
+- A tenant may override **`primary`** and its derived ramp (`on-primary`, `primary-container`, `primary-fixed`). That is the whole of it.
+- **`tertiary` stays platform-owned.** It is PropVista's AI-intelligence signal, not the tenant's brand — it must read identically on every tenant's site, and a tenant's brand color must never be able to land on it.
+- Surfaces, text, outlines and the type scale are fixed for everyone.
+
 ## Typography
 
 This design system utilizes **Plus Jakarta Sans** for its modern, friendly, and geometric characteristics. The type scale is intentionally large to reinforce the sense of "Premium Space."
@@ -208,6 +230,37 @@ The shape language is characterized by **Generous Radii**. This design system av
 - **Lists:** Avoid borders between list items. Use vertical spacing and subtle hover states (a `surface-container-low` tint) to separate entries.
 - **Property Hero:** A full-bleed or large-inset container that makes the real estate photography the center of the user's focus.
 
-## Known Gap — Semantic Status Colors
+## Semantic Status Colors
 
-⚠️ This system defines **no success or warning ramp** — the only semantic token is `error` (`#ba1a1a`). Status indicators (e.g. a listing's Draft / Pending Approval / Published / Sold states) currently have to borrow from `primary` and `secondary`, which are both blues and are **not reliably distinguishable at chip size**. Add a proper status ramp before building any screen that depends on status at a glance. Tracked against `docs/11-stitch-design-prompts.md` §7.
+Status is not brand. `primary`, `secondary` and `tertiary` all carry meaning already — high-intent action, supporting action, and the AI layer — so none of them may be conscripted to mean "approved" or "waiting." Status has its own ramp.
+
+### The ramp
+
+⚠️ **These four follow the `error` convention, not the accent convention.** `error-container` is a *pale* fill with *dark* text, and the semantic ramp matches it — so unlike `primary-container` and its siblings (see Colors, above), **`*-container` here means pale fill + dark text.** This is the Material 3 behaviour. The accents are the odd ones out; the semantics are normal.
+
+| Role | Base (fill + white text) | Container (pale fill + dark text) |
+|---|---|---|
+| **Success** — done, live, approved | `success` `#026e4f` / `on-success` `#ffffff` | `success-container` `#c3f0da` / `on-success-container` `#00522f` |
+| **Warning** — needs attention, blocked on a human | `warning` `#8a5300` / `on-warning` `#ffffff` | `warning-container` `#ffddb0` / `on-warning-container` `#2c1700` |
+| **Error** — failed, rejected, invalid | `error` `#ba1a1a` / `on-error` `#ffffff` | `error-container` `#ffdad6` / `on-error-container` `#93000a` |
+| **Neutral** — inert, not started, archived | `neutral` `#5b5b6b` / `on-neutral` `#ffffff` | `neutral-container` `#e2e1ec` / `on-neutral-container` `#1a1a24` |
+
+Status **chips** use the `*-container` pair — pale fill, dark text — per the chip rule in Components. The saturated base is for icons, borders, and text on a plain surface.
+
+### Canonical status mappings
+
+Use these exactly; don't invent a new color for a new state.
+
+| Entity | State | Chip |
+|---|---|---|
+| Property listing | Draft | `neutral-container` `#e2e1ec` / `#1a1a24` |
+| Property listing | Pending Approval | `warning-container` `#ffddb0` / `#2c1700` |
+| Property listing | Published | `success-container` `#c3f0da` / `#00522f` |
+| Property listing | Sold | `inverse-surface` `#213145` / `inverse-on-surface` `#eaf1ff` |
+| Property listing | Rejected | `error-container` `#ffdad6` / `#93000a` |
+
+**Why Sold is the dark chip, not a fifth hue:** Sold is terminal, not "extra good." A filled dark chip reads as *closed* against four pale ones and needs no new color. It also keeps the ramp to four semantic hues, which is as many as anyone can hold apart at a glance.
+
+### What this replaced
+
+Before this ramp existed, Pending Approval and Published had to borrow `secondary-container` `#2170e4` and `primary-container` `#4f46e5` — two blues separated by a contrast ratio of **1.35 : 1**, effectively one color. Those are the two states an agent most needs to tell apart while scanning a list, and they were indistinguishable. The amber/green pair above is unambiguous at chip size and passes AA on both fills (13.2 : 1 and 7.5 : 1).

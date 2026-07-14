@@ -232,7 +232,9 @@ FastAPI ──────►│   jobs   │◄──── poll: FOR UPDATE SK
 - `public-site/` — public site + customer portal (shared auth context, since customer portal is just an authenticated view of the public site).
 - `admin-portal/` — admin/agent/super-admin CRM interface.
 
-Rationale: different audiences, different design systems/branding needs (public site is tenant-branded; admin portal is not), and independent deploy cadences.
+Rationale: different audiences, different design needs, and independent deploy cadences.
+
+> **Branding — MVP scope (decided 2026-07-13).** The public site is **not tenant-branded in the MVP.** Both apps ship the single fixed palette in `docs/DESIGN.md`; there is no theming layer. Per-tenant branding is **post-MVP** (PRD FR16.2) — the split into two apps still holds on audience and deploy-cadence grounds alone, and it is what will make per-tenant theming cheap to add to `public-site/` later without touching the admin portal.
 
 ### 5.2 Folder Structure (applies to both apps, same shape)
 

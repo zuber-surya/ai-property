@@ -134,7 +134,7 @@ Panel slides in (the board stays behind it)
 | Lead with no property | The property block is hidden (a general contact-form lead) |
 | Lead with no requirement profile | The "what they want" block is hidden. Most walk-in and contact-form leads won't have one |
 | Lead from the chatbot | The transcript is available, collapsed by default, expandable |
-| **Escalated chat** | Flag it hard (`color-coral`). This is the only genuinely real-time item in the CRM — someone is *waiting right now*. It should look different from every other lead |
+| **Escalated chat** | Flag it hard with the `error` family (`DESIGN.md` → Semantic Status Colors). This is the only genuinely real-time item in the CRM — someone is *waiting right now*. It should look different from every other lead |
 | Follow-up overdue | Highlight it. An overdue reminder that looks identical to a future one is a reminder that doesn't work |
 | Note saving | Optimistic append; revert on failure |
 | Agent viewing someone else's lead | Read-only, or 403 — depending on the tenant's policy (see [07](07-leads-kanban.md) §11) |

@@ -143,64 +143,45 @@ User & Role Management → invites a new agent
 
 ## 4. Design System
 
-*Formalizes and expands `11-stitch-design-prompts.md` Section 0 into concrete tokens.*
+> ## ⚠️ The design system is [`docs/DESIGN.md`](DESIGN.md). It is not here.
+>
+> **Superseded 2026-07-13.** This section used to define a complete, parallel design system — `color-brass` `#C17F3C`, `color-teal` `#1F6F63`, a Fraunces/Inter/IBM-Plex-Mono type stack, a 4px grid, brass focus rings, and teal/amber status badges. **All of it is dead.** It was extracted from an early draft of `11-stitch-design-prompts.md` and was never reconciled when `DESIGN.md` became the system of record.
+>
+> Anything still citing "`13-ui-ux-flows.md` §4.1–§4.5" for a color, a font, a spacing value, a component state, or a badge color is citing a **deleted** system. Go to `DESIGN.md`.
 
-### 4.1 Color Tokens
-
-| Token | Hex | Usage |
-|---|---|---|
-| `color-ink` | `#12253B` | Primary text, headers, nav |
-| `color-paper` | `#F3F5F6` | Page background |
-| `color-brass` | `#C17F3C` | Primary CTA buttons, active/selected states |
-| `color-brass-hover` | `#A66A30` | Primary button hover/active |
-| `color-teal` | `#1F6F63` | Secondary actions, success states, "Published" badge |
-| `color-slate` | `#5B6472` | Secondary/muted text, borders |
-| `color-white` | `#FFFFFF` | Card/surface backgrounds |
-| `color-amber` (semantic) | `#D9A441` | Warning / "Pending Approval" badge |
-| `color-coral` (semantic) | `#C0392B` | Error states, "escalated" flags, destructive actions |
-
-### 4.2 Typography Scale
-
-| Role | Font | Size | Usage |
-|---|---|---|---|
-| Display | Fraunces (or Newsreader) | 32px | Page titles, property titles |
-| Heading | Fraunces | 24px | Section headers |
-| Subheading | Fraunces | 20px | Card titles, modal headers |
-| Body | Inter (or General Sans) | 16px | Paragraph text, form labels |
-| Small | Inter | 14px | Secondary text, table cells |
-| Caption | Inter | 12px | Timestamps, helper text |
-| Data/Mono | IBM Plex Mono | 14–20px (context-dependent) | Prices, area/measurements, stat figures |
-
-### 4.3 Spacing Scale (4px base grid)
-
-`4 · 8 · 12 · 16 · 24 · 32 · 48 · 64` (px) — component padding uses 8/16/24; section/page-level gaps use 32/48/64.
-
-### 4.4 Component States
-
-| Component | Default | Hover/Focus | Disabled/Error |
-|---|---|---|---|
-| Primary button | Solid `color-brass`, white text | `color-brass-hover` | 40% opacity, no pointer |
-| Secondary button | Outline `color-teal` | Filled `color-teal`, white text | 40% opacity |
-| Text link | `color-teal`, no underline | Underline on hover | `color-slate`, no pointer |
-| Card (blueprint style) | Hairline border + corner tick marks | Slight lift (2px translate) | n/a |
-| Form input | 1px `color-slate` border | 2px `color-brass` focus ring | 1px `color-coral` border + message below |
-| Status badge | Pill shape, semantic background at 15% opacity, full-opacity text | n/a (static) | n/a |
-
-### 4.5 Status Badge Colors (Reused Across Property & Lead States)
-
-| State | Color |
+| You want | Go to |
 |---|---|
-| Draft | `color-slate` |
-| Pending Approval | `color-amber` |
-| Published / Active | `color-teal` |
-| Sold / Closed (Won) | `color-ink` |
-| Escalated / Closed (Lost) | `color-coral` |
+| Color tokens | `DESIGN.md` → token block + **Colors** |
+| The AI/intelligence color rule | `DESIGN.md` → **Colors** (`tertiary`, AI output only) |
+| Type scale & fonts | `DESIGN.md` → **Typography** (Plus Jakarta Sans — **no mono, no serif**) |
+| Spacing & grid | `DESIGN.md` → **Layout & Spacing** (8px base, 4px half-step) |
+| Radii | `DESIGN.md` → **Shapes** |
+| Elevation, shadow, glassmorphism | `DESIGN.md` → **Elevation & Depth** |
+| Buttons, inputs, chips, cards, AI widgets, lists | `DESIGN.md` → **Components** |
+| Status badge colors | `DESIGN.md` → **Semantic Status Colors** |
+
+**What changed, in case you have old work in flight:**
+
+| Old (§4, deleted) | New (`DESIGN.md`) |
+|---|---|
+| `color-brass` `#C17F3C` — primary CTA | `primary` `#3525cd`, gradient to `secondary` `#0058be` |
+| `color-brass` 2px focus ring | `primary` `#3525cd` 2px focus ring |
+| `color-teal` `#1F6F63` — "Published" badge | `success-container` `#c3f0da` / `#00522f` |
+| `color-amber` `#D9A441` — "Pending Approval" | `warning-container` `#ffddb0` / `#2c1700` |
+| `color-slate` — "Draft" | `neutral-container` `#e2e1ec` / `#1a1a24` |
+| `color-ink` — "Sold" | `inverse-surface` `#213145` / `#eaf1ff` |
+| `color-coral` — error/escalated | `error-container` `#ffdad6` / `#93000a` |
+| Fraunces / Inter / IBM Plex Mono | **Plus Jakarta Sans only** — prices are `headline-md`, not mono |
+| "Blueprint" cards with corner tick marks | Bento cards — white, 24px radius, hairline border, ultra-soft shadow |
+| *(nothing)* | **`tertiary` `#571ac0` — the AI intelligence layer.** New, semantic, and reserved: it marks model output and nothing else. |
 
 ### 4.6 Iconography
 
-Line-style icons (not filled, not rounded/playful) at a consistent 1.5px stroke weight — matches the editorial, precision-oriented feel established in `11-stitch-design-prompts.md`.
+Line-style icons (not filled, not rounded/playful) at a consistent 1.5px stroke weight. This still holds — it suits the Soft Minimalism direction in `DESIGN.md` as well as it suited what preceded it.
 
 ### 4.7 Responsive Breakpoints
+
+`DESIGN.md` states that the grid collapses to a single column on mobile and that desktop margins scale 40px → 20px, but it defines **no numeric breakpoints**. They live here, and this table is their source of truth.
 
 | Breakpoint | Range | Key Behavior |
 |---|---|---|
@@ -210,18 +191,20 @@ Line-style icons (not filled, not rounded/playful) at a consistent 1.5px stroke 
 
 ### 4.8 Accessibility Notes
 
-- Minimum text contrast ratio 4.5:1 against `color-paper`/`color-white` backgrounds — verify `color-brass` and `color-amber` specifically when used for text (not just backgrounds), as gold/amber tones commonly fail contrast at smaller sizes.
+- Minimum text contrast 4.5:1. Two pairs in `DESIGN.md` are known to be tight and must not carry small text: **`tertiary-container` + `on-tertiary-container` = 4.55:1** — nothing below 16px on it.
 - Minimum touch target 44×44px on mobile (chat bubble launcher, favorite icon, filter chips).
-- Form fields always have a visible label — never rely on placeholder text alone as the label, especially in the Requirement Analysis wizard (`01-prd.md` §5.3) and Property Management forms.
-- Focus-visible outlines use `color-brass` at 2px, consistent with the form-input focus state (Section 4.4).
+- Form fields always have a visible label — never rely on placeholder text alone, especially in the Requirement Analysis wizard (`01-prd.md` §5.3) and Property Management forms.
+- Focus-visible outlines use **`primary` `#3525cd`** at 2px. **Not `tertiary`** — a focused field is a user action, not model output, and the AI layer must not be diluted by a state that fires on every form field (`DESIGN.md` → Components).
+- Status must never be conveyed by color alone — the four listing states are distinguishable by hue *and* carry text labels.
 
 ---
 
 ## 5. Open Questions / Assumptions to Confirm
 
 - [ ] Whether the admin portal's mobile behavior (Section 4.7) needs full parity with desktop, or a deliberately reduced mobile feature set (e.g. view-only on mobile, full editing reserved for desktop) — needs product input, since admin usage patterns (Section 2, Vikram/Anjali flows) may be predominantly desktop-based in practice.
-- [ ] Final font licensing/availability check for Fraunces/Newsreader and General Sans if a specific font-hosting approach (self-hosted vs. Google Fonts) is required.
-- [ ] Whether dark mode is in scope for any surface — not currently assumed anywhere in this doc set.
+- [x] ~~Font licensing check for Fraunces/Newsreader and General Sans.~~ **Moot** — those faces were part of the superseded §4 type stack. The system is **Plus Jakarta Sans only** (`DESIGN.md` → Typography). A hosting decision is still needed for *that* face: self-hosted vs. Google Fonts.
+- [ ] **Font hosting for Plus Jakarta Sans** — self-hosted (recommended: no third-party request on every page load, no CDN dependency) vs. Google Fonts. Not yet decided.
+- [ ] Whether dark mode is in scope for any surface — not currently assumed anywhere in this doc set. `DESIGN.md` defines no dark palette; `inverse-surface` is a single dark accent, not a theme.
 
 ---
 

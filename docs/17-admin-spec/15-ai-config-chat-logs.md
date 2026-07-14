@@ -130,7 +130,7 @@ Opens a transcript
 |---|---|
 | Loading | Skeleton |
 | Empty | "No conversations yet." For a new tenant, expected |
-| Escalated, unhandled | **Visually loud** (`color-coral`). Someone is waiting *right now*. This is the only real-time item in the admin portal, and it should not look like a log entry |
+| Escalated, unhandled | **Visually loud** — the `error` family (`DESIGN.md` → Semantic Status Colors). Someone is waiting *right now*. This is the only real-time item in the admin portal, and it should not look like a log entry |
 | Flagged | Persists in the flagged filter until cleared |
 | Long conversation | Virtualize; jump-to-tool-call would be a genuinely useful affordance |
 | Conversation → lead | Link to the lead ([08](08-lead-detail.md)) |
