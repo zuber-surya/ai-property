@@ -19,3 +19,6 @@ e2e/shot.mjs
 # Secrets — only .env.example is committed
 .env
 .env.local
+
+# tsc must not emit next to source — vite bundles. Belt and braces.
+*.tsbuildinfo
