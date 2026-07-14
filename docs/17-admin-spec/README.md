@@ -66,6 +66,7 @@ One file per screen. Each follows the same 11-section template as the customer s
 | 14 | [`14-ai-config-recommendation.md`](14-ai-config-recommendation.md) | `/admin/ai-config/recommendation` |
 | 15 | [`15-ai-config-chat-logs.md`](15-ai-config-chat-logs.md) | `/admin/ai-config/chat-logs` |
 | 16 | [`16-ai-config-search-insights.md`](16-ai-config-search-insights.md) | `/admin/ai-config/search-insights` |
+| **22** | [**`22-agent-chat-console.md`**](22-agent-chat-console.md) | **`/admin/chat`** — live handoff. **The only real-time screen in the portal** (FR1.7; closed gap G7) |
 
 ### 2.5 Content, Reporting & Settings
 
@@ -123,8 +124,16 @@ Per FR11.3 / PRD Module 11: **all admin-portal write actions are logged** (actor
 ### 4.4 Soft delete, always
 Properties, leads, and users are **soft-deleted** (`deleted_at`), never hard-deleted (`.claude/rules/database.md`). CRM history has to survive. "Delete" in the UI means "archive" in the database — and the copy should be honest about that.
 
-### 4.5 Not tenant-branded
-The admin portal uses the design system directly (`13-ui-ux-flows.md` §4) — no tenant logo, no tenant colors. It's a tool, not a storefront. (The public site is the branded surface.)
+### 4.5 Design system — and no tenant branding
+The admin portal uses the design system directly: **[`docs/DESIGN.md`](../DESIGN.md)**. No tenant logo, no tenant colors. It's a tool, not a storefront.
+
+> ⚠️ `13-ui-ux-flows.md` §4.1–§4.5 used to hold a parallel system (brass/teal/Fraunces/IBM Plex Mono). **It is deleted.** Any page in this set still citing it for a color, font or badge is stale — go to `DESIGN.md`. Doc 13 §4.6–§4.8 (iconography, breakpoints, accessibility) is still live.
+
+Neither surface is tenant-branded in the MVP (decided 2026-07-13 — the public site isn't either, see PRD FR16.2). Every tenant gets the same tokens.
+
+Two `DESIGN.md` rules bite hardest in the admin portal:
+- **The `tertiary` family marks AI output and nothing else.** Legitimate uses: the AI-derived lead sources (Chatbot, AI Search), the AI-config screens' model output, chat-log transcripts. **Not** legitimate: focus rings (those are `primary`), nav highlights, or any chart series that isn't AI-derived.
+- **Status uses the semantic ramp**, never `primary`/`secondary` — see `DESIGN.md` → Semantic Status Colors. This is a denser, more table-heavy surface than the public site, and status legibility at chip size is the thing most likely to break.
 
 ### 4.6 Desktop-first, and that's a decision
 Agents and admins work at desks. `13-ui-ux-flows.md` §5 flags mobile parity as an open question; this doc set assumes **desktop-first with a usable read-only mobile view**, and calls it out where it matters (the Kanban board in particular is not a mobile experience).

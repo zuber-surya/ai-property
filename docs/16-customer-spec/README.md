@@ -94,7 +94,7 @@ Chat widget: overlays every route above (not a route of its own).
 These apply to all pages below. They are stated once here rather than repeated in each file.
 
 ### 4.1 Tenant resolution is server-side, always
-The public site is tenant-branded. The tenant is resolved **from the request's origin domain/subdomain**, never from a client-supplied value (`04-api-spec.md` §1, `.claude/rules/security.md`). The React app never sends a `tenant_id`, and no customer-facing endpoint accepts one. Every list, search, chat, and recommendation is implicitly scoped to the tenant that owns the domain being visited.
+The tenant is resolved **from the request's origin domain/subdomain**, never from a client-supplied value (`04-api-spec.md` §1, `.claude/rules/security.md`). The React app never sends a `tenant_id`, and no customer-facing endpoint accepts one. Every list, search, chat, and recommendation is implicitly scoped to the tenant that owns the domain being visited.
 
 ### 4.2 Anonymous-first — login is never a gate for value
 A visitor can browse, search, chat, favorite, run the requirement wizard, and submit an inquiry **without an account** (`08-auth-roles-spec.md` §4). The registration prompt appears *after* a persist-worthy action, never before it (`13-ui-ux-flows.md` §2.1).
@@ -124,7 +124,16 @@ A rate-limited (`429`) AI response is a *degradation*, not an error toast — pu
 Breakpoints per `13-ui-ux-flows.md` §4.7 (mobile <640, tablet 641–1024, desktop >1024). Every customer page must be usable on mobile (PRD §18). Touch targets ≥44×44px — this specifically covers the chat launcher and the favorite heart icon.
 
 ### 4.7 Design system
-Colors, type scale, spacing, component states, and status-badge colors all come from `13-ui-ux-flows.md` §4. Do not introduce new tokens in a page implementation.
+**Colors, type scale, spacing, radii, elevation, component states and status-badge colors all come from [`docs/DESIGN.md`](../DESIGN.md)** — the single source of truth. Do not introduce new tokens in a page implementation.
+
+> ⚠️ `13-ui-ux-flows.md` §4.1–§4.5 used to hold a parallel system (brass/teal/Fraunces). **It is deleted.** If you find a page in this set still citing it for a color or a font, that citation is stale — go to `DESIGN.md`. Doc 13 §4.6–§4.8 (iconography, breakpoints, accessibility) is still live.
+
+Two rules from `DESIGN.md` bite hardest on the customer surface:
+- **The `tertiary` family marks AI output and nothing else** — the chatbot, AI-search results, requirement-wizard recommendations, and "similar properties". A focused input, a favorite heart, or a "Just Listed" tag is **not** tertiary. Focus rings are `primary`.
+- **One typeface only.** Prices use `headline-md`, not a different face.
+
+### 4.8 Branding — one palette, no theming (MVP)
+The public site is **not tenant-branded in the MVP** (decided 2026-07-13, PRD FR16.2). Every tenant's site ships the same `DESIGN.md` tokens. Do not build a theming layer, a `branding` context, or runtime color overrides. Tenant *resolution* (§4.1) still happens — it scopes data, not appearance.
 
 ---
 
@@ -155,7 +164,7 @@ Found while writing this set. **These are documentation gaps, not implementation
 | G3 | **No autosuggest endpoint.** FR2.4 requires as-you-type suggestions; `04-api-spec.md` has no endpoint. Must not be a Bedrock call per keystroke. | `13-feature-ai-search.md` | `04-api-spec.md` |
 | G4 | **"Saved Searches" appears in a persona flow** (`13-ui-ux-flows.md` §2.2, Raj) but exists in no PRD module, table, or endpoint. Either it's a `requirement_profile` by another name, or it's unscoped. | `07-portal-dashboard.md`, `09-portal-requirements.md` | `01-prd.md` |
 | G5 | **No public endpoint serves CMS pages.** Admin CRUD exists; no public read route, so the public site cannot render About/Terms/blog. The module is inert. | `12-static-cms-pages.md` | `04-api-spec.md` |
-| G7 | **No agent-reply path for an escalated chat.** The bot promises a human; nothing lets one respond into the widget. | `14-feature-ai-chatbot.md` | `05-ai-chatbot-spec.md`, `04-api-spec.md` |
+| ~~G7~~ | ✅ **CLOSED 2026-07-14.** The agent-reply path now exists: `04-api-spec.md` §12A (queue / claim / reply / close) and `05-ai-chatbot-spec.md` §10A (handoff state machine). The visitor's widget **polls `GET /ai/chat/history` every ~4s while escalated** — see `14-feature-ai-chatbot.md`. | — | — |
 | G8 | **Missing endpoints:** delete a requirement profile (the column now exists), mark-notification-read, customer follow-up on an inquiry. | `09`, `10`, `11` | `04-api-spec.md` |
 | G9 | **No email/SMS provider chosen**, and **no job scheduler** — so notifications can only be in-app, and nothing fires on a schedule. | `11-portal-notifications.md` | `10-deployment-devops.md`, `02-architecture.md` |
 

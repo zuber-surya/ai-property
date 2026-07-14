@@ -144,6 +144,66 @@ On escalation: conversation status → `escalated`, a lead/notification is creat
 
 ---
 
+## 10A. The Handoff State Machine *(closes gap G7)*
+
+Escalation used to be a **dead end**: the bot handed off to a human, and no endpoint let that human reply. FR1.7 promised a handoff the system could not perform. This section, plus `04-api-spec.md` §12A, closes it.
+
+```
+   ACTIVE ──────────────── escalate_to_agent ──────────────► ESCALATED
+     │                                                          │
+     │ bot answers                                    agent claims it
+     │ (Bedrock)                                     (atomic — one winner)
+     │                                                          │
+     │                                                          ▼
+     │                                                   AGENT HANDLING
+     │                                                          │
+     │                                              agent closes ─┤
+     ▼                                                           ▼
+  ABANDONED ◄── visitor left, no message for N  ────────────► CLOSED
+```
+
+### 10A.1 ⚠️ Once escalated, the bot goes silent
+
+**`status = 'escalated'` → `POST /ai/chat/message` persists the visitor's message and does NOT call Bedrock.**
+
+This is the load-bearing rule. If the bot keeps replying after handoff, the visitor is talking to **two voices at once** — a human and a machine, contradicting each other — which is a worse experience than never offering a human at all. It also stops paying Bedrock for every message in an escalated conversation.
+
+The bot does not resume. Only an agent, or a close, moves the conversation on.
+
+### 10A.2 What the visitor sees
+
+| Moment | The visitor's widget shows |
+|---|---|
+| On escalation | The bot's handoff message from `ai_config.escalation_rules` — *"I've looped in one of our agents; they'll respond shortly."* |
+| Waiting | A quiet, honest status — *"Waiting for an agent…"*. **Do not fake a typing indicator.** Nobody is typing. |
+| Agent claims it | *"Anjali has joined the conversation."* The visitor must know they are now talking to a human — that is the entire point of asking for one. |
+| Agent replies | The message, attributed to the agent by name. |
+| Agent closes | *"This conversation has been closed."* with a path back to the bot or the contact form. |
+
+### 10A.3 Delivery — polling, not a realtime channel
+
+The widget **polls `GET /ai/chat/history/{conversation_id}` roughly every 4 seconds while `status = 'escalated'`**, and stops polling otherwise. There is no new customer-facing endpoint.
+
+Supabase Realtime is in the stack and would be nicer — but **ADR-0005 restricts the Supabase client to Auth and Storage, never data access.** A human agent types with 10–30 seconds of natural latency; 4-second polling is invisible against that. **We do not bend a load-bearing architectural rule to save three seconds on a human's typing speed.** See **ADR-0017**.
+
+### 10A.4 Outside business hours, do not promise a human
+
+`ai_config.escalation_rules` already carries business hours and fallback contact info (§9).
+
+**Outside those hours the bot must not say "an agent will respond shortly."** Nobody is there. It should say so plainly, capture contact details, and create a lead — a promise the product cannot keep is worse than an honest "we'll call you tomorrow morning."
+
+### 10A.5 Nobody picks it up
+
+The conversation sits in `/admin/chat/queue` with a **rising `waiting_seconds`**, rendered loudly (`17-admin-spec/15`, `17-admin-spec/22`). That is a **pull** signal — it works only if someone is looking at the screen.
+
+⚠️ **A proactive alert — "escalated and unclaimed for 15 minutes → tell someone" — needs a timer, and there is no scheduler (`GAPS.md` G9a).** MVP ships with the pull signal only. **This is a known, accepted weakness**, and it is the same missing scheduler that blocks the mandatory stale-lead alert (FR10.2b). One fix closes both.
+
+### 10A.6 Escalation is not a lead
+
+An escalated chat and a lead are different objects with different clocks. The escalation creates a lead (§10), but **closing the lead does not close the chat**, and a visitor waiting in an open chat is a **real-time** obligation while a lead is a pipeline item. Do not collapse the two.
+
+---
+
 ## 11. Logging & Admin Review
 
 - Every message (both directions) is persisted to `chat_messages` with `metadata` capturing any tool calls made — this is what powers the admin "conversation log viewer" (PRD Module 13, API Section 12).
