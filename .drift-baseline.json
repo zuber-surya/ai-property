@@ -2,7 +2,9 @@
   "dead-design-system": 0,
   "forked-hex": 0,
   "generated-prompts-stale": 0,
+  "design-copy-stale": 0,
   "mono-serif": 0,
-  "stale-gap": 25,
+  "stale-gap": 24,
+  "false-gap": 0,
   "async-violation": 0
 }

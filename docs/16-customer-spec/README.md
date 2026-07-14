@@ -166,7 +166,7 @@ Found while writing this set. **These are documentation gaps, not implementation
 | G5 | **No public endpoint serves CMS pages.** Admin CRUD exists; no public read route, so the public site cannot render About/Terms/blog. The module is inert. | `12-static-cms-pages.md` | `04-api-spec.md` |
 | ~~G7~~ | ✅ **CLOSED 2026-07-14.** The agent-reply path now exists: `04-api-spec.md` §12A (queue / claim / reply / close) and `05-ai-chatbot-spec.md` §10A (handoff state machine). The visitor's widget **polls `GET /ai/chat/history` every ~4s while escalated** — see `14-feature-ai-chatbot.md`. | — | — |
 | G8 | **Missing endpoints:** delete a requirement profile (the column now exists), mark-notification-read, customer follow-up on an inquiry. | `09`, `10`, `11` | `04-api-spec.md` |
-| G9 | **No email/SMS provider chosen**, and **no job scheduler** — so notifications can only be in-app, and nothing fires on a schedule. | `11-portal-notifications.md` | `10-deployment-devops.md`, `02-architecture.md` |
+| ~~G9~~ | ✅ **CLOSED — it was never real.** `02-architecture.md` **§3** names **SendGrid** (email) and **Twilio** (SMS); **§4.4** specifies **`pg_cron` + a jobs worker**. Both decided **2026-07-13**. Notifications are fully buildable on all three channels. ⚠️ Indian SMS still needs **DLT registration** — real calendar lead time, start it early. See `GAPS.md` §5A. | — | — |
 
 ---
 

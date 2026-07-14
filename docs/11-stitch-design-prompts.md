@@ -14,7 +14,7 @@
 >
 > **Two things are still open and both prompts work around them:**
 > 1. **`DESIGN.md` needs an `info` color.** Three lead stages, two property statuses, and three customer-facing inquiry statuses are all *in progress* — none of `success`/`warning`/`error`/`neutral` fits. Currently rendered `neutral` as a placeholder.
-> 2. **Gap G5** — no public CMS read endpoint, so §11 can't be served. **Gap G9** — no email/SMS provider and no job scheduler, so §16 and §18's notification-rules screen can only offer in-app.
+> 2. **Gap G5** — no public CMS read endpoint, so §11 can't be served. *(~~G9~~ was withdrawn: email/SMS providers and the scheduler were decided 2026-07-13 — `GAPS.md` §5A. The notification screens can offer all three channels.)*
 
 ---
 
@@ -53,6 +53,7 @@ Every color, size and radius in the prompts below traces to a `DESIGN.md` token.
 | **Status — warning** | `warning-container` | `#ffddb0` fill / `#2c1700` text |
 | **Status — error** | `error-container` | `#ffdad6` fill / `#93000a` text |
 | **Status — neutral** | `neutral-container` | `#e2e1ec` fill / `#1a1a24` text |
+| **Status — info (IN PROGRESS)** | `info-container` | `#bfe9ff` fill / `#00344a` text |
 
 **Type:** Plus Jakarta Sans throughout — there is **no** mono and **no** serif face in this system. Prices use `headline-md` (24px / 600) in `on-surface`. Headings use `display-lg` (48px / 700) or `headline-lg` (30px / 600). Labels use `label-md` (14px / 600) or `label-sm` (12px / 500).
 
@@ -863,7 +864,7 @@ top does NOT get them. The customer wrote that; the model didn't.
 | `closed_won` | **Completed** |
 | `closed_lost` | **Closed** — never "Lost", and never say why |
 
-> ⚠️ **OPEN — the semantic ramp has no "in progress" color.** `DESIGN.md` defines `success` / `warning` / `error` / `neutral`. Three of the six customer-facing statuses above ("An agent is on it", "Visit scheduled", "In discussion") are **in progress** — not done, not failed, not inert, and *not* a warning. None of the four fits. The prompt below uses `neutral` for them as an honest placeholder and flags it. **Resolve by adding an `info` family to `DESIGN.md`** (a hue distinct from `primary` indigo and `secondary` blue) before this screen is built.
+> ✅ **RESOLVED 2026-07-14 (gap D1).** `DESIGN.md` now has an **`info`** family (`#bfe9ff` fill / `#00344a` text) for **in progress**. The three middle statuses — "An agent is on it", "Visit scheduled", "In discussion" — use it. They share one colour deliberately: the **text label** distinguishes them, and three near-identical blues would recreate the 1.35:1 failure the ramp was built to fix (ADR-0018).
 
 > ⚠️ **"Send a follow-up" has no endpoint (Gap G8).** `POST /admin/leads/{id}/notes` is admin-only and must stay that way. Per spec §4, the button is **hidden for MVP**. The prompt omits it.
 
@@ -882,8 +883,8 @@ FIRST CARD — expanded:
 - A property block at the top: 4:3 thumbnail at 16px radius, title at 24px
   semibold, price at 24px semibold, "3BHK · Whitefield" in #464555
 - A label/value block: "Status", "Sent", "Via" — with the status shown as a
-  pill reading "An agent is on it" (neutral-container: #e2e1ec fill, #1a1a24
-  text), then "12 Jul 2026" and "Property page"
+  pill reading "An agent is on it" (info-container: #bfe9ff fill, #00344a
+  text — IN PROGRESS, not neutral), then "12 Jul 2026" and "Property page"
 - "Your message:" followed by the customer's own words in an inset tinted
   panel (#eff4ff, 12px radius, italic): "Is this available for a Nov move-in?"
 - A TIMELINE: a thin vertical #c7c4d8 line with dated entries. Completed
@@ -895,7 +896,8 @@ FIRST CARD — expanded:
 - One action at the foot: "View property" (outlined, primary #3525cd).
 
 SECOND CARD — collapsed: just the property name "Palm Grove Villa" and a
-status pill reading "Received" (neutral-container #e2e1ec / #1a1a24), with a
+status pill reading "Received" (neutral-container #e2e1ec / #1a1a24 — nobody
+has touched it yet), with a
 relative timestamp.
 
 Include TWO small mockups:
@@ -922,7 +924,9 @@ conversation, not model output.
 - "Mark all as read" — one click, no confirmation
 - A preferences grid: event type × channel
 
-> ⚠️ **Email and SMS cannot be delivered (Gap G9).** No email/SMS provider is chosen and there is **no job scheduler** — so the in-app channel is the only one that works. The prompt renders the Email and SMS columns **disabled with a "Coming soon" note** rather than offering switches that silently do nothing. Fix `10-deployment-devops.md` and `02-architecture.md` before enabling them.
+> ✅ **All three channels are deliverable.** ~~Gap G9~~ was **never real**: `02-architecture.md` §3 names **SendGrid** (email) and **Twilio** (SMS), and §4.4 specifies the **`pg_cron` + jobs-worker** scheduler — both decided 2026-07-13 (`GAPS.md` §5A). The prompt below still renders Email/SMS disabled; **that is now wrong and should be regenerated** to show all three channels live.
+>
+> ⚠️ Indian SMS still needs **DLT registration** — a regulatory process with calendar lead time. A tenant without it should see that channel disabled **with the reason shown**.
 
 > ⚠️ **Only `new_match` is an actual PRD requirement** (FR3.4). `inquiry_update`, `price_change` and `property_unavailable` are proposals in the spec and **must be added to `01-prd.md` before being built.** They are drawn below; do not read that as approval.
 
@@ -1012,6 +1016,7 @@ negative space. Property photography is the protagonist.
   Status: warning               #ffddb0 fill / #2c1700 text
   Status: error                 #ffdad6 fill / #93000a text
   Status: neutral               #e2e1ec fill / #1a1a24 text
+  Status: info (IN PROGRESS)    #bfe9ff fill / #00344a text
 
 THE ONE RULE THAT MATTERS MOST:
   #571ac0 tertiary violet marks AI-GENERATED OUTPUT AND NOTHING ELSE —
@@ -1368,7 +1373,7 @@ FINAL CHECKS — the three things most likely to go wrong
 >
 > The prompt below uses `neutral` for all of them as an honest placeholder. **Add an `info` family to `DESIGN.md`** — a hue distinct from `primary` indigo and `secondary` blue — and the Kanban, the leads table, the agent profile and the customer Inquiries page all get correct at once.
 >
-> **2. Email and SMS have no provider, and there is no job scheduler** (Gap G9). This guts two screens: the **notification rules** (§19 below) can't deliver on the channels it offers, and the "lead sits in New for 48h" rule needs a scheduler that doesn't exist. The prompt renders those channels disabled rather than as switches that silently do nothing.
+> **2. ~~Email/SMS and the scheduler~~ — ✅ this warning was FALSE.** `02-architecture.md` §3 (SendGrid + Twilio) and §4.4 (`pg_cron` + jobs worker) decided both on 2026-07-13. The notification-rules screen **can** deliver on all three channels, and the "lead sits in New for 48h" rule is **buildable** — `mark_stale_leads()` is listed in §4.4 by name. See `GAPS.md` §5A. The §19 prompt below still shows the channels disabled and **should be regenerated**.
 
 **Stitch prompt:**
 
@@ -1409,6 +1414,7 @@ COLOR — use these exact values, no others:
   STATUS warning (needs a human)#ffddb0 fill / #2c1700 text
   STATUS error (failed, urgent) #ffdad6 fill / #93000a text
   STATUS neutral (inert)        #e2e1ec fill / #1a1a24 text
+  STATUS info (IN PROGRESS)     #bfe9ff fill / #00344a text
 
 THE ONE RULE THAT MATTERS MOST:
   #571ac0 tertiary violet marks AI-GENERATED OUTPUT AND NOTHING ELSE. In this
@@ -1462,11 +1468,14 @@ SIDEBAR (every screen except login): a fixed left rail, ~240px. PropVista
 STATUS CHIPS — fully rounded, pale fill with dark text of the same hue, and
   ALWAYS a text label:
     Property:  Draft #e2e1ec/#1a1a24 · Pending Approval #ffddb0/#2c1700 ·
-               Published #c3f0da/#00522f · Sold #213145/#eaf1ff ·
-               Rejected #ffdad6/#93000a · On hold #e2e1ec/#1a1a24 ·
+               Published #c3f0da/#00522f · On hold #bfe9ff/#00344a ·
+               Sold #213145/#eaf1ff · Rejected #ffdad6/#93000a ·
                Archived #e2e1ec/#1a1a24 (muted)
-    Lead:      New #e2e1ec/#1a1a24 · Contacted / Site visit / Negotiation
-               #e2e1ec/#1a1a24 · Won #c3f0da/#00522f · Lost #e2e1ec/#1a1a24
+    Lead:      New #e2e1ec/#1a1a24 (nobody has touched it) ·
+               Contacted / Site visit / Negotiation #bfe9ff/#00344a
+                 ← IN PROGRESS. All three share the info colour; the TEXT
+                   LABEL distinguishes them. Do NOT invent three blues.
+               Won #c3f0da/#00522f · Lost #e2e1ec/#1a1a24 (muted, never red)
     User:      Active #c3f0da/#00522f · Invited #ffddb0/#2c1700 ·
                Inactive #e2e1ec/#1a1a24
 
@@ -1836,6 +1845,7 @@ COLOR — use these exact values, no others:
   STATUS warning                #ffddb0 fill / #2c1700 text
   STATUS error / urgent         #ffdad6 fill / #93000a text  (strong: #ba1a1a)
   STATUS neutral                #e2e1ec fill / #1a1a24 text
+  STATUS info (IN PROGRESS)     #bfe9ff fill / #00344a text
 
 THE ONE RULE THAT MATTERS MOST — read it twice:
   #571ac0 tertiary violet marks AI-GENERATED OUTPUT AND NOTHING ELSE.
@@ -1885,10 +1895,14 @@ SIDEBAR (every screen): a fixed left rail ~240px. PropVista logo at top, the
 STATUS CHIPS — fully rounded, pale fill + dark text of the same hue, ALWAYS with
   a text label:
     Property: Draft #e2e1ec/#1a1a24 · Pending Approval #ffddb0/#2c1700 ·
-              Published #c3f0da/#00522f · Sold #213145/#eaf1ff ·
-              Rejected #ffdad6/#93000a · On hold / Archived #e2e1ec/#1a1a24
-    Lead:     New #e2e1ec/#1a1a24 · Contacted / Site visit / Negotiation
-              #e2e1ec/#1a1a24 · Won #c3f0da/#00522f · Lost #e2e1ec/#1a1a24
+              Published #c3f0da/#00522f · On hold #bfe9ff/#00344a ·
+              Sold #213145/#eaf1ff · Rejected #ffdad6/#93000a ·
+              Archived #e2e1ec/#1a1a24 (muted)
+    Lead:     New #e2e1ec/#1a1a24 (nobody has touched it) ·
+              Contacted / Site visit / Negotiation #bfe9ff/#00344a
+                ← IN PROGRESS. All three share the info colour; the TEXT
+                  LABEL distinguishes them. Do NOT invent three blues.
+              Won #c3f0da/#00522f · Lost #e2e1ec/#1a1a24 (muted, never red)
 
 LEAD-SOURCE CHIPS — the AI-derived ones get tertiary; the rest do not:
     💬 Chatbot  #e9ddff / #571ac0   ← AI

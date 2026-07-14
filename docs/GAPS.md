@@ -21,10 +21,7 @@ These stop work. Ranked by how much they hold up.
 
 | ID | Gap | Owning doc | Blocks |
 |---|---|---|---|
-| **G9a** | **No job scheduler.** `02-architecture.md` says background work uses FastAPI `BackgroundTasks` — which only runs *after a request* and cannot fire on a timer. But `01-prd.md` **FR10.2b** makes the stale-lead alert **mandatory, not optional** ("a lead sitting unclaimed past a threshold must alert someone; without it, manual claim loses leads"). That requirement is currently **unbuildable as specced.** | `02-architecture.md`, `10-deployment-devops.md` | FR10.2b · notification rules (admin §19) · any scheduled digest |
-| **G9b** | **No email/SMS provider chosen.** In-app is the only channel that can work. Both the customer notification preferences and the admin notification rules currently *offer* Email and SMS. ⚠️ **Indian commercial SMS requires regulatory (DLT) registration of entity, sender IDs and templates — that has calendar lead time.** If SMS is in scope, start it now; if not, cut it from the specs. | `10-deployment-devops.md` | `16-customer-spec/11-portal-notifications.md` · `17-admin-spec/19-notification-rules.md` |
 | **G5** | **No public CMS read endpoint.** Admin CRUD exists; nothing serves a page to a visitor. The whole CMS module is inert — the public site cannot render About/Terms/blog. | `04-api-spec.md` | `16-customer-spec/12-static-cms-pages.md` · doc 11 §11 |
-| **D1** | **`DESIGN.md` has no "in progress" status color.** The ramp is `success`/`warning`/`error`/`neutral`. Three lead stages (`contacted`, `site_visit_scheduled`, `negotiation`), two property statuses (`on_hold`, `archived`), and three customer-facing inquiry statuses are all *in progress* — not done, not failed, not inert, and **not a warning**. Add an `info` family (a hue distinct from `primary` indigo and `secondary` blue). | `DESIGN.md` | Lead Kanban · leads table · agent profile · customer Inquiries page |
 
 ---
 
@@ -35,7 +32,7 @@ These stop work. Ranked by how much they hold up.
 | **G3** | **No autosuggest endpoint.** FR2.4 requires as-you-type suggestions. Must not be a Bedrock call per keystroke. | `04-api-spec.md` | Blocks AI-search polish (Phase 2) |
 | **G4** | **"Saved Searches"** appears in Raj's persona flow (`13-ui-ux-flows.md` §2.2) but exists in **no module, table, or endpoint.** Either it's a `requirement_profile` by another name, or it's unscoped scope. | `01-prd.md` | Decide: scope it, or delete it from the persona flow |
 | **G8** | **Missing endpoints:** delete a requirement profile (the `deleted_at` column now exists — G6), mark-notification-read, customer follow-up on an inquiry. | `04-api-spec.md` | Portal screens 09/10/11 ship degraded without them |
-| **P1** | **Lead auto-assignment is undecided.** Manual claim is specced, with FR10.2b as its safety net — which depends on G9a. | `01-prd.md` | — |
+| **P1** | **Lead auto-assignment is undecided.** Manual claim is specced, with FR10.2b as its safety net — and that safety net **is buildable** (`02-architecture.md` §4.4). | `01-prd.md` | — |
 | **P2** | **`01-prd.md` FR10.1 is stale** — still promises configurable pipeline stages; the schema fixes the enum for MVP. | `01-prd.md` | Correct the PRD |
 | **P3** | **`04-api-spec.md` §14 is stale** — implies a persisted report with an ID; reports are stateless. | `04-api-spec.md` | Correct the API spec |
 | **I1** | **Bedrock region vs. users vs. Supabase.** `10-deployment-devops.md` §1's whole rationale is "co-locate compute with Bedrock." This is an India-first product. If Claude-on-Bedrock isn't in `ap-south-1`, you must choose: co-locate with Bedrock (slow for users + DB) or with users (every AI call crosses regions). **This decides the region, which decides everything else.** Not yet confronted. | `10-deployment-devops.md` | Blocks provisioning |
@@ -79,8 +76,54 @@ Kept, not deleted — because **three portal specs still cite these as blocking*
 | **DS2** | Tenant branding assumed by `02-architecture.md` and `rules/frontend.md`; no theming layer existed | Deferred to post-MVP 2026-07-13; 4 docs amended | Done |
 | **G7** | **No agent-reply path for an escalated chat.** `POST /ai/chat/escalate` existed; nothing let the human reply. FR1.7 promised a handoff the system could not perform | **Closed 2026-07-14.** `04-api-spec.md` §12A (4 endpoints: queue / claim / reply / close, + the bot-goes-silent rule) · `05-ai-chatbot-spec.md` §10A (handoff state machine) · `17-admin-spec/22-agent-chat-console.md` (the screen) · ADR-0017 (polling over Realtime). **No migration — the schema already had `sender = 'agent'` and `assigned_agent_id`** | Done — `16-feature-ai-chatbot.md` §222 swept |
 
-> ⚠️ **G7 closed with one residual, and it is not a loophole — it is the same missing scheduler as G9a.**
-> The queue is a **pull** signal: it shouts, but only at an agent already looking at the screen. A **proactive** alert ("escalated and unclaimed for 15 minutes → tell someone") needs a timer, and there is no scheduler. **This is the same gap that blocks the mandatory stale-lead alert (FR10.2b). One scheduler closes both.** Tracked under **G9a**, not re-opened as G7.
+| **D1** | **No "in progress" status color.** Three lead stages, two property statuses and three customer inquiry statuses were all *in progress* — not done, not failed, not inert, not a warning — and rendered `neutral`, a placeholder | **Closed 2026-07-14.** `info` family added to `DESIGN.md` (`#00668b` / `#bfe9ff`). A cyan works because **a status chip only ever appears next to other status chips** — it never has to compete with the brand blues | ⚠️ **Stitch screens for Kanban / leads table / lead detail were generated pre-`info` and must be regenerated** |
+
+---
+
+## 5A. ⛔ FALSE GAPS — G9a and G9b never existed
+
+**This is the most important entry in this file. Read it before you trust any gap.**
+
+| ID | The claim | The truth |
+|---|---|---|
+| ~~**G9a**~~ | *"No job scheduler. `BackgroundTasks` cannot fire on a timer, so FR10.2b (mandatory) is unbuildable."* | **False.** `02-architecture.md` **§4.4** has specified **`pg_cron` + a `jobs` table + a Python worker since 2026-07-13** — and **`mark_stale_leads()` is explicitly listed in it.** FR10.2b was buildable the entire time. |
+| ~~**G9b**~~ | *"No email/SMS provider chosen."* | **False.** `02-architecture.md` **§3** names **Email = SendGrid, SMS = Twilio** — decided 2026-07-13, with the Indian DLT registration requirement already noted. |
+
+### How this happened, in three levels
+
+```
+02-architecture.md §4.4      DECIDED pg_cron + jobs worker (2026-07-13)
+        │                    …but its own §9 open-questions list still said
+        │                    "[ ] BackgroundTasks or Celery?" — contradicting itself
+        ▼
+CLAUDE.md line 33            SUMMARISED it as "no job scheduler"        ← level 1
+        ▼
+16-customer-spec/README §5   COPIED that summary into a gap table       ← level 2
+        ▼
+an agent (me)                READ THE SUMMARY, NOT THE OWNING DOC       ← level 3
+        ▼
+GAPS.md · BACKLOG.md · 22-risk-register.md · 20-operations-runbook.md ·
+adr/README.md (ADR-0014) · 05-ai-chatbot-spec.md · 17-admin-spec/22 · doc 11
+        ▼
+        "A mandatory PRD requirement is unbuildable."   ← confidently, eight times
+```
+
+**Nobody lied. Every step was a faithful copy of the step above it.** That is what makes summary-drift so dangerous: it does not look like an error, it looks like agreement.
+
+### What it cost
+
+An entire sprint (`Sprint 4`) was planned as blocked. A "known residual" was written into the G7 closure. A risk-register entry, an ADR consequence, an operations-runbook limitation, and a Stitch prompt warning were all authored around a constraint **that did not exist**.
+
+### The rules this produced
+
+1. **`GAPS.md` is the only place a gap's state is recorded.** Cite the ID; never restate the list. (`OWNERSHIP.md` §3.)
+2. **An answered open-question is a lie with a checkbox.** `02-architecture.md` §9 still listed the scheduler as open a day after §4.4 decided it. When you decide something, **close its open-question line in the same commit.**
+3. **`scripts/check_drift.py` now has a `false-gap` check** that fails on any resurrection of "no scheduler" or "no email/SMS provider".
+4. This is the same failure as `OWNERSHIP.md` §5 #4 (a doc paraphrased the PRD, the paraphrase drifted, a false bug was reported). **It happened twice. The second time it cost a sprint plan.**
+
+---
+
+## 5B. Closed
 
 ---
 

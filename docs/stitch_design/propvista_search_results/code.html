@@ -1,0 +1,525 @@
+<!DOCTYPE html><html lang="en" class="light"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-fixed": "#23005c",
+                      "on-secondary-fixed": "#001a42",
+                      "surface-tint": "#4d44e3",
+                      "tertiary-fixed-dim": "#d0bcff",
+                      "outline": "#777587",
+                      "secondary-fixed": "#d8e2ff",
+                      "on-secondary-container": "#002c66",
+                      "outline-variant": "#c7c4d8",
+                      "primary-fixed": "#e2dfff",
+                      "surface-container": "#e5eeff",
+                      "tertiary-fixed": "#e9ddff",
+                      "on-secondary-fixed-variant": "#004395",
+                      "inverse-surface": "#2f2f3e",
+                      "on-tertiary": "#ffffff",
+                      "on-surface-variant": "#464555",
+                      "on-primary-container": "#b1afff",
+                      "error": "#ba1a1a",
+                      "inverse-on-surface": "#f1efff",
+                      "error-container": "#ffdad6",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-dim": "#dad8eb",
+                      "surface-variant": "#e2e0f4",
+                      "on-error": "#ffffff",
+                      "primary-fixed-dim": "#c3c0ff",
+                      "tertiary-container": "#571ac0",
+                      "primary-container": "#3525cd",
+                      "primary": "#1e00a9",
+                      "on-primary-fixed-variant": "#3323cc",
+                      "surface-container-high": "#e8e6fa",
+                      "on-surface": "#1a1a28",
+                      "surface-bright": "#fbf8ff",
+                      "on-error-container": "#93000a",
+                      "tertiary": "#3e0095",
+                      "inverse-primary": "#c3c0ff",
+                      "on-secondary": "#ffffff",
+                      "surface": "#f8f9ff",
+                      "on-tertiary-fixed-variant": "#5516be",
+                      "surface-container-low": "#f5f2ff",
+                      "on-tertiary-container": "#c3aaff",
+                      "background": "#fbf8ff",
+                      "on-background": "#1a1a28",
+                      "on-primary": "#ffffff",
+                      "warning": "#8a5300",
+                      "secondary-fixed-dim": "#adc6ff",
+                      "on-primary-fixed": "#001a42",
+                      "surface-container-highest": "#e2e0f4",
+                      "secondary": "#085ac0",
+                      "secondary-container": "#5b94fd",
+                      "success": "#026e4f"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "2xl": "1.5rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-sm": "12px",
+                      "stack-md": "24px",
+                      "stack-lg": "48px",
+                      "margin-desktop": "40px",
+                      "gutter": "24px",
+                      "container-max": "1440px",
+                      "margin-mobile": "20px",
+                      "base": "8px"
+              },
+              "fontFamily": {
+                      "display-lg": ["Plus Jakarta Sans"],
+                      "label-md": ["Plus Jakarta Sans"],
+                      "body-md": ["Plus Jakarta Sans"],
+                      "label-sm": ["Plus Jakarta Sans"],
+                      "headline-md": ["Plus Jakarta Sans"],
+                      "headline-lg": ["Plus Jakarta Sans"],
+                      "body-lg": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                      "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "label-md": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "label-sm": ["12px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                      "headline-md": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                      "headline-lg": ["30px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    }catch(_e){}</script><meta charset="utf-8"></head><body class="bg-background text-on-background min-h-screen">
+<!-- TopNavBar Component -->
+<nav class="bg-surface-container-lowest/80 glass-nav border-b border-outline-variant sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-desktop py-4 max-w-container-max mx-auto">
+<div class="flex items-center gap-8 flex-1">
+<span class="text-headline-md font-headline-md font-bold text-primary">PropVista</span>
+<!-- Search Integration -->
+<div class="relative w-full max-w-xl group"><div class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-tertiary">
+<span class="material-symbols-outlined text-[20px]" data-weight="fill">auto_awesome</span>
+</div>
+<input class="w-full bg-surface-container-low border-outline-variant rounded-full py-3 pl-12 pr-24 font-body-md text-on-surface-variant focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" type="text" value="Modern 3 bedroom house in Austin with a pool under $1M" placeholder="Describe the home you’re looking for...">
+<div class="absolute inset-y-0 right-4 flex items-center gap-2">
+<button class="p-1 text-outline hover:text-error transition-colors">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+<div class="h-4 w-[1px] bg-outline-variant"></div>
+<button class="p-1 text-primary hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-[20px]">mic</span>
+</button>
+</div></div>
+</div>
+<div class="hidden md:flex items-center gap-6 mx-8">
+<a href="#" class="text-on-surface-variant font-body-md hover:text-primary transition-colors duration-200">Dashboard</a>
+<a href="#" class="text-primary font-bold border-b-2 border-primary pb-1 font-body-md">Properties</a>
+<a href="#" class="text-on-surface-variant font-body-md hover:text-primary transition-colors duration-200">Clients</a>
+<a href="#" class="text-on-surface-variant font-body-md hover:text-primary transition-colors duration-200">Leads</a>
+<a href="#" class="text-on-surface-variant font-body-md hover:text-primary transition-colors duration-200">Insights</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-bold cursor-pointer overflow-hidden">
+<span class="material-symbols-outlined">account_circle</span>
+</div>
+</div>
+</div>
+</nav>
+<div class="max-w-container-max mx-auto flex gap-gutter px-margin-desktop py-stack-md">
+<!-- Filter Rail (Left Sidebar) -->
+<aside class="w-72 flex-shrink-0 hidden lg:block sticky top-28 self-start h-[calc(100vh-140px)] overflow-y-auto custom-scrollbar pr-2">
+<div class="space-y-stack-md">
+<div>
+<h3 class="font-label-md text-on-surface-variant mb-4 uppercase tracking-wider">Filters</h3>
+<div class="space-y-6">
+<!-- Location -->
+<div>
+<label class="block font-label-md text-on-surface mb-2">Location</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">location_on</span>
+<input type="text" placeholder="Add location..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-outline-variant bg-surface-container-lowest text-body-md">
+</div>
+</div>
+<!-- Price Range -->
+<div>
+<div class="flex justify-between items-center mb-2">
+<label class="font-label-md text-on-surface">Price Range</label>
+<span class="text-label-sm text-primary font-semibold">$0 - $1.0M</span>
+</div>
+<input type="range" min="0" max="2000000" step="50000" class="w-full h-1.5 bg-surface-container-highest rounded-full appearance-none cursor-pointer">
+<div class="flex justify-between mt-2 text-label-sm text-outline">
+<span class="">$0</span>
+<span class="">$2M+</span>
+</div>
+</div>
+<!-- Property Type -->
+<div>
+<label class="block font-label-md text-on-surface mb-3">Property Type</label>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1.5 rounded-full bg-primary text-on-primary text-label-sm cursor-pointer shadow-sm">House</span>
+<span class="px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant text-label-sm hover:bg-surface-container-highest cursor-pointer transition-all">Condo</span>
+<span class="px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant text-label-sm hover:bg-surface-container-highest cursor-pointer transition-all">Townhouse</span>
+<span class="px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant text-label-sm hover:bg-surface-container-highest cursor-pointer transition-all">Land</span>
+</div>
+</div>
+<!-- Bedrooms Stepper -->
+<div>
+<label class="block font-label-md text-on-surface mb-3">Bedrooms</label>
+<div class="grid grid-cols-5 gap-1 bg-surface-container-low p-1 rounded-xl">
+<button class="py-1.5 rounded-lg text-label-sm text-on-surface-variant hover:bg-surface-container-lowest">Any</button>
+<button class="py-1.5 rounded-lg text-label-sm text-on-surface-variant hover:bg-surface-container-lowest">1+</button>
+<button class="py-1.5 rounded-lg text-label-sm text-on-surface-variant hover:bg-surface-container-lowest">2+</button>
+<button class="py-1.5 rounded-lg bg-surface-container-lowest text-primary shadow-sm text-label-sm font-bold">3+</button>
+<button class="py-1.5 rounded-lg text-label-sm text-on-surface-variant hover:bg-surface-container-lowest">4+</button>
+</div>
+</div>
+<!-- Amenities -->
+<div>
+<label class="block font-label-md text-on-surface mb-3">Amenities</label>
+<div class="space-y-2">
+<label class="flex items-center gap-3 cursor-pointer group">
+<input type="checkbox" checked="" class="w-4 h-4 rounded text-primary border-outline-variant focus:ring-primary/20">
+<span class="text-body-md text-on-surface-variant group-hover:text-on-surface transition-colors">Pool</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input type="checkbox" class="w-4 h-4 rounded text-primary border-outline-variant focus:ring-primary/20">
+<span class="text-body-md text-on-surface-variant group-hover:text-on-surface transition-colors">Garage</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input type="checkbox" class="w-4 h-4 rounded text-primary border-outline-variant focus:ring-primary/20">
+<span class="text-body-md text-on-surface-variant group-hover:text-on-surface transition-colors">Guest House</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input type="checkbox" class="w-4 h-4 rounded text-primary border-outline-variant focus:ring-primary/20">
+<span class="text-body-md text-on-surface-variant group-hover:text-on-surface transition-colors">Modern Design</span>
+</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1">
+<!-- Result Header & AI Interpretation -->
+<div class="mb-stack-md">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4">
+<div>
+<h1 class="text-headline-lg font-headline-lg text-on-surface">12 properties found</h1>
+<p class="text-body-lg text-on-surface-variant mt-1">Showing matches for <span class="font-semibold text-primary">"Modern 3 bedroom house in Austin with a pool under $1M"</span></p>
+</div>
+<!-- View Toggles & Sort -->
+<div class="flex items-center gap-3">
+<div class="flex bg-surface-container-high p-1 rounded-full">
+<button class="p-2 rounded-full bg-surface-container-lowest shadow-sm text-primary">
+<span class="material-symbols-outlined text-[20px]">grid_view</span>
+</button>
+<button class="p-2 rounded-full text-on-surface-variant hover:text-primary">
+<span class="material-symbols-outlined text-[20px]">format_list_bulleted</span>
+</button>
+<button class="p-2 rounded-full text-on-surface-variant hover:text-primary">
+<span class="material-symbols-outlined text-[20px]">map</span>
+</button>
+</div>
+<div class="h-8 w-[1px] bg-outline-variant mx-1"></div>
+<select class="bg-transparent border-none text-label-md font-semibold text-on-surface cursor-pointer focus:ring-0">
+<option>Sort by: Relevance</option>
+<option>Price: Low to High</option>
+<option>Newest Listed</option>
+</select>
+</div>
+</div>
+<!-- Parsed AI Chips -->
+<div class="flex flex-wrap gap-2 items-center">
+<span class="text-label-sm font-bold text-on-tertiary-fixed-variant uppercase tracking-tighter mr-2">AI Filters:</span>
+<div class="bg-tertiary-fixed text-on-tertiary-fixed px-3 py-1.5 rounded-full flex items-center gap-2 text-label-sm">
+<span class="">Austin</span>
+<span class="material-symbols-outlined text-[14px] cursor-pointer">close</span>
+</div>
+<div class="bg-tertiary-fixed text-on-tertiary-fixed px-3 py-1.5 rounded-full flex items-center gap-2 text-label-sm">
+<span class="">3+ Beds</span>
+<span class="material-symbols-outlined text-[14px] cursor-pointer">close</span>
+</div>
+<div class="bg-tertiary-fixed text-on-tertiary-fixed px-3 py-1.5 rounded-full flex items-center gap-2 text-label-sm">
+<span class="">Pool</span>
+<span class="material-symbols-outlined text-[14px] cursor-pointer">close</span>
+</div>
+<div class="bg-tertiary-fixed text-on-tertiary-fixed px-3 py-1.5 rounded-full flex items-center gap-2 text-label-sm">
+<span class="">&lt;$1M</span>
+<span class="material-symbols-outlined text-[14px] cursor-pointer">close</span>
+</div>
+<button class="text-tertiary hover:underline text-label-sm font-semibold ml-2">Clear all</button>
+</div>
+</div>
+<!-- Result Grid (Bento Style) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- AI-Matched Featured Card (Large/Special) -->
+<div class="md:col-span-2 group relative bg-surface-container-lowest rounded-2xl border border-outline-variant overflow-hidden flex flex-col md:flex-row hover:shadow-lg transition-all duration-300">
+<div class="w-full md:w-1/2 aspect-video md:aspect-auto overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A hyper-realistic photograph of a stunning modern luxury house in Austin, Texas at dusk. The architecture features clean lines, expansive glass walls, and a warm interior glow. In the foreground, a crystal-clear infinity pool reflects the soft indigo sky and surrounding architectural lights. Lush landscaping and desert-inspired flora frame the property under a soft, elegant lighting scheme." src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg">
+<div class="absolute top-4 left-4 bg-tertiary-container/90 backdrop-blur-md text-on-tertiary-container px-4 py-2 rounded-full flex items-center gap-2 shadow-xl border border-on-tertiary-container/20">
+<span class="material-symbols-outlined text-[18px]" data-weight="fill">auto_awesome</span>
+<span class="text-label-md font-bold">98% Match</span>
+</div>
+<div class="absolute top-4 right-4 bg-white/20 backdrop-blur-md p-2 rounded-full text-white cursor-pointer hover:bg-white hover:text-error transition-all">
+<span class="material-symbols-outlined">favorite</span>
+</div>
+</div>
+<div class="p-8 flex flex-col justify-between flex-1">
+<div>
+<div class="flex justify-between items-start mb-2">
+<span class="bg-success/10 text-success px-2.5 py-1 rounded text-label-sm font-bold">Just Listed</span>
+<h2 class="text-headline-md font-bold text-primary">$945,000</h2>
+</div>
+<h3 class="text-headline-md font-bold text-on-surface mb-2">The Zen Oasis Residences</h3>
+<p class="text-body-md text-on-surface-variant flex items-center gap-1 mb-6">
+<span class="material-symbols-outlined text-[18px] text-outline">location_on</span>
+                                1245 West Lynn St, Austin, TX 78703
+                            </p>
+<div class="flex gap-6 py-4 border-y border-outline-variant">
+<div class="flex flex-col">
+<span class="text-label-sm text-outline uppercase tracking-wider">Bedrooms</span>
+<span class="text-body-lg font-bold">3 Beds</span>
+</div>
+<div class="flex flex-col border-l border-outline-variant pl-6">
+<span class="text-label-sm text-outline uppercase tracking-wider">Bathrooms</span>
+<span class="text-body-lg font-bold">2.5 Baths</span>
+</div>
+<div class="flex flex-col border-l border-outline-variant pl-6">
+<span class="text-label-sm text-outline uppercase tracking-wider">Square Ft</span>
+<span class="text-body-lg font-bold">2,450 sqft</span>
+</div>
+</div>
+</div>
+<div class="mt-6 flex items-center gap-4">
+<button class="bg-primary text-on-primary px-6 py-3 rounded-full font-label-md hover:opacity-90 transition-all flex-1">View Details</button>
+<button class="bg-tertiary-fixed text-on-tertiary-fixed px-6 py-3 rounded-full font-label-md hover:bg-tertiary-fixed-dim transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">smart_toy</span>
+                                AI Insight
+                            </button>
+</div>
+</div>
+</div>
+<!-- Standard-->
+<div class="group bg-surface-container-lowest rounded-2xl border border-outline-variant overflow-hidden hover:shadow-lg transition-all duration-300">
+<div class="aspect-video overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A minimalist modern residential property in a suburban Austin neighborhood. The house features a combination of white limestone and dark cedar wood siding. The front yard is meticulously landscaped with native grasses. Bright, mid-day sunlight casts crisp shadows, emphasizing the sharp geometric forms of the building. The sky is a clear, vibrant blue." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQ4NGDIprQDRtC2pEkXKryqXHpEToUIhguN6bepdnvAlRICIy13y_ygUfSYtBQthSaWvCFh8lWvcBAquFpWnnzTi5vqNp5rLkIldozucvxEYYqmRwMnHwr8P0oUAcI5W1FXH9vWe9lqyj2XYcBQdn5FWatURHln7HecdvJq4WoVQWuiOxHjJZ_97VS79dVpoJjvpkpM9oHkTgZQstecm-hQpRFO5-_qUOC6_2rjcBjioXjVidGq4wWLw">
+<div class="absolute top-3 right-3 bg-white/20 backdrop-blur-md p-2 rounded-full text-white cursor-pointer hover:bg-white hover:text-error transition-all">
+<span class="material-symbols-outlined">favorite</span>
+</div>
+<div class="absolute bottom-3 left-3 bg-surface-container-lowest/90 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-tertiary" data-weight="fill">auto_awesome</span>
+<span class="text-label-sm font-bold text-on-surface">82% Match</span>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-center mb-1">
+<span class="text-headline-md font-bold text-primary">$875,000</span>
+<span class="text-label-sm text-on-surface-variant">4 days ago</span>
+</div>
+<h3 class="text-body-lg font-bold text-on-surface mb-1">Modern Prairie Estate</h3>
+<p class="text-label-md text-on-surface-variant flex items-center gap-1 mb-4">
+<span class="material-symbols-outlined text-[16px] text-outline">location_on</span>
+                            South Congress District, Austin
+                        </p>
+<div class="flex items-center justify-between text-on-surface-variant border-t border-outline-variant pt-4">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[20px]">bed</span>
+<span class="text-label-md">3 Beds</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[20px]">bathtub</span>
+<span class="text-label-md">2 Baths</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[20px]">square_foot</span>
+<span class="text-label-md">2,100 ft²</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Standard Property Card 2 -->
+<div class="group bg-surface-container-lowest rounded-2xl border border-outline-variant overflow-hidden hover:shadow-lg transition-all duration-300">
+<div class="aspect-video overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="An interior shot of a wide-open modern living room in a luxury Austin home. The room features double-height ceilings and a floor-to-ceiling glass wall looking out onto a private backyard with a turquoise swimming pool. High-end contemporary furniture in neutral tones fills the space. The lighting is soft and airy, creating a high-end editorial feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9PDWtbWIVCcuBwxJWMxy14twYqthKi3bEeUgHP302Lx8AO7cmIZ7WT9G5tWsU90AyP4txc5YF7xhxI55W0FH4qNOw4IBEVT5hxSRdcGQS6MBZFUUq1ZZTClo6HkCBBO8QHyTTev5CFTqxVRjZe5Pscthq8LCrZFXlRemjivijARuihTm5BNYP2OpSZt1aJC51_IediJYQ1cBwxQh2yjqEEMi7yWW1TBrQFhKON3WQmk10teMAWL4-IQ">
+<div class="absolute top-3 right-3 bg-white/20 backdrop-blur-md p-2 rounded-full text-white cursor-pointer hover:bg-white hover:text-error transition-all">
+<span class="material-symbols-outlined">favorite</span>
+</div>
+<div class="absolute bottom-3 left-3 bg-surface-container-lowest/90 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-tertiary" data-weight="fill">auto_awesome</span>
+<span class="text-label-sm font-bold text-on-surface">75% Match</span>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-center mb-1">
+<span class="text-headline-md font-bold text-primary">$995,000</span>
+<span class="text-label-sm text-on-surface-variant">2 weeks ago</span>
+</div>
+<h3 class="text-body-lg font-bold text-on-surface mb-1">The Glass House</h3>
+<p class="text-label-md text-on-surface-variant flex items-center gap-1 mb-4">
+<span class="material-symbols-outlined text-[16px] text-outline">location_on</span>
+                            Lake Travis, Austin
+                        </p>
+<div class="flex items-center justify-between text-on-surface-variant border-t border-outline-variant pt-4">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[20px]">bed</span>
+<span class="text-label-md">3 Beds</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[20px]">bathtub</span>
+<span class="text-label-md">3 Baths</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[20px]">square_foot</span>
+<span class="text-label-md">2,800 ft²</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Standard Property Card 3 -->
+<div class="group bg-surface-container-lowest rounded-2xl border border-outline-variant overflow-hidden hover:shadow-lg transition-all duration-300">
+<div class="aspect-video overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A cozy but sophisticated modern cottage in East Austin. The exterior features dark charcoal siding and large black-framed windows. A small, elegant cocktail pool is tucked into the side yard. Surrounded by mature oak trees, the property feels private and serene. Afternoon sunlight filters through the branches, creating beautiful dappled light patterns." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBR5Sf2OqPC6NbvU-hrl6XcywJUdBO8dXas6KCB2e7niHsRx7fWp8PHQVxgyELj176G9GFLzp44fEmoUcs7lIH7CqqpV1s3nO8AuAlkhZyJPTSyGDWPx0zaMrCmJA69Yt2Z4OIs4fCUOFqZVP2IljOOMHCJGYtib7khZSBz7PBsDt7YtlPBP2gMDoNvDcDhNS9AJiYW-_RBQdP_wuCyXG5AnY0IVUzvXVoJUi6TMTjmTedO2dwDIJn7nQ">
+<div class="absolute top-3 right-3 bg-white/20 backdrop-blur-md p-2 rounded-full text-white cursor-pointer hover:bg-white hover:text-error transition-all">
+<span class="material-symbols-outlined">favorite</span>
+</div>
+<div class="absolute bottom-3 left-3 bg-surface-container-lowest/90 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-tertiary" data-weight="fill">auto_awesome</span>
+<span class="text-label-sm font-bold text-on-surface">91% Match</span>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-center mb-1">
+<span class="text-headline-md font-bold text-primary">$725,000</span>
+<span class="text-label-sm text-on-surface-variant">Just Listed</span>
+</div>
+<h3 class="text-body-lg font-bold text-on-surface mb-1">East Side Modern</h3>
+<p class="text-label-md text-on-surface-variant flex items-center gap-1 mb-4">
+<span class="material-symbols-outlined text-[16px] text-outline">location_on</span>
+                            Holly District, Austin
+                        </p>
+<div class="flex items-center justify-between text-on-surface-variant border-t border-outline-variant pt-4">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[20px]">bed</span>
+<span class="text-label-md">3 Beds</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[20px]">bathtub</span>
+<span class="text-label-md">2.5 Baths</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[20px]">square_foot</span>
+<span class="text-label-md">1,850 ft²</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Standard Property Card 4 -->
+<div class="group bg-surface-container-lowest rounded-2xl border border-outline-variant overflow-hidden hover:shadow-lg transition-all duration-300">
+<div class="aspect-video overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A sprawling modern ranch-style home in the Austin hill country. The design utilizes horizontal limestone and steel elements. A large swimming pool anchors the backyard, overlooking a valley. The vibe is sophisticated, professional, and tranquil. Evening lighting highlights the texture of the stone walls and the stillness of the water." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLTQn5UZ-JxMblZlBa0Gpg-ZjVxxCoYeDNDkooYziufvfGWygpbiW-nYeSxX9YHwBViQAcNkiT78-hcXTy5cJxspKBOiOoZe3A4nXqsrRm0tUU_VtOdPLgGrALTyOOYxCoHsELa0MgYzc5sHqyGYa9scUUz1UklKt3hn0gtS1-VxzCYqmOrCz6pJ--LXiK5oeIluExyUDiiDGtd82QiUXryvd3uzZ_JCgVk9LSaCcsap6-nVonx6CLvg">
+<div class="absolute top-3 right-3 bg-white/20 backdrop-blur-md p-2 rounded-full text-white cursor-pointer hover:bg-white hover:text-error transition-all">
+<span class="material-symbols-outlined">favorite</span>
+</div>
+<div class="absolute bottom-3 left-3 bg-surface-container-lowest/90 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-tertiary" data-weight="fill">auto_awesome</span>
+<span class="text-label-sm font-bold text-on-surface">68% Match</span>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-center mb-1">
+<span class="text-headline-md font-bold text-primary">$1,100,000</span>
+<span class="text-label-sm text-on-surface-variant">1 month ago</span>
+</div>
+<h3 class="text-body-lg font-bold text-on-surface mb-1">Hill Country Retreat</h3>
+<p class="text-label-md text-on-surface-variant flex items-center gap-1 mb-4">
+<span class="material-symbols-outlined text-[16px] text-outline">location_on</span>
+                            Westlake, Austin
+                        </p>
+<div class="flex items-center justify-between text-on-surface-variant border-t border-outline-variant pt-4">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[20px]">bed</span>
+<span class="text-label-md">4 Beds</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[20px]">bathtub</span>
+<span class="text-label-md">4 Baths</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[20px]">square_foot</span>
+<span class="text-label-md">3,400 ft²</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="flex justify-center items-center gap-2 mt-stack-lg pb-stack-lg">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-outline hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center bg-primary text-on-primary font-bold shadow-md">1</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container font-semibold transition-all">2</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container font-semibold transition-all">3</button>
+<span class="text-outline">...</span>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container font-semibold transition-all">12</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-outline hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</main>
+</div>
+<!-- Footer Component -->
+<footer class="bg-surface-container">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-margin-desktop py-stack-md mt-stack-lg max-w-container-max mx-auto">
+<div class="mb-4 md:mb-0">
+<span class="text-body-lg font-display-lg text-on-surface">PropVista</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-2">© 2024 PropVista Real Estate CRM. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-all" href="#">Terms of Service</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-all" href="#">Privacy Policy</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-all" href="#">Tenant Support</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-all" href="#">Contact Sales</a>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interaction for hover states and chip removals
+        document.querySelectorAll('.material-symbols-outlined.cursor-pointer').forEach(icon => {
+            if (icon.innerText === 'close') {
+                icon.parentElement.addEventListener('click', function() {
+                    this.classList.add('scale-95', 'opacity-0');
+                    setTimeout(() => this.remove(), 200);
+                });
+            }
+        });
+
+        // Add a subtle entrance animation to cards
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.group.bg-surface-container-lowest').forEach((card, i) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = `all 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.1}s`;
+            observer.observe(card);
+        });
+    </script>
+
+</body></html>

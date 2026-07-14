@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PropVista Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Shared Tailwind Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-container": "#571ac0",
+                    "on-secondary-fixed": "#1b1a29",
+                    "on-tertiary-fixed": "#23005c",
+                    "on-tertiary-container": "#c3aaff",
+                    "surface-tint": "#4d44e3",
+                    "tertiary-fixed-dim": "#d0bcff",
+                    "outline": "#777587",
+                    "on-secondary-container": "#646374",
+                    "primary-fixed": "#e2dfff",
+                    "inverse-surface": "#302f39",
+                    "surface-container": "#e5eeff",
+                    "tertiary-fixed": "#e9ddff",
+                    "on-secondary-fixed-variant": "#464555",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-container": "#3525cd",
+                    "on-surface-variant": "#464555",
+                    "inverse-on-surface": "#eaf1ff",
+                    "error": "#ba1a1a",
+                    "on-warning-container": "#2c1700",
+                    "error-container": "#ffdad6",
+                    "surface-dim": "#dcd8e5",
+                    "surface-variant": "#e4e1ee",
+                    "success-container": "#c3f0da",
+                    "on-error": "#ffffff",
+                    "primary-container": "#e2dfff",
+                    "primary-fixed-dim": "#c3c0ff",
+                    "primary": "#1e00a9",
+                    "on-primary-fixed-variant": "#3323cc",
+                    "surface-container-high": "#eae6f4",
+                    "warning-container": "#ffddb0",
+                    "outline-variant": "#c7c4d8",
+                    "surface-bright": "#fcf8ff",
+                    "on-error-container": "#93000a",
+                    "on-surface": "#1b1b24",
+                    "tertiary": "#3e0095",
+                    "inverse-primary": "#c3c0ff",
+                    "on-secondary": "#ffffff",
+                    "surface": "#ffffff",
+                    "on-tertiary-fixed-variant": "#5516be",
+                    "surface-container-low": "#eff4ff",
+                    "on-success-container": "#00522f",
+                    "background": "#f8f9ff",
+                    "on-background": "#1b1b24",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed-dim": "#c7c4d8",
+                    "on-primary": "#ffffff",
+                    "on-primary-fixed": "#0f0069",
+                    "surface-container-highest": "#e4e1ee",
+                    "secondary": "#5e5d6e",
+                    "secondary-container": "#e3e0f5",
+                    "secondary-fixed": "#e3e0f5"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px",
+                    "24": "24px"
+            },
+            "spacing": {
+                    "margin-page": "2rem",
+                    "gutter": "1.5rem",
+                    "sidebar-width": "240px",
+                    "component-gap": "1rem"
+            },
+            "fontFamily": {
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"],
+                    "label-sm": ["Plus Jakarta Sans"],
+                    "label-md": ["Plus Jakarta Sans"],
+                    "display-lg": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "label-md": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                    "display-lg": ["30px", {"lineHeight": "38px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bento-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .bento-card:hover {
+            background-color: #eff4ff;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #c7c4d8;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- SideNavBar (Authority: JSON & Design System) -->
+<aside class="fixed left-0 top-0 h-full w-[240px] bg-surface dark:bg-surface-container-low flex flex-col py-6 px-4 gap-2 z-50 overflow-y-auto">
+<div class="mb-8 px-2">
+<h1 class="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed">PropVista Admin</h1>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Tenant Business</p>
+</div>
+<nav class="flex-1 space-y-1">
+<!-- Active State Logic: Dashboard is current -->
+<a class="flex items-center gap-3 bg-primary-container dark:bg-primary text-primary dark:text-on-primary font-bold rounded-xl px-4 py-3 scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-label-md font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-on-secondary-fixed-variant px-4 py-3 hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">domain</span>
+<span class="text-label-md font-label-md">Properties</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-on-secondary-fixed-variant px-4 py-3 hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">person_search</span>
+<span class="text-label-md font-label-md">Leads</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-on-secondary-fixed-variant px-4 py-3 hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-label-md font-label-md">Clients</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-on-secondary-fixed-variant px-4 py-3 hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">person_outline</span>
+<span class="text-label-md font-label-md">Users</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-on-secondary-fixed-variant px-4 py-3 hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="text-label-md font-label-md">AI Config</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-on-secondary-fixed-variant px-4 py-3 hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-label-md font-label-md">Reports</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-on-secondary-fixed-variant px-4 py-3 hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+</nav>
+<button class="mt-4 mb-8 h-12 rounded-xl bg-gradient-to-r from-[#3525cd] to-[#0058be] text-white font-bold text-label-md flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined">add</span>
+            New Property
+        </button>
+<div class="pt-4 border-t border-outline-variant/30">
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-on-secondary-fixed-variant px-4 py-3 hover:bg-surface-container-low rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="text-label-md font-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Shell -->
+<main class="ml-[240px] min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center h-16 px-gutter w-full bg-background dark:bg-background z-40 sticky top-0">
+<h2 class="text-headline-md font-headline-md text-primary dark:text-primary-fixed">Dashboard Overview</h2>
+<div class="flex items-center gap-4">
+<div class="relative hidden md:block">
+<input class="w-64 bg-surface-container-low border-none rounded-full px-4 py-2 text-label-md focus:ring-2 focus:ring-primary transition-all" placeholder="Search insights..." type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-2 text-on-surface-variant text-sm">search</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="hover:bg-surface-container-highest rounded-full p-2 text-on-surface-variant">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="hover:bg-surface-container-highest rounded-full p-2 text-on-surface-variant">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-variant ml-2">
+<img class="w-full h-full object-cover" data-alt="A professional business headshot of a female real estate manager with a warm smile, wearing a modern blue suit. The background is a clean, out-of-focus corporate office with minimalist aesthetics and bright daylight, matching the PropVista brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmfESq3O66IzMjhqcIvuma9YMmtyD8ZiMN5RlowavQBNnhbWaUP_uR-YC0Mk9i_9NN6gtPp0t7fwb5Xw8ooVmAC7LG_cKpCmLiyJWWJ--kxBf9HsR_5DDarGxVtkXPhZXYjP0kQwKE4CY0lvG3T4_poNrcaD8dMqU7ogqpabPmCGGWSsPazMAiOBrs1kmROP-MynOMAq8jRERgJIcrQIniej1sPoVipT8BPkrBZzvCxFvAfyHYIDMrHQ"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Dashboard Content Canvas -->
+<div class="p-gutter space-y-6">
+<!-- KPI Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- KPI Card 1 -->
+<div class="bg-surface p-6 rounded-24 flex flex-col gap-1 bento-card">
+<span class="text-[14px] font-label-md text-on-surface-variant">Total Listings</span>
+<div class="flex items-baseline gap-2">
+<span class="text-[30px] font-semibold text-on-surface">1,284</span>
+<span class="text-label-sm text-success-container text-on-success-container px-2 py-0.5 rounded-full">+12%</span>
+</div>
+</div>
+<!-- KPI Card 2 -->
+<div class="bg-surface p-6 rounded-24 flex flex-col gap-1 bento-card">
+<span class="text-[14px] font-label-md text-on-surface-variant">Active Leads</span>
+<div class="flex items-baseline gap-2">
+<span class="text-[30px] font-semibold text-on-surface">452</span>
+<span class="text-label-sm text-warning-container text-on-warning-container px-2 py-0.5 rounded-full">Stable</span>
+</div>
+</div>
+<!-- KPI Card 3 -->
+<div class="bg-surface p-6 rounded-24 flex flex-col gap-1 bento-card">
+<span class="text-[14px] font-label-md text-on-surface-variant">Conversion Rate</span>
+<div class="flex items-baseline gap-2">
+<span class="text-[30px] font-semibold text-on-surface">24.8%</span>
+<span class="text-label-sm text-success-container text-on-success-container px-2 py-0.5 rounded-full">+4.2%</span>
+</div>
+</div>
+<!-- KPI Card 4 -->
+<div class="bg-surface p-6 rounded-24 flex flex-col gap-1 bento-card">
+<span class="text-[14px] font-label-md text-on-surface-variant">Site Visitors</span>
+<div class="flex items-baseline gap-2">
+<span class="text-[30px] font-semibold text-on-surface">18.5k</span>
+<span class="text-label-sm text-error-container text-on-error-container px-2 py-0.5 rounded-full">-2%</span>
+</div>
+</div>
+</div>
+<!-- Middle Charts Row -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+<!-- Left: Listing Growth (Line Chart Placeholder) -->
+<div class="bg-surface p-8 rounded-24 flex flex-col h-[400px]">
+<div class="flex justify-between items-center mb-8">
+<h3 class="text-headline-md font-headline-md text-on-surface">Listing Growth</h3>
+<div class="flex gap-2">
+<span class="w-3 h-3 rounded-full bg-primary mt-1.5"></span>
+<span class="text-label-md text-on-surface-variant">Primary Market</span>
+</div>
+</div>
+<div class="flex-1 flex items-end gap-2 relative">
+<!-- Abstract Visual Representation of Line Chart -->
+<div class="absolute inset-0 flex items-center justify-center opacity-10">
+<span class="material-symbols-outlined text-[160px]">show_chart</span>
+</div>
+<div class="w-full h-full flex items-end justify-between px-2">
+<div class="w-4 bg-primary/20 rounded-t-full h-[30%]"></div>
+<div class="w-4 bg-primary/30 rounded-t-full h-[45%]"></div>
+<div class="w-4 bg-primary/40 rounded-t-full h-[40%]"></div>
+<div class="w-4 bg-primary/50 rounded-t-full h-[60%]"></div>
+<div class="w-4 bg-primary/60 rounded-t-full h-[55%]"></div>
+<div class="w-4 bg-primary/70 rounded-t-full h-[75%]"></div>
+<div class="w-4 bg-primary/80 rounded-t-full h-[70%]"></div>
+<div class="w-4 bg-primary/90 rounded-t-full h-[90%]"></div>
+<div class="w-4 bg-primary rounded-t-full h-full"></div>
+</div>
+</div>
+<div class="flex justify-between mt-4 text-label-sm text-on-surface-variant">
+<span>JAN</span><span>FEB</span><span>MAR</span><span>APR</span><span>MAY</span><span>JUN</span><span>JUL</span><span>AUG</span><span>SEP</span>
+</div>
+</div>
+<!-- Right: Lead Source Breakdown (Bar Chart) -->
+<div class="bg-surface p-8 rounded-24 flex flex-col h-[400px]">
+<div class="flex justify-between items-center mb-8">
+<h3 class="text-headline-md font-headline-md text-on-surface">Lead Source Breakdown</h3>
+<div class="flex gap-4">
+<div class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="text-label-sm text-on-surface-variant">AI Driven</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-label-sm text-on-surface-variant">Standard</span>
+</div>
+</div>
+</div>
+<div class="flex-1 flex flex-col justify-between py-2">
+<!-- AI Source 1 -->
+<div class="space-y-2">
+<div class="flex justify-between text-label-md">
+<span class="flex items-center gap-1 font-bold text-tertiary">Chatbot <span class="material-symbols-outlined text-[14px]">auto_awesome</span></span>
+<span>38%</span>
+</div>
+<div class="h-4 w-full bg-surface-container-low rounded-full overflow-hidden">
+<div class="h-full bg-tertiary w-[38%] rounded-full"></div>
+</div>
+</div>
+<!-- AI Source 2 -->
+<div class="space-y-2">
+<div class="flex justify-between text-label-md">
+<span class="flex items-center gap-1 font-bold text-tertiary">AI Search <span class="material-symbols-outlined text-[14px]">psychology</span></span>
+<span>25%</span>
+</div>
+<div class="h-4 w-full bg-surface-container-low rounded-full overflow-hidden">
+<div class="h-full bg-tertiary w-[25%] rounded-full"></div>
+</div>
+</div>
+<!-- Standard Source 1 -->
+<div class="space-y-2">
+<div class="flex justify-between text-label-md text-on-surface-variant">
+<span>Direct Traffic</span>
+<span>18%</span>
+</div>
+<div class="h-4 w-full bg-surface-container-low rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[18%] rounded-full"></div>
+</div>
+</div>
+<!-- Standard Source 2 -->
+<div class="space-y-2">
+<div class="flex justify-between text-label-md text-on-surface-variant">
+<span>Referral</span>
+<span>12%</span>
+</div>
+<div class="h-4 w-full bg-surface-container-low rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[12%] rounded-full"></div>
+</div>
+</div>
+<!-- Standard Source 3 -->
+<div class="space-y-2">
+<div class="flex justify-between text-label-md text-on-surface-variant">
+<span>Social Media</span>
+<span>7%</span>
+</div>
+<div class="h-4 w-full bg-surface-container-low rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[7%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom: Recent Activity Feed -->
+<div class="bg-surface rounded-24 overflow-hidden border-none">
+<div class="p-6 border-b border-outline-variant/30 flex justify-between items-center">
+<h3 class="text-headline-md font-headline-md text-on-surface">Recent Activity</h3>
+<button class="text-primary text-label-md font-bold hover:underline">View All</button>
+</div>
+<div class="divide-y divide-outline-variant/20 max-h-[400px] overflow-y-auto custom-scrollbar">
+<!-- Escalated Item -->
+<div class="p-6 flex items-center gap-4 hover:bg-surface-container-low transition-colors group">
+<div class="w-12 h-12 rounded-full flex items-center justify-center bg-error-container text-error">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between">
+<h4 class="text-body-md text-on-surface">Chat Escalation: High Value Lead</h4>
+<span class="text-label-sm text-on-surface-variant">2 mins ago</span>
+</div>
+<p class="text-body-md text-on-surface-variant font-normal">Sarah Jenkins (Portfolio Client) requested human assistance regarding Listing #4829.</p>
+</div>
+<span class="px-3 py-1 bg-error text-white text-[12px] font-bold rounded-full animate-pulse">ESCALATED</span>
+</div>
+<!-- AI Insight Item -->
+<div class="p-6 flex items-center gap-4 hover:bg-surface-container-low transition-colors">
+<div class="w-12 h-12 rounded-full flex items-center justify-center bg-tertiary-container text-white">
+<span class="material-symbols-outlined">auto_awesome</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between">
+<h4 class="text-body-md text-on-surface">AI Optimization Complete</h4>
+<span class="text-label-sm text-on-surface-variant">45 mins ago</span>
+</div>
+<p class="text-body-md text-on-surface-variant font-normal">Price recommendations updated for 12 properties in the Downtown sector.</p>
+</div>
+<span class="px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed-variant text-[12px] font-bold rounded-full">AI INSIGHT</span>
+</div>
+<!-- Standard Item -->
+<div class="p-6 flex items-center gap-4 hover:bg-surface-container-low transition-colors">
+<div class="w-12 h-12 rounded-full flex items-center justify-center bg-primary-container text-primary">
+<span class="material-symbols-outlined">person_add</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between">
+<h4 class="text-body-md text-on-surface">New Lead Registered</h4>
+<span class="text-label-sm text-on-surface-variant">2 hours ago</span>
+</div>
+<p class="text-body-md text-on-surface-variant font-normal">Marcus Thorne viewing 3 listings in North Valley. Assigned to Sales Team B.</p>
+</div>
+<span class="px-3 py-1 bg-surface-container-highest text-on-surface-variant text-[12px] font-bold rounded-full">NEW LEAD</span>
+</div>
+<!-- Escalated Item 2 -->
+<div class="p-6 flex items-center gap-4 hover:bg-surface-container-low transition-colors">
+<div class="w-12 h-12 rounded-full flex items-center justify-center bg-error-container text-error">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">emergency</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between">
+<h4 class="text-body-md text-on-surface">System Alert: Sync Delayed</h4>
+<span class="text-label-sm text-on-surface-variant">4 hours ago</span>
+</div>
+<p class="text-body-md text-on-surface-variant font-normal">API connection to National Listing Service (NLS) experienced a 30s timeout.</p>
+</div>
+<span class="px-3 py-1 bg-error text-white text-[12px] font-bold rounded-full">ESCALATED</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer / Global Status -->
+<footer class="mt-auto px-gutter py-4 flex justify-between items-center bg-surface-container-low">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-success-container"></span>
+<span class="text-label-sm text-on-surface-variant">Systems Operational</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="text-label-sm text-on-surface-variant">AI Core: Optimized</span>
+</div>
+</div>
+<p class="text-label-sm text-on-surface-variant">© 2024 PropVista Enterprise</p>
+</footer>
+</main>
+<script>
+        // Micro-interactions for bento cards
+        document.querySelectorAll('.bento-card').forEach(card => {
+            card.addEventListener('mousedown', () => {
+                card.style.transform = 'scale(0.98)';
+            });
+            card.addEventListener('mouseup', () => {
+                card.style.transform = 'scale(1)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'scale(1)';
+            });
+        });
+
+        // Search Bar Focus Effect
+        const searchBar = document.querySelector('input[type="text"]');
+        searchBar.addEventListener('focus', () => {
+            searchBar.parentElement.classList.add('scale-[1.02]');
+        });
+        searchBar.addEventListener('blur', () => {
+            searchBar.parentElement.classList.remove('scale-[1.02]');
+        });
+    </script>
+</body></html>

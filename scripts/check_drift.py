@@ -174,10 +174,16 @@ HEX_ALLOWED = {
     "docs/DESIGN.md",  # the owner
     "docs/11-stitch-design-prompts.md",  # sanctioned generated artifact (OWNERSHIP §3.1)
     "docs/stitch-prompts.md",  # sanctioned generated artifact — watched, see below
+    "docs/stitch_design/design.md",  # a VERBATIM copy fed to Stitch — watched by design_copy check
     "docs/13-ui-ux-flows.md",  # the migration table burying the old system
     "docs/GAPS.md",
     "docs/OWNERSHIP.md",
 }
+
+# A verbatim copy of DESIGN.md, handed to Stitch alongside the generated screens.
+# Because it is MEANT to be a copy, the check is the strongest one available:
+# byte-identity. Any divergence at all means it is stale.
+DESIGN_COPY = DOCS / "stitch_design" / "design.md"
 
 
 def design_hexes() -> set[str]:
@@ -370,12 +376,95 @@ def check_async_violation() -> Check:
 
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# CHECK — false gaps
+# Incident: CLAUDE.md summarised "no job scheduler" and "no email/SMS provider"
+# a day AFTER 02-architecture.md §4.4/§3 decided both (pg_cron + jobs worker;
+# SendGrid + Twilio). A spec-set README copied the summary; an agent copied the
+# README; the claim spread to eight documents and a MANDATORY requirement
+# (FR10.2b) was planned as unbuildable for a sprint.
+#
+# Nobody lied. Every step was a faithful copy of the one above it. That is what
+# makes summary-drift dangerous: it doesn't look like an error, it looks like
+# agreement. So the resurrection of these specific claims is now a hard failure.
+# ---------------------------------------------------------------------------
+
+FALSE_GAPS = [
+    (
+        re.compile(
+            r"no (job )?scheduler|scheduler (does not|doesn't) exist"
+            r"|BackgroundTasks cannot|cannot fire on a timer"
+            r"|nothing fires on a schedule",
+            re.IGNORECASE,
+        ),
+        "There IS a scheduler: 02-architecture.md §4.4 — pg_cron + a jobs worker, "
+        "decided 2026-07-13. mark_stale_leads() is listed in it. See GAPS.md §5A.",
+    ),
+    (
+        re.compile(
+            r"no email/?SMS provider|email/?SMS provider (is )?(not )?chosen"
+            r"|no (email|SMS) provider",
+            re.IGNORECASE,
+        ),
+        "The providers ARE chosen: 02-architecture.md §3 — SendGrid (email), "
+        "Twilio (SMS), decided 2026-07-13. See GAPS.md §5A.",
+    ),
+]
+
+
+def check_false_gaps() -> Check:
+    c = Check(
+        "false-gap",
+        "A gap that was never real, resurrected from a stale summary. This one "
+        "cost a sprint plan.",
+    )
+    for path in md_files():
+        for n, line in lines_of(path):
+            # A line that names the false claim in order to bury it is a record,
+            # not a resurrection — same gravestone logic as everywhere else.
+            if GRAVESTONE.search(line) or re.search(r"false|never existed|✅|~~", line, re.I):
+                continue
+            for pattern, why in FALSE_GAPS:
+                if pattern.search(line):
+                    c.findings.append(Finding(c.name, path, n, line, why))
+    return c
+
+
+def check_design_copy_identical() -> Check:
+    """docs/stitch_design/design.md must be byte-identical to DESIGN.md."""
+    c = Check(
+        "design-copy-stale",
+        "stitch_design/design.md is a verbatim copy of DESIGN.md, handed to "
+        "Stitch. A copy that has diverged is a second design system wearing a "
+        "familiar name — which is exactly how this project got two of them.",
+    )
+    if not DESIGN_COPY.exists():
+        return c
+    if DESIGN_COPY.read_bytes() != DESIGN.read_bytes():
+        c.findings.append(
+            Finding(
+                c.name,
+                DESIGN_COPY,
+                0,
+                "diverged from docs/DESIGN.md",
+                "This file must be a VERBATIM copy. Regenerate it:\n"
+                "        cp docs/DESIGN.md docs/stitch_design/design.md\n"
+                "      Never hand-edit it. If the design changed, change DESIGN.md "
+                "and re-copy — and regenerate the Stitch screens, because they were "
+                "built from the old one.",
+            )
+        )
+    return c
+
+
 CHECKS = [
     check_dead_design_system,
     check_forked_hex,
     check_generated_prompts_current,
+    check_design_copy_identical,
     check_mono_serif,
     check_stale_gap_citations,
+    check_false_gaps,
     check_async_violation,
 ]
 

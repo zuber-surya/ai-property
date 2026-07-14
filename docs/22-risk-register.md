@@ -87,15 +87,23 @@ The bind: this is an **India-first** product (users want `ap-south-1`); **Supaba
 
 ---
 
-## 6. 🟠 Mandatory features that are architecturally impossible
+## 6. 🔴 A gap that was never real cost a sprint plan
 
-**Impact:** FR10.2b makes the stale-lead alert **mandatory** — because with manual lead claim, an unclaimed lead is nobody's responsibility and silently rots. But `02-architecture.md` specifies FastAPI `BackgroundTasks`, **which cannot fire on a timer**. There is no scheduler. The mandatory requirement is unbuildable as specced (`GAPS.md` G9a).
+**What happened.** `CLAUDE.md` carried a stale summary — *"no job scheduler, no email/SMS provider"* — long after `02-architecture.md` decided both (§4.4 `pg_cron` + a jobs worker; §3 SendGrid + Twilio, **2026-07-13**). A spec-set README copied the summary. An agent copied the README. The claim reached **eight documents**, and **FR10.2b — a mandatory requirement — was planned as unbuildable for an entire sprint.**
 
-Similarly: notification rules offer Email and SMS channels with **no provider chosen** (G9b) — and Indian commercial SMS requires **DLT registration with real calendar lead time**, which is a procurement problem, not a coding one.
+**Nobody lied.** Every step was a faithful copy of the one above it. That is what makes summary-drift lethal: it doesn't look like an error, it looks like consensus.
 
-**When you'd find out:** Sprint 4, when someone tries to build the lead pipeline and discovers the safety net has no floor.
+**Impact:** a fictitious blocker in the sprint plan, a false "residual" in the G7 closure, a false consequence on ADR-0014, a false limitation in the runbook, and a warning baked into a Stitch prompt — all authored around a constraint that did not exist.
 
-**Mitigation:** pick a scheduler (`pg_cron` is free, already in the stack, and sufficient). Decide on SMS **now** — if it's in scope, start DLT registration immediately; if it isn't, cut it from the specs, because both surfaces currently offer channels that cannot deliver.
+**Likelihood:** it has now happened **twice** (`OWNERSHIP.md` §5 #4 was the first). Assume it recurs.
+
+**Mitigation:**
+- `GAPS.md` is the **only** place a gap's state is recorded. Cite the ID; never restate the list.
+- **An answered open-question is a lie with a checkbox.** `02-architecture.md` §9 still listed the scheduler as open a day after §4.4 decided it — close the question in the same commit as the decision.
+- `scripts/check_drift.py` now has a **`false-gap`** check that hard-fails on any resurrection of these two claims.
+
+**Residual:** the check catches *these* false gaps. It cannot catch the *next* one. **When a gap turns out not to exist, add it to the check** — that is what the check is for.
+
 
 ---
 

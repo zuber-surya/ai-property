@@ -95,8 +95,7 @@ Stated plainly, so nobody discovers it during an incident:
 
 | Gap | Consequence |
 |---|---|
-| **No scheduler** (`GAPS.md` G9a) | Nothing fires on a timer. No stale-lead alerts (which FR10.2b makes **mandatory**), no scheduled digests, no automated cleanup. |
-| **No email/SMS** (`GAPS.md` G9b) | Alerts reach nobody who isn't already looking at the admin portal. |
+| **Email/SMS not yet wired** | SendGrid and Twilio are *chosen* (`02-architecture.md` §3) but not yet integrated, and **Indian SMS needs DLT registration first**. Until then, alerts reach nobody who isn't already looking at the admin portal. |
 | **No error tracking** chosen (Sentry suggested, unconfirmed) | You find out about frontend errors from customers. |
 | **No alerting thresholds** defined | Every signal in §3 is a dashboard nobody is watching at 2am. |
 | **No on-call rotation** | — |

@@ -188,9 +188,11 @@ An ADR that grows past a screen graduates to its own file (`adr/0001-slug.md`); 
 
 **Decision.** Manual claim, with an **atomic** claim operation (two agents claiming simultaneously must not both succeed). Because an unclaimed lead is invisible work, FR10.2b makes the stale-lead alert **mandatory, not optional**.
 
-**Consequences.** That mandatory alert **cannot currently be built.** `02-architecture.md` specifies FastAPI `BackgroundTasks`, which only runs *after a request* and cannot fire on a timer. There is no scheduler. See `GAPS.md` G9a — this is a blocking gap created by a decision that assumed infrastructure that doesn't exist.
+**Consequences.** That mandatory alert is **buildable**: `02-architecture.md` §4.4 provides `pg_cron` + a `jobs` table + a Python worker, and **`mark_stale_leads()` is listed there by name**.
 
-**Status:** Accepted, blocked.
+> ⚠️ **An earlier revision of this ADR said the opposite** — *"the alert cannot be built; there is no scheduler"* — and marked this decision `Accepted, blocked` for a day. **That was false.** The claim came from a stale summary in `CLAUDE.md`, not from `02-architecture.md`. It is preserved here rather than quietly deleted, because an ADR that hides its own errors is worth less than one that admits them. See `GAPS.md` §5A.
+
+**Status:** Accepted.
 
 ---
 
@@ -236,6 +238,26 @@ The thing being bought with that architectural exception is **three seconds** �
 
 ---
 
+## ADR-0018 — `info` is a cyan, and the three in-progress lead stages share it
+
+**Context.** The semantic ramp (ADR-0009) shipped with `success` / `warning` / `error` / `neutral` and **no colour for "in progress"**. Three lead stages (`contacted`, `site_visit_scheduled`, `negotiation`), two property statuses (`on_hold`) and three customer inquiry statuses are all *started but not finished* — not done, not failed, not inert, and emphatically **not a warning**. They rendered `neutral`, which meant an agent could not distinguish *"nobody has touched this"* from *"a site visit is booked"* (gap **D1**).
+
+**Decision.** Add an **`info`** family: `#00668b` / container `#bfe9ff`. **All three in-progress lead stages share it.**
+
+**Why a cyan, when the palette already has indigo, blue and violet.** The constraint that actually applies is narrower than it looks:
+
+> **A status chip only ever appears next to other status chips.**
+
+`info` therefore has to be distinguishable from `success`, `warning`, `error` and `neutral` — **not** from the brand colours, which never render as status ("status is not brand", ADR-0009). That frees the cyan band. Pale cyan against pale mint and pale amber is unambiguous at chip size; against indigo it never has to compete, because they never appear together.
+
+**Why one colour for three stages, not three.** They do not need three. The **text label** distinguishes them — status always carries one — and on the Kanban the *column* already encodes the stage positionally. Three near-identical blues would recreate the exact failure ADR-0009 was written to fix (Pending vs. Published at 1.35 : 1).
+
+**Consequences.** The ramp is now five hues, which is the practical ceiling for at-a-glance discrimination. ⚠️ **The Kanban, leads-table and lead-detail Stitch screens were generated before `info` existed and render those stages `neutral` — they must be regenerated.** That is the cost of designing screens against a design system that wasn't finished.
+
+**Status:** Accepted.
+
+---
+
 ## Decisions still open
 
 These are not ADRs yet because nobody has decided. They live in `GAPS.md`:
@@ -243,7 +265,6 @@ These are not ADRs yet because nobody has decided. They live in `GAPS.md`:
 | | Question | Blocks |
 |---|---|---|
 | **I1** | Which AWS region — and does Bedrock's Claude availability survive an India-first product? | All provisioning |
-| **G9a** | Which scheduler? (`BackgroundTasks` cannot do timed work, and FR10.2b is mandatory) | ADR-0014 · **and the "nobody picked up this chat" alert — one scheduler closes both** |
-| **G9b** | Email/SMS provider — and is SMS worth the Indian DLT registration lead time? | Notifications, both surfaces |
+| **DLT** | Indian SMS requires DLT registration of entity, sender IDs and templates. Twilio is chosen (`02-architecture.md` §3) — but the registration is a *regulatory* lead time, not an engineering one. **Start it now.** | Notifications, both surfaces |
 | **D1** | The missing `info` status color | Kanban, leads table, portal inquiries |
 | **G4** | Is "Saved Searches" a real feature or an unscoped persona artifact? | Portal dashboard |

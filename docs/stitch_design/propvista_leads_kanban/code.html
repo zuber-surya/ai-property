@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Leads Kanban | PropVista Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8f9ff;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+            font-size: 20px;
+        }
+        .kanban-column {
+            min-width: 280px;
+            width: 100%;
+        }
+        .drag-shadow {
+            box-shadow: 0 20px 25px -5px rgba(53, 37, 205, 0.1), 0 10px 10px -5px rgba(53, 37, 205, 0.04);
+        }
+        /* Custom scrollbar for horizontal kanban */
+        .kanban-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        .kanban-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .kanban-container::-webkit-scrollbar-thumb {
+            background: #e4e1ee;
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#571ac0",
+                        "on-secondary-fixed": "#1b1a29",
+                        "on-tertiary-fixed": "#23005c",
+                        "on-tertiary-container": "#c3aaff",
+                        "surface-tint": "#4d44e3",
+                        "tertiary-fixed-dim": "#d0bcff",
+                        "outline": "#777587",
+                        "on-secondary-container": "#646374",
+                        "primary-fixed": "#e2dfff",
+                        "inverse-surface": "#302f39",
+                        "surface-container": "#e5eeff",
+                        "tertiary-fixed": "#e9ddff",
+                        "on-secondary-fixed-variant": "#464555",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#3525cd",
+                        "on-surface-variant": "#464555",
+                        "inverse-on-surface": "#eaf1ff",
+                        "error": "#ba1a1a",
+                        "on-warning-container": "#2c1700",
+                        "error-container": "#ffdad6",
+                        "surface-dim": "#dcd8e5",
+                        "surface-variant": "#e4e1ee",
+                        "success-container": "#c3f0da",
+                        "on-error": "#ffffff",
+                        "primary-container": "#e2dfff",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "primary": "#1e00a9",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "surface-container-high": "#eae6f4",
+                        "warning-container": "#ffddb0",
+                        "outline-variant": "#c7c4d8",
+                        "surface-bright": "#fcf8ff",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#1b1b24",
+                        "tertiary": "#3e0095",
+                        "inverse-primary": "#c3c0ff",
+                        "on-secondary": "#ffffff",
+                        "surface": "#ffffff",
+                        "on-tertiary-fixed-variant": "#5516be",
+                        "surface-container-low": "#eff4ff",
+                        "on-success-container": "#00522f",
+                        "background": "#f8f9ff",
+                        "on-background": "#1b1b24",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#c7c4d8",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#0f0069",
+                        "surface-container-highest": "#e4e1ee",
+                        "secondary": "#5e5d6e",
+                        "secondary-container": "#e3e0f5",
+                        "secondary-fixed": "#e3e0f5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-page": "2rem",
+                        "gutter": "1.5rem",
+                        "sidebar-width": "240px",
+                        "component-gap": "1rem"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "label-md": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                        "display-lg": ["30px", {"lineHeight": "38px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- Side Navigation Bar -->
+<aside class="fixed left-0 top-0 h-full w-[240px] bg-surface flex flex-col py-6 px-4 gap-2 z-50">
+<div class="mb-8 px-4">
+<h1 class="text-headline-md font-headline-md font-bold text-primary">PropVista Admin</h1>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Tenant Business</p>
+</div>
+<nav class="flex flex-col gap-1 flex-grow">
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-label-md font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">domain</span>
+<span class="text-label-md font-label-md">Properties</span>
+</a>
+<a class="flex items-center gap-3 bg-primary-container text-primary font-bold rounded-xl px-4 py-3 active:scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">person_search</span>
+<span class="text-label-md font-label-md">Leads</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-label-md font-label-md">Clients</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">person_outline</span>
+<span class="text-label-md font-label-md">Users</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="text-label-md font-label-md">AI Config</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-label-md font-label-md">Reports</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-surface-container-highest pt-4">
+<button class="w-full h-12 rounded-xl bg-gradient-to-r from-[#3525cd] to-[#0058be] text-white font-bold mb-4">
+                New Property
+            </button>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="text-label-md font-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Top App Bar -->
+<header class="flex justify-between items-center h-16 px-gutter w-[calc(100%-240px)] ml-[240px] bg-background fixed top-0 z-40">
+<div class="flex items-center gap-4">
+<h2 class="text-headline-md font-headline-md text-on-surface">Leads Kanban</h2>
+<div class="flex items-center gap-2 bg-surface-container-low px-4 py-2 rounded-full border border-transparent focus-within:ring-2 focus-within:ring-primary transition-all">
+<span class="material-symbols-outlined text-on-surface-variant">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md w-64" placeholder="Search leads..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="hover:bg-surface-container-highest rounded-full p-2 transition-colors relative">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="hover:bg-surface-container-highest rounded-full p-2 transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">help_outline</span>
+</button>
+<div class="flex items-center gap-3 ml-2 pl-4 border-l border-surface-container-highest">
+<div class="text-right">
+<p class="text-label-md font-bold">Admin User</p>
+<p class="text-label-sm text-on-surface-variant">Administrator</p>
+</div>
+<img class="w-10 h-10 rounded-full border-2 border-primary-container object-cover" data-alt="A professional headshot of a corporate male administrator in a clean modern office, soft bokeh background with architectural elements, neutral color palette with hints of blue, 8k resolution, high-end photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9xEXodX9JkyGyZ1vjkOvbD_TDw3-xRJasGfwDOJxg7FfbnpARkW1N2wPch743eR0s0ulr24rOX120maN7ZhoDCgGduFSjHFuE7w8UEWihLGD4hhYnwzBQVRUEYVea_kVToj2aMjpeQeP7wu11FSAii36VQ3I2P8SMTIuWAQ70lrpoLpBxfqK13ur55D_H8bNlQpKTlGE-nzJpAa-aWxTRJjeRBE2F5yxm74YrxAOhYvr4HWtz3hqsPA"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="pt-20 pl-[240px] h-screen flex flex-col">
+<div class="flex-grow kanban-container overflow-x-auto p-gutter flex gap-6 items-start">
+<!-- Column: New -->
+<div class="kanban-column flex flex-col gap-4">
+<div class="flex justify-between items-center px-2">
+<div class="flex items-center gap-2">
+<span class="text-label-md font-bold uppercase tracking-wider text-on-surface-variant">New</span>
+<span class="bg-surface-container-high px-2 py-0.5 rounded-full text-label-sm font-bold text-on-surface-variant">12</span>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">more_horiz</button>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Unassigned Lead Card -->
+<div class="bg-surface rounded-[24px] p-4 flex flex-col gap-3 group hover:bg-surface-container-low transition-colors cursor-pointer border-l-4 border-error">
+<div class="flex justify-between items-start">
+<h3 class="text-[14px] font-semibold text-on-surface">Eleanor Shellstrop</h3>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>
+<span class="bg-tertiary text-on-tertiary px-2 py-1 rounded-full text-[10px] font-bold uppercase">AI Search</span>
+</div>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+<span class="text-label-sm font-label-sm">Skyline Penthouse • 402</span>
+</div>
+<div class="flex justify-between items-center mt-2">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border-2 border-dashed border-outline-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px] text-outline-variant">person</span>
+</div>
+<span class="text-label-sm text-on-surface-variant">2 hours ago</span>
+</div>
+</div>
+<!-- Regular Card -->
+<div class="bg-surface rounded-[24px] p-4 flex flex-col gap-3 group hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex justify-between items-start">
+<h3 class="text-[14px] font-semibold text-on-surface">Chidi Anagonye</h3>
+<span class="bg-surface-container-highest text-on-surface-variant px-2 py-1 rounded-full text-[10px] font-bold uppercase">Referral</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+<span class="text-label-sm font-label-sm">The Ethical Lofts • 12A</span>
+</div>
+<div class="flex justify-between items-center mt-2">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="A portrait of a young female real estate agent with a friendly smile, professional attire, soft natural lighting in a bright modern office setting, high quality commercial portrait." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB02EOJop91lZeHvUr60XwO07tj8Rsp1Kde1yBxUPJ0RI5UixfYwRVK0q4mT8Oy5KtvRIiz7b_zeN-HxfDCrLXef8s7cPwhTbSnG7FcR8_c8nsc6acbzT0zxqaeVi5M-upMici1YIXx6_j8mGdQ2IPRJLWvUcg1INdCxe3SwKRw5P2BAjaaY2wFo5hMTmXdUTmN9VV-dvwueqIWoSGgRDefzvvyuoChL_DJUk-flFOuYXOB16PgLrqmKg"/>
+<span class="text-label-sm text-on-surface-variant">5 hours ago</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Column: Contacted -->
+<div class="kanban-column flex flex-col gap-4">
+<div class="flex justify-between items-center px-2">
+<div class="flex items-center gap-2">
+<span class="text-label-md font-bold uppercase tracking-wider text-on-surface-variant">Contacted</span>
+<span class="bg-surface-container-high px-2 py-0.5 rounded-full text-label-sm font-bold text-on-surface-variant">8</span>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">more_horiz</button>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Being Dragged Card -->
+<div class="bg-surface rounded-[24px] p-4 flex flex-col gap-3 drag-shadow -rotate-2 z-10 cursor-grabbing border-2 border-primary-container scale-105 transition-all">
+<div class="flex justify-between items-start">
+<h3 class="text-[14px] font-semibold text-primary">Tahani Al-Jamil</h3>
+<span class="bg-tertiary text-on-tertiary px-2 py-1 rounded-full text-[10px] font-bold uppercase">Chatbot</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+<span class="text-label-sm font-label-sm">Majestic Regency • GH</span>
+</div>
+<div class="flex justify-between items-center mt-2">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="A professional agent profile picture, confident middle-aged man in business casual, warm studio lighting, minimalist corporate background, 4k sharp focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDD_h2siOJJo9xYcAsAe5D0p6WVlYSGjHrTREN2GOUv7j5hD3LSvyHfWhv7wJoXMdE9SAXHhKM7x90WbOMU5TABXmoklHziQDjhyOGPvr8avDOJQxByAVxcvIEmRXnPmgCILb69rvvXz2lqupRkIX0ub5rf6Ax6hE3zxGAvWoLdlT070EG9McfFZ-vf3m8-Vf6bYUjXJWucsOYDK5IwJs6jRwdbXODjmdX6u5NRk_MaIFDGHC4-z4qIZQ"/>
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-[16px] text-tertiary">chat_bubble</span>
+<span class="text-label-sm text-tertiary font-bold">In chat</span>
+</div>
+</div>
+</div>
+<!-- Static Card -->
+<div class="bg-surface rounded-[24px] p-4 flex flex-col gap-3 group hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex justify-between items-start">
+<h3 class="text-[14px] font-semibold text-on-surface">Jason Mendoza</h3>
+<span class="bg-surface-container-highest text-on-surface-variant px-2 py-1 rounded-full text-[10px] font-bold uppercase">Direct</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+<span class="text-label-sm font-label-sm">Palm Villa • B4</span>
+</div>
+<div class="flex justify-between items-center mt-2">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="A smiling female real estate professional in a light-filled modern lobby, blurred background of luxury furniture, soft morning sunlight, professional headshot style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOWcaDKxNQF7ejgTz3OLmGZokx8T6o_dQT1y96-05U_knvytKh0RKR2T3KMMVrRW3539C2gH168crKIuKHk-LBDRTPAa3C35t_5GC7UbmfyWxOLw6PVALjAC_hfteefphDc-Qzdxtpz6D7etmDWsKKxGVLpxHpmr-GlAh3Ke8DwDPj3KpV_8Q0y1akJjCeJUK15WWTlesuwaK-Q9KPZzy9UTlgr-749FafxV9eE3zZ0E9MwE_laDFstQ"/>
+<span class="text-label-sm text-on-surface-variant">1 day ago</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Column: Site Visit -->
+<div class="kanban-column flex flex-col gap-4">
+<div class="flex justify-between items-center px-2">
+<div class="flex items-center gap-2">
+<span class="text-label-md font-bold uppercase tracking-wider text-on-surface-variant">Site Visit</span>
+<span class="bg-surface-container-high px-2 py-0.5 rounded-full text-label-sm font-bold text-on-surface-variant">5</span>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">more_horiz</button>
+</div>
+<div class="flex flex-col gap-3">
+<div class="bg-surface rounded-[24px] p-4 flex flex-col gap-3 group hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex justify-between items-start">
+<h3 class="text-[14px] font-semibold text-on-surface">Michael Realman</h3>
+<div class="flex items-center gap-2">
+<span class="bg-success-container text-on-success-container px-2 py-1 rounded-full text-[10px] font-bold uppercase">Scheduled</span>
+</div>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+<span class="text-label-sm font-label-sm">The Eternal Plaza • 555</span>
+</div>
+<div class="flex justify-between items-center mt-2">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="Portrait of a young male agent with glasses, wearing a tailored blazer, modern office background with greenery, professional lighting, soft aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbGrbuVT9pb54HWBh3_msS6-BArWSgq2puVD2CExQf72wG0sya2yRnjEaijzfbey4-iTpjiDPzjLjVczUSio_eTD-Q6vnQRZCEhRGCJTQvQ50x4sgaC9gH1KG8iHjKETfGvATM5xA62w8trh8ifc3t2RI_qMvGkbC-LuRGELdX0o2PLTpFQ-n7gHIZ1z-bHRlAnEJxvwtWbNZewiPpmM59nf9zArHD53_tiWMUlTVlX3z99EL55JD7mw"/>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span>
+<span class="text-label-sm">Oct 24, 2:00 PM</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Column: Negotiation -->
+<div class="kanban-column flex flex-col gap-4">
+<div class="flex justify-between items-center px-2">
+<div class="flex items-center gap-2">
+<span class="text-label-md font-bold uppercase tracking-wider text-on-surface-variant">Negotiation</span>
+<span class="bg-surface-container-high px-2 py-0.5 rounded-full text-label-sm font-bold text-on-surface-variant">3</span>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">more_horiz</button>
+</div>
+<div class="flex flex-col gap-3">
+<div class="bg-surface rounded-[24px] p-4 flex flex-col gap-3 group hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex justify-between items-start">
+<h3 class="text-[14px] font-semibold text-on-surface">Janet Notagirl</h3>
+<span class="bg-tertiary text-on-tertiary px-2 py-1 rounded-full text-[10px] font-bold uppercase">AI Search</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+<span class="text-label-sm font-label-sm">The Information Hub</span>
+</div>
+<div class="bg-warning-container/30 p-3 rounded-xl flex flex-col gap-1 mt-1">
+<p class="text-[11px] font-bold text-on-warning-container uppercase">Offer Status</p>
+<p class="text-label-md text-on-warning-container font-bold">$12,500/mo</p>
+</div>
+<div class="flex justify-between items-center mt-2">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="A high-quality professional photo of a female real estate manager, wearing elegant business attire, modern architectural background with clean lines and blue glass accents, 8k resolution." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKNOoZSrba8lLClWAz8qLshLAFQ3bAapcPLL2kpSYKvKJjJt2r3lCF8kVlIvFKYwd40cYf8eEtliGG1SVc-LiX8juWwjxsv4C9A2kaRooKF6m4vGLkDOiQh3PqGJce0kju3m7rexnKKr8lC83NO9jp-D6n_rQ7k3l_S-QYANmeGmYp5ZGzbOPm9eKwbrzZ9uhaxyqJE3k01AQe3wytC1UYHoXTLqdJ17bCCB9XXa_trqggNtArjvB1gg"/>
+<span class="text-label-sm text-on-surface-variant">Updated 2h ago</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Column: Closed -->
+<div class="kanban-column flex flex-col gap-4">
+<div class="flex justify-between items-center px-2">
+<div class="flex items-center gap-2">
+<span class="text-label-md font-bold uppercase tracking-wider text-on-surface-variant">Closed</span>
+<span class="bg-surface-container-high px-2 py-0.5 rounded-full text-label-sm font-bold text-on-surface-variant">24</span>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">more_horiz</button>
+</div>
+<div class="flex flex-col gap-3 opacity-70 grayscale-[0.5]">
+<div class="bg-surface rounded-[24px] p-4 flex flex-col gap-3 group hover:grayscale-0 transition-all cursor-pointer">
+<div class="flex justify-between items-start">
+<h3 class="text-[14px] font-semibold text-on-surface">Doug Forcett</h3>
+<span class="bg-success-container text-on-success-container px-2 py-1 rounded-full text-[10px] font-bold uppercase">Won</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+<span class="text-label-sm font-label-sm">Points Manor • 01</span>
+</div>
+<div class="flex justify-between items-center mt-2">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="A sharp, professional headshot of a smiling real estate expert, confident posture, soft studio lighting with a neutral grey-blue background, high-end photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBDc9npIGo2HeQaPcT3juUZis10E_MILzNjFbPfs9T_3taD1-4ZzHWl5H9NgrBPDwAeBYlvcUNBs_eSxyoTl0zBtgAo8aYQ_7M1DwhDNiBHkjzH4xdVlGCCxzoXL7AvYlGoCZfIIRD6PXMObA01LEqkqkXiWytVOejKnqtjW1I_VQXHG38kPIZo6mEi3SpUO07Ek5aRT_66g-skwasG65STQV8U2V_3i522CPGwjTULgWYG71QlhV6zA"/>
+<span class="text-label-sm text-success-container font-bold">Oct 12</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating AI Insights Action (Optional context for PropVista) -->
+<button class="fixed bottom-8 right-8 bg-tertiary hover:bg-tertiary-container text-on-tertiary w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all z-50">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">psychology</span>
+</button>
+</main>
+<script>
+        // Simple drag interaction visualization
+        document.querySelectorAll('.kanban-column').forEach(column => {
+            column.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                column.classList.add('bg-surface-container-low/50');
+            });
+            column.addEventListener('dragleave', (e) => {
+                column.classList.remove('bg-surface-container-low/50');
+            });
+            column.addEventListener('drop', (e) => {
+                column.classList.remove('bg-surface-container-low/50');
+            });
+        });
+
+        // Search bar interaction
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('bg-surface');
+            searchInput.parentElement.classList.add('border-primary-container');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('bg-surface');
+            searchInput.parentElement.classList.remove('border-primary-container');
+        });
+    </script>
+</body></html>

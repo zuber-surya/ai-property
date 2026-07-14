@@ -397,7 +397,7 @@ Full CI/CD and hosting detail in `10-deployment-devops.md`.
 
 - [x] ORM choice for FastAPI → **SQLAlchemy + Alembic** for migrations, used alongside the Supabase-hosted Postgres instance (Supabase Auth/Storage still used as-is; Supabase's own client is not used for data access — SQLAlchemy talks directly to the Postgres connection string).
 - [ ] Monorepo (Turborepo/pnpm workspaces) vs. two fully independent React repos — recommendation given, not yet confirmed.
-- [ ] Whether background jobs start with FastAPI `BackgroundTasks` (simplest) or Celery/RQ from day one.
+- [x] ~~Whether background jobs start with FastAPI `BackgroundTasks` or Celery/RQ.~~ **DECIDED 2026-07-13 — see §4.4: `pg_cron` + a Python jobs worker.** This line sat here contradicting §4.4 for a day, and it is a large part of why a *mandatory* requirement (FR10.2b) was reported as unbuildable. **An open question that has been answered is not harmless — it is a lie with a checkbox.**
 - [ ] Maps and SMS/WhatsApp provider selection.
 
 ---

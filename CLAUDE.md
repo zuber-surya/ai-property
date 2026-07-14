@@ -30,7 +30,13 @@ Read the relevant doc before working on a feature; point tasks at specific doc s
 
 **Before building any screen, open its file in `docs/16-customer-spec/` or `docs/17-admin-spec/`.** Each one gives the layout, the click-by-click workflow, every API call it makes, the tables it touches, the role/tenant rules, the edge cases, and the `TC-*` cases it must pass — and ends with an **Open Questions** section you must not silently guess your way past.
 
-⚠️ **Schema gaps are closed (`docs/03-database-schema.md` v1.1 — see its §8 changelog), but several requirements still cannot be built** because other docs don't support them: no job scheduler (`02-architecture.md`), no email/SMS provider (`10-deployment-devops.md`), lead auto-assignment undecided (`01-prd.md`), no public CMS read endpoint or agent-chat-reply endpoint (`04-api-spec.md`). The consolidated list is in `docs/00-project-overview.md` §9.1, with per-doc detail in each spec set's `README.md` §5. **Fix the owning doc first, then implement** — do not work around a gap in code.
+⚠️ **`docs/GAPS.md` is the ONLY place a gap's state is recorded.** Do not trust a gap list summarised anywhere else — including the one that used to live in this paragraph.
+
+> **This paragraph was itself the bug.** It claimed "no job scheduler" and "no email/SMS provider" long after `02-architecture.md` had decided both (§4.4 — `pg_cron` + a jobs worker; §3 — SendGrid + Twilio, **2026-07-13**). That stale summary was copied into `16-customer-spec/README.md` §5, and from there into six more documents, and an agent then reported a *mandatory* PRD requirement (FR10.2b) as unbuildable when it had been buildable for a day. Three levels of paraphrase, all confidently wrong.
+>
+> **The rule this produced:** cite `GAPS.md` by gap ID, or read the owning doc. **Never restate a gap list.** (`OWNERSHIP.md` §3, `.claude/rules/devos.md` §1.)
+
+Run `python scripts/check_drift.py` — it fails on a stale gap citation.
 
 Two docs are now **stale against the schema** and must be corrected: `01-prd.md` FR10.1 still promises configurable pipeline stages (the schema fixes the enum for MVP), and `04-api-spec.md` §14 still implies a persisted report with an ID (reports are stateless).
 

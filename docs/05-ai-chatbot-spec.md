@@ -196,7 +196,9 @@ Supabase Realtime is in the stack and would be nicer — but **ADR-0005 restrict
 
 The conversation sits in `/admin/chat/queue` with a **rising `waiting_seconds`**, rendered loudly (`17-admin-spec/15`, `17-admin-spec/22`). That is a **pull** signal — it works only if someone is looking at the screen.
 
-⚠️ **A proactive alert — "escalated and unclaimed for 15 minutes → tell someone" — needs a timer, and there is no scheduler (`GAPS.md` G9a).** MVP ships with the pull signal only. **This is a known, accepted weakness**, and it is the same missing scheduler that blocks the mandatory stale-lead alert (FR10.2b). One fix closes both.
+✅ **A proactive alert is buildable today.** `02-architecture.md` **§4.4** provides `pg_cron` + a jobs worker. Add a `pg_cron` job alongside `mark_stale_leads()` — *"escalated and unclaimed for N minutes → enqueue a notification"* — and the queue stops being a pull-only signal.
+
+> An earlier revision of this section claimed there was no scheduler. **That was false** (`GAPS.md` §5A): the scheduler had been specified for a day, and the claim came from a stale summary in `CLAUDE.md`, not from the owning doc.
 
 ### 10A.6 Escalation is not a lead
 

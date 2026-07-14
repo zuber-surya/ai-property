@@ -27,7 +27,7 @@
 3. A task is done when its **acceptance criteria are demonstrated** — not when the code compiles.
 4. **Blocked tasks name their blocker** — a gap ID from `GAPS.md`. A blocked task with no named blocker is an excuse.
 
-**No estimates.** `15-development-plan.md` assumes 2-week sprints and says the *sequencing* matters more than durations. Fake precision here would only obscure that.
+**Estimates.** Story points appear in Part B only (the admin-portal build, where the work is concretely scoped against real files). They are **relative sizes, not hours** — `15-development-plan.md` says sequencing matters more than duration, and it is right. Do not convert them to dates.
 
 ---
 
@@ -41,10 +41,10 @@
 | `P.3` Font pipeline | **I2** — Plus Jakarta Sans hosting undecided | `13-ui-ux-flows.md` §5 | Frontend build can't be finalised |
 | `S0.5` CI + staging deploy | **I1** (same) | `10-deployment-devops.md` | — |
 | `S4.5` Lead Kanban stage colors | **D1** — no `info` status color | `DESIGN.md` | 3 of 5 pipeline stages have no honest color |
-| `S4.6` **Stale-lead alert (FR10.2b — mandatory)** | **G9a** — no scheduler | `02-architecture.md` | **A mandatory PRD requirement is unbuildable.** `BackgroundTasks` cannot fire on a timer |
+| ~~`S4.6`~~ | ~~**G9a**~~ ✅ **UNBLOCKED — the gap was never real** | — | `02-architecture.md` **§4.4** has specified `pg_cron` + a jobs worker since 2026-07-13, with **`mark_stale_leads()` listed by name**. FR10.2b was buildable all along (`GAPS.md` §5A) |
 | *(Phase 2)* CMS public page | **G5** — no public read endpoint | `04-api-spec.md` | The module is inert |
 | ~~*(Phase 2)* Chat escalation reply~~ | ~~**G7**~~ ✅ **UNBLOCKED 2026-07-14** | — | Endpoints now exist (`04-api-spec.md` §12A), handoff state machine specced (`05-ai-chatbot-spec.md` §10A), screen specced (`17-admin-spec/22`). **No migration needed.** |
-| *(Phase 2/3)* Notifications | **G9b** — no email/SMS provider | `10-deployment-devops.md` | ⚠️ Indian SMS needs **DLT registration — calendar lead time.** Start now or cut it |
+| ~~*(Phase 2/3)* Notifications~~ | ~~**G9b**~~ ✅ **UNBLOCKED — never real** | — | `02-architecture.md` **§3**: SendGrid + Twilio, decided 2026-07-13. ⚠️ Indian SMS still needs **DLT registration — calendar lead time.** Start it now |
 
 **Sprints 0–2 are otherwise unblocked.** Don't let the gap list stall the scaffolding — but **I1 blocks provisioning**, so it genuinely comes first.
 
@@ -235,7 +235,7 @@ Must be true before any application code is written.
 | `S4.3` | Public: contact form + callback slot picker | `feature/lead-contact-form` | |
 | `S4.4` | **Atomic** lead claim — two agents claiming at once must not both succeed | `feature/lead-atomic-claim` | `03` §3.8.1 · ADR-0014 |
 | `S4.5` | Admin Lead Kanban + table view ⛔ **D1** | `feature/lead-crm-kanban` | 3 of 5 stages are *in progress* and have **no honest color**. `neutral` is a placeholder, not an answer |
-| `S4.6` | **Stale-lead alert — FR10.2b, MANDATORY** ⛔ **G9a** | `feature/lead-stale-alert` | **`BackgroundTasks` cannot fire on a timer. There is no scheduler.** |
+| `S4.6` | **Stale-lead alert — FR10.2b, MANDATORY** ✅ buildable | `feature/lead-stale-alert` | A **`pg_cron`** job (`02-architecture.md` §4.4) enqueues into `jobs`; the worker dispatches. `mark_stale_leads()` is already named in §4.4 |
 
 > **`S4.6` is the sharpest item in this backlog.** Manual claim (ADR-0014) is only safe *because* of the staleness alert — it is the floor under the entire design. **That floor does not exist.** Either pick a scheduler (`pg_cron` is free and already in the stack) or reopen the auto-assignment decision. Do not build the pipeline and hope.
 
@@ -250,7 +250,7 @@ Headline scope (`15-development-plan.md`):
 | Phase | Sprints | Scope | Known blockers |
 |---|---|---|---|
 | **2 — AI Layer** | 5–7 | AI Search · Chatbot · Recommendation · **Agent Chat Console** (`17-admin-spec/22`) | **G3** autosuggest · **G5** CMS read · ~~G7~~ ✅ closed |
-| **3 — Scale & Polish** | 8–11 | Remaining admin modules, hardening, deploy, pilot | **G9b** email/SMS (⚠️ DLT lead time) · **DPDP** (`19-security-and-privacy.md` §3 — likely a **pilot blocker**) |
+| **3 — Scale & Polish** | 8–11 | Remaining admin modules, hardening, deploy, pilot | ⚠️ **DLT registration** for Indian SMS (regulatory lead time) · **DPDP** (`19-security-and-privacy.md` §3 — likely a **pilot blocker**) |
 
 **Decompose a sprint when it becomes the next one.**
 
@@ -258,3 +258,324 @@ Headline scope (`15-development-plan.md`):
 
 1. **AI eval baselines.** The golden sets are specced; **no baselines are recorded anywhere.** Until they are, "the AI got worse" is an opinion, not a measurement (`22-risk-register.md` §2). Record them **the day the first AI feature works** — not at the end of Phase 2.
 2. **DPDP.** Consent capture, data export and an erasure mechanism are **build items that appear in no sprint**, and erasure conflicts architecturally with soft-delete. Discovered at a pilot, they are ruinously expensive. Get counsel now (`19-security-and-privacy.md` §3).
+
+---
+
+# Part B — Admin Portal Build (UI · API · Integration)
+
+> **Scope:** the **10 admin screens** Stitch generated, in `docs/stitch_design/`. Sequenced onto the sprints in `15-development-plan.md` — this section decomposes that schedule, it does not invent a new one.
+>
+> **Story points** are relative sizes (Fibonacci), not hours. Do not convert them to dates.
+
+---
+
+## B0. Read this before writing a single component
+
+### B0.1 ⚠️ The Stitch HTML is a REFERENCE, not an implementation
+
+Each screen is `docs/stitch_design/<screen>/code.html` plus a `screen.png` render. **Do not port that HTML into React.** It will look right and be wrong:
+
+| What Stitch emitted | Why it can't ship | What to do instead |
+|---|---|---|
+| **~55 hardcoded hex values per screen** (≈550 across the admin portal) | Every one is a fork of `DESIGN.md`. This is the exact failure that produced two design systems here (`OWNERSHIP.md` §5). | **Token classes only** — `bg-primary`, never an arbitrary-value hex class. |
+| `<script src="cdn.tailwindcss.com">` | A CDN script is not a build. No purge, no config, no types. | A real Tailwind config **generated from `DESIGN.md`** (task `B.1`). |
+| Google Fonts `<link>` for Plus Jakarta Sans | **Font hosting is undecided — gap I2.** Stitch chose for us. | Resolve `P.3` first. Self-hosting recommended. |
+| **Material Symbols** icon font | In **no spec.** `13-ui-ux-flows.md` §4.6 asks for line icons at 1.5px stroke. Nobody decided this. | Decide it (`B.0`), don't inherit it. |
+
+**Use `screen.png` as the visual target and `code.html` for structure and spacing. Type the components yourself.**
+
+### B0.2 The rules that will actually bite
+
+- **`tertiary` marks AI output and nothing else** (ADR-0007). In this portal: the Chatbot / AI Search source chips, the two AI bars in the dashboard chart, and the **bot's** messages and tool calls. **Not** focus rings — those are `primary` (ADR-0008). **Not** a human agent's chat reply.
+- **Status uses the semantic ramp, never brand colours** (ADR-0009).
+- **Router → Service → Repository.** Routers hold no logic. Services write no SQL.
+- **Every endpoint must already exist in `04-api-spec.md`.** If it doesn't, the spec changes first.
+- **Every new tenant-owned table needs a cross-tenant isolation test that fails at the DB layer** (ADR-0003). Not an API test. Not negotiable.
+
+---
+
+## B.0 — Pre-work: decisions Stitch made for us
+
+**3 pts** · Branch `fix/frontend-dependency-decisions`
+
+Stitch silently picked an icon set and a font-delivery mechanism. **Neither is in any spec.**
+
+- [ ] **Icon set** — Material Symbols (what Stitch used) vs. Lucide/Phosphor. Record in `13-ui-ux-flows.md` §4.6.
+- [ ] **Font hosting** (gap **I2**, task `P.3`) — self-hosted vs. Google Fonts. **Recommend self-hosted:** no third-party request per page load, no CDN dependency, and a Google Fonts `<link>` ships every visitor's IP to a third party on every page (`19-security-and-privacy.md`).
+
+**DoD:** both decisions written into their owning docs; `GAPS.md` I2 closed.
+
+---
+
+## B.1 — The token pipeline (once; everything below depends on it)
+
+**5 pts** · Branch `feature/frontend-design-tokens` · **Blocks every UI task.**
+
+**`DESIGN.md` is the only file that defines a colour.** The Tailwind config must be **generated from it**, never hand-typed — otherwise it is a sixth fork, and this project already has five.
+
+- [ ] `scripts/gen_tokens.py` — parse the `DESIGN.md` YAML front-matter → emit `admin-portal/src/styles/tokens.css` + the Tailwind `theme.extend`.
+- [ ] Header the generated files: `/* GENERATED FROM docs/DESIGN.md — DO NOT EDIT */`.
+- [ ] **Extend `scripts/check_drift.py`** with a `forked-hex-frontend` check: fail on any hex literal in `admin-portal/src/**` or `public-site/src/**` outside the generated token files.
+  - Without this, a developer pastes one line of Stitch HTML and the whole discipline is gone. **The check IS the discipline.**
+- [ ] Semantic classes, so a component never touches a raw token: `.chip-status-published`, `.chip-source-ai`, `.ai-widget` (the primary→tertiary gradient border + glow).
+
+**DoD:** changing a hex in `DESIGN.md`, re-running `gen_tokens.py`, changes the UI. A hex typed into a `.tsx` **fails the drift check.**
+
+---
+
+## Sprint 2 — Property Management
+
+**Focus:** admins manage listings end-to-end.
+**Depends on:** Sprint 1 (auth, tenancy, RLS) · `B.1` (tokens).
+**Screens:** 4 · **52 pts**
+
+### UI Tasks
+
+| # | Task | Design reference | Pts |
+|---|---|---|---|
+| `S2-UI-1` | Properties List | `docs/stitch_design/propvista_properties_list/` | 8 |
+| `S2-UI-2` | Add / Edit Property (multi-step) | `docs/stitch_design/propvista_add_edit_property/` | 8 |
+| `S2-UI-3` | Bulk Upload | `docs/stitch_design/propvista_bulk_upload/` | 5 |
+| `S2-UI-4` | Approvals Queue | `docs/stitch_design/propvista_approvals_queue/` | 5 |
+
+**Every UI task carries these four subtasks:**
+
+- [ ] **Layout** — from `screen.png` + `code.html` structure, **token classes only** — no arbitrary-value hex classes. The drift check enforces it.
+- [ ] **Components** — extract to `components/`, don't inline. The table, the status chip, the step indicator and the dropzone are reused; build each once.
+- [ ] **Interactive states** — hover · **focus (2px `primary` ring, NOT tertiary)** · loading skeletons · error · **and the empty state.** Stitch renders none of these, and they are the states users actually spend time in.
+- [ ] **Responsive** — `13-ui-ux-flows.md` §4.7 (mobile <640 · tablet 641–1024 · desktop >1024). Sidebar → icon-only on tablet. **Desktop-first is a decision** (`17-admin-spec/README.md` §4.6): a usable read-only mobile view is the bar, not parity.
+
+**Screen-specific — the details a pixel-match will miss:**
+
+- `S2-UI-1` — status chips from the **semantic ramp**. Six states: Draft · Pending · Published · Sold · Rejected · Archived.
+- `S2-UI-3` — the review step shows **per-row errors in plain language** and offers **partial import**. *"Import the 128 valid rows"* is the entire point of the screen (`TC-PROP-02`). Never make someone fix 14 rows to get value from the other 128.
+- `S2-UI-4` — **Reject requires a reason.** A rejection with no reason is a dead end for the agent who submitted it.
+
+### API Tasks — `04-api-spec.md` §8
+
+| # | Task | Pts |
+|---|---|---|
+| `S2-API-1` | `properties`, `property_media`, `amenities` + migrations + **RLS via the reusable macro** | 5 |
+| `S2-API-2` | Property CRUD per **§8** | 5 |
+| `S2-API-3` | Status workflow — six states, incl. **de-indexing on `sold`** | 3 |
+| `S2-API-4` | Bulk upload — **per-row validation, partial commit** | 5 |
+
+**Every API task carries these four subtasks:**
+
+- [ ] **Repository** — SQLAlchemy lives *only* here. Every query tenant-scoped. `async`.
+- [ ] **Service** — business logic + domain exceptions (`PropertyNotFoundError`). **No raw SQL.**
+- [ ] **Router** — parse, call **one** service method, return. No logic. Errors → the standard envelope (`04-api-spec.md` §1). **A raw DB error must never reach a client.**
+- [ ] **Tests** — service unit tests with repos mocked · integration test for the RLS policy · **the cross-tenant isolation test.**
+
+> `S2-API-3` — **de-indexing matters as much as indexing.** A `sold` property left in `property_embeddings` keeps getting recommended and keeps being offered by the chatbot. That makes the AI look broken, and nobody reports it because it looks like an opinion.
+
+### Integration Tasks
+
+| # | Task | Pts |
+|---|---|---|
+| `S2-INT-1` | Wire list + form + bulk upload + approvals to their endpoints | 8 |
+
+- [ ] React Query. **Cache keys include `tenant_id`.**
+- [ ] Loading / error / **empty** states wired to real responses.
+- [ ] **Optimistic updates** on status change — **with rollback on failure.** Never leave the UI lying about server state.
+- [ ] **Tenant isolation from the client side:** a Tenant A session must not fetch a Tenant B property by pasting its UUID into the URL.
+
+### Acceptance
+
+| TC | Case |
+|---|---|
+| `TC-PROP-01` | A `pending_approval` property is **not publicly visible** until approved |
+| `TC-PROP-02` | Bulk upload with malformed rows reports **per-row** errors, not a full-batch failure |
+| `TC-PROP-03` | An agent without `properties.edit` gets **403** on writes |
+| `TC-TENANT-01` | Tenant A cannot read/write Tenant B's properties — **failing at the DB layer** |
+
+**DoD:** an admin adds, edits, approves and features a property **through the real UI** and it persists on reload · all TC cases pass · `check_drift.py` clean · **no hex literal anywhere in `admin-portal/src/`** · `09-coding-standards.md` §8 self-check run.
+
+---
+
+## Sprint 4 — Lead CRM
+
+**Focus:** inquiries become trackable leads; agents work them.
+**Depends on:** Sprint 2.
+**Screens:** 3 · **39 pts**
+
+> ### ⛔ Two blockers. Read before committing capacity.
+>
+> **D1 — `DESIGN.md` has no "in progress" colour.** Three of the five pipeline stages (`contacted`, `site_visit_scheduled`, `negotiation`) are *in progress* — not done, not failed, not inert, and **not a warning**. None of `success`/`warning`/`error`/`neutral` fits. The Stitch screens render them `neutral` because the prompt said so, and **`neutral` is a placeholder, not an answer.** Add an `info` family to `DESIGN.md` **before** `S4-UI-1`, or you build the board twice.
+>
+> ~~**G9a — no scheduler.**~~ ✅ **WITHDRAWN.** `02-architecture.md` §4.4 has had `pg_cron` + a jobs worker since 2026-07-13, and **`mark_stale_leads()` is listed in it by name.** `S4-API-5` is fully buildable. This entry was a stale summary copied from `CLAUDE.md`, and it cost this sprint a fictitious blocker — see `GAPS.md` §5A.
+
+### UI Tasks
+
+| # | Task | Design reference | Pts |
+|---|---|---|---|
+| `S4-UI-1` | Leads Kanban — 5 columns, drag between stages | `docs/stitch_design/propvista_leads_kanban/` | 8 |
+| `S4-UI-2` | Leads Table — sortable, filterable, bulk assign | `docs/stitch_design/propvista_leads_table/` | 5 |
+| `S4-UI-3` | Lead Detail — the slide-in panel *(this is the "customer" view)* | `docs/stitch_design/propvista_lead_detail_view/` | 5 |
+
+Same four subtasks as Sprint 2, plus:
+
+- `S4-UI-1` — **drag-and-drop with optimistic reorder and rollback.** A card that snaps back is honest; a card that stays put after the server rejected the move is a lie. **Unassigned leads must be visually loud** — an unassigned lead is nobody's responsibility. The Kanban is **explicitly not a mobile experience**; ship a read-only fallback.
+- `S4-UI-2` — **the AGE column is the point of this screen.** It is what a manager sorts by, and it is what surfaces the leads quietly rotting. Prominent, red past a threshold.
+- `S4-UI-3` — **source chips: `tertiary` for Chatbot and AI Search only.** Requirement form, contact form and walk-in are neutral.
+
+### API Tasks — `04-api-spec.md` §5, §9
+
+| # | Task | Pts |
+|---|---|---|
+| `S4-API-1` | `leads`, `lead_notes`, `lead_activities` + RLS + isolation test | 5 |
+| `S4-API-2` | `POST /leads` + **idempotency** (`leads.idempotency_key`) | 3 |
+| `S4-API-3` | Lead list / detail / stage-change / notes per **§9** | 5 |
+| `S4-API-4` | **Atomic** claim — two agents at once → exactly one winner | 3 |
+| `S4-API-5` | **Stale-lead alert (FR10.2b)** — a `pg_cron` job + the worker | 3 |
+
+> **`S4-API-5` — build it.** Manual claim (ADR-0014) is only *safe* because of the staleness alert: FR10.2b calls it **mandatory** — *"without it, manual claim loses leads."*
+>
+> ✅ **It is buildable today.** `02-architecture.md` §4.4: a **`pg_cron`** job (`mark_stale_leads()`, already named there) enqueues into the `jobs` table; the Python worker dispatches the notification via SendGrid/Twilio/in-app.
+>
+> ⚠️ **The worker bypasses RLS** (§4.4, "the three things that will bite"). It must `SET LOCAL app.current_tenant_id` from `jobs.tenant_id` before touching tenant data. **A worker that forgets has no tenant isolation at all**, and unlike every other code path RLS is not there to catch it. This job gets its own cross-tenant test.
+
+### Integration Tasks
+
+| # | Task | Pts |
+|---|---|---|
+| `S4-INT-1` | Wire Kanban + table + detail panel to the lead endpoints | 5 |
+
+- [ ] Optimistic stage change on drag → **rollback + toast on failure**.
+- [ ] The claim race: the loser sees *"Ravi took this one"* — **not an error toast.** It is a normal race and it will happen daily.
+- [ ] A Tenant A lead never appears on a Tenant B board.
+
+### Acceptance
+
+| TC | Case |
+|---|---|
+| `TC-LEAD-01` | **Every lead has a non-null `source`** |
+| `TC-LEAD-02` | Stage changes recorded in `lead_activities` with correct timestamps |
+| — | Simultaneous double-claim → **exactly one owner** (FR10.2a) |
+| `TC-TENANT-01` | Cross-tenant lead access fails at the DB layer |
+
+**DoD:** an agent works a lead from capture to close through the real UI · the claim race is provably safe · **D1 resolved**, or the board ships knowingly with three indistinguishable stages · drift check clean.
+
+---
+
+## Sprint 6 — AI Chatbot (admin side)
+
+**Focus:** review what the bot did, and take over when it fails.
+**Depends on:** Sprint 4 · the Sprint 6 chatbot backend.
+**Screens:** 2 · **31 pts**
+
+### UI Tasks
+
+| # | Task | Design reference | Pts |
+|---|---|---|---|
+| `S6-UI-1` | AI Chat Logs — read-only transcripts | `docs/stitch_design/propvista_ai_chat_logs/` | 5 |
+| `S6-UI-2` | **Agent Chat Console** — the live handoff ★ | `docs/stitch_design/propvista_agent_chat_console/` | 8 |
+
+> ### ★ `S6-UI-2` is the highest-risk UI task in the project
+>
+> **Three voices must look different, and the AI-colour rule decides it:**
+>
+> | Voice | Treatment |
+> |---|---|
+> | 👤 Visitor | Plain, neutral |
+> | 🤖 **Bot** | **`tertiary`** — model output. Tool calls rendered **inline** (`[🔧 lookup_property(id: "a3f…")]`) — that inline call is how you verify the bot used live data instead of inventing it |
+> | 🙋 **Agent** | **NEVER `tertiary`.** A human wrote it. Attribute by name |
+>
+> Paint a human agent's reply in the AI colour and **the screen lies about who is talking** — on the one screen whose entire purpose is showing a worried customer that a real person arrived. Spec: `17-admin-spec/22-agent-chat-console.md` §3.1.
+>
+> **Waiting time is the most important number in this portal.** Everywhere else a stale view costs someone minutes. Here, a person is sitting in a chat window right now.
+
+- [ ] Queue polls ~10s; the visitor's widget polls ~4s (**ADR-0017** — polling, not Realtime, because ADR-0005 restricts the Supabase client to Auth and Storage).
+- [ ] **The composer is disabled until you have claimed the conversation.**
+- [ ] Empty queue = *"No one's waiting."* **Calm, not celebratory.** It is the normal state.
+
+### API Tasks — `04-api-spec.md` §12, **§12A**
+
+| # | Task | Pts |
+|---|---|---|
+| `S6-API-1` | `GET /admin/ai-config/chat-logs` — browse, filter, flag (**§12**) | 3 |
+| `S6-API-2` | **§12A** — `GET /admin/chat/queue` · `POST …/claim` · `POST …/reply` · `POST …/close` | 5 |
+| `S6-API-3` | **The bot goes silent when escalated** — `POST /ai/chat/message` persists and **does not call Bedrock** (§12A.2) | 3 |
+| `S6-API-4` | Atomic claim → **`409`** to the loser (§12A.1). **Reuse the lead-claim pattern.** | 2 |
+
+> **No migration needed.** `chat_messages.sender` already accepts `agent`; `chat_conversations` already has `assigned_agent_id`. The schema was built for this (G7, closed 2026-07-14).
+>
+> `S6-API-3` is load-bearing: without it the visitor is talking to a human **and** a machine at once — worse than never offering a human at all.
+
+### Integration Tasks
+
+| # | Task | Pts |
+|---|---|---|
+| `S6-INT-1` | Wire the console end to end: queue → claim → reply → close | 5 |
+
+- [ ] **The whole point:** an agent replies and **it reaches the visitor's open chat widget.** Test with two browsers.
+- [ ] Claim race → `409` → *"Ravi picked this one up"*, queue refreshes.
+- [ ] An agent **cannot open another tenant's conversation by pasting its UUID** (`04-api-spec.md` §12A.5 — threat T1, on transcripts containing phone numbers and budgets).
+
+### Acceptance
+
+| TC | Case |
+|---|---|
+| — | An escalated conversation appears in the queue **within one poll cycle** (FR1.7: *"real time or near-real time"*) |
+| — | The agent's reply **reaches the visitor's widget** |
+| — | Two agents claiming → exactly one owner; the loser gets a clear message |
+| — | While escalated, a visitor message is **persisted without invoking Bedrock** |
+| — | The agent's reply is **not** rendered in the AI colour (ADR-0007) |
+
+**DoD:** the escalation loop closes end-to-end in a live two-browser test · bot and agent are distinguishable at a glance · drift check clean.
+
+---
+
+## Sprint 8 — Admin Dashboard
+
+**Focus:** operational visibility.
+**Depends on:** Sprints 2, 4, 6 — **it is last because it has nothing to show until the data exists.**
+**Screens:** 1 · **13 pts**
+
+### UI Tasks
+
+| # | Task | Design reference | Pts |
+|---|---|---|---|
+| `S8-UI-1` | Admin Dashboard — KPIs, charts, activity feed | `docs/stitch_design/propvista_admin_dashboard/` | 8 |
+
+- [ ] Four KPI cards · a 30-day leads line chart · a lead-source bar chart · a borderless activity feed.
+- [ ] **The source chart is the point of this screen.** Chatbot and AI Search bars are **`tertiary`**; the other three are `primary`. That contrast is the whole reason the chart exists: **it shows whether the AI features are earning their Bedrock cost** (`22-risk-register.md` §3).
+- [ ] **Escalated chats in the activity feed are flagged `error`** — the only genuinely time-sensitive item on the page.
+- [ ] Charts follow the `dataviz` guidance. Semantic colour is **not** the accent.
+
+### API Tasks — `04-api-spec.md` §11
+
+| # | Task | Pts |
+|---|---|---|
+| `S8-API-1` | `GET /admin/dashboard/summary` — KPIs + chart series in **one** call | 5 |
+
+- [ ] Every aggregate **tenant-scoped.** A KPI that leaks another tenant's lead count is still a cross-tenant leak.
+- [ ] The `source` breakdown must distinguish the AI sources — that reporting is the justification for the AI spend.
+
+### Integration Tasks
+
+- [ ] Wire it; skeleton the loading; and **design the day-one empty state.** A brand-new tenant has zero of everything, and four zeroes with no explanation is the first thing every new admin will ever see.
+
+**DoD:** a real tenant's real numbers render · the AI-vs-non-AI split is visible at a glance · the empty state is designed, not defaulted.
+
+---
+
+## B.2 — Summary
+
+| Sprint | Focus | Screens | UI | API | Int | **Total** |
+|---|---|---|---|---|---|---|
+| Pre | Decisions + token pipeline | — | — | — | — | **8** |
+| 2 | Property Management | 4 | 26 | 18 | 8 | **52** |
+| 4 | Lead CRM | 3 | 18 | 16 | 5 | **39** |
+| 6 | AI Chatbot (admin) | 2 | 13 | 13 | 5 | **31** |
+| 8 | Dashboard | 1 | 8 | 5 | — | **13** |
+| | | **10** | | | | **143 pts** |
+
+### The two things to fix before you start
+
+✅ **Both former blockers are gone.**
+
+- **D1** — the `info` status colour is now in `DESIGN.md` (a cyan family — see Semantic Status Colors). ⚠️ **The Kanban, leads-table and lead-detail Stitch screens were generated before it and must be regenerated** — they render three in-progress stages as `neutral`.
+- **G9a** — **was never real.** `02-architecture.md` §4.4 has had `pg_cron` + a jobs worker since 2026-07-13, `mark_stale_leads()` included. `S4-API-5` is buildable (`GAPS.md` §5A).
+
+**Sprint 4 is unblocked.**

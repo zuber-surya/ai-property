@@ -540,9 +540,9 @@ def get_favorite(favorite_id: str, user_id: str, tenant_id: str) -> Favorite:
 
 | Feature | Route | Blocker | Issue |
 |---|---|---|---|
-| CMS Pages | `/:slug`, `/admin/cms` | Gap G5 | No public read endpoint + no job scheduler for workflow approval |
+| CMS Pages | `/:slug`, `/admin/cms` | Gap G5 | No public read endpoint. *(The scheduler exists — `02-architecture.md` §4.4.)* |
 | Tenant Branding | `/admin/settings` | FR16.2 decision | Post-MVP; no themeeable UI in MVP |
-| Email/SMS Notifications | `/portal/notifications` (channels), `/admin/settings/notifications` | Gap G9 | No email/SMS provider, no job scheduler |
+| Email/SMS Notifications | `/portal/notifications`, `/admin/settings/notifications` | ~~G9~~ ✅ | **Buildable.** SendGrid + Twilio (`02-architecture.md` §3); `pg_cron` + jobs worker (§4.4). See `GAPS.md` §5A |
 | Super-Admin Tenants | `/platform/tenants` | Gap G10 | No tenant creation flow in MVP |
 | Reports | `/admin/reports` | Gap G11 | No stateless report definition API |
 | Agent Chat Handoff | `/admin/chat` | Gap G7 (closed) | Now in MVP via new spec file `22-agent-chat-console.md` |

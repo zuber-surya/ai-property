@@ -198,7 +198,7 @@ All: `Authorization: Bearer <jwt>`. All defined in `04-api-spec.md` §12A. **Not
 
 ## 11. Open Questions
 
-- [ ] **Claim release.** Nothing un-claims a conversation when an agent closes their laptop. The visitor waits forever and the queue looks clean. A "release" action is the cheap fix; an auto-release on inactivity needs a timer — **and there is no scheduler (`GAPS.md` G9a)**, the same gap that blocks the mandatory stale-lead alert. **One fix closes both.**
+- [ ] **Claim release.** Nothing un-claims a conversation when an agent closes their laptop. The visitor waits forever and the queue looks clean. Add a "release" action **and** an auto-release on inactivity — the latter is a `pg_cron` job alongside `mark_stale_leads()` (`02-architecture.md` §4.4). ✅ **The scheduler exists**; an earlier revision wrongly claimed it didn't (`GAPS.md` §5A).
 - [ ] **A message arriving on a `closed` conversation** — reopen, or start a new one? Decide it; don't let it emerge.
-- [ ] **Proactive "nobody picked this up" alert** needs the same scheduler (G9a). MVP ships with the pull signal only — the queue shouts, but only at someone already looking at it. **Accepted weakness, logged.**
+- [ ] **Proactive "nobody picked this up" alert** — ✅ buildable. Add a `pg_cron` job beside `mark_stale_leads()` (`02-architecture.md` §4.4): *escalated + unclaimed for N minutes → enqueue a notification*. An earlier revision called this blocked; it never was (`GAPS.md` §5A).
 - [ ] Should an agent be able to **hand back to the bot** after answering a one-off question? Cheap, and it would keep the bot useful in long sessions. Not specified.
