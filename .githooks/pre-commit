@@ -1,0 +1,20 @@
+#!/bin/sh
+# PropVista DevOS — drift gate.  Install once:  git config core.hooksPath .githooks
+#
+# Gates on REGRESSION, not on zero. Known debt is recorded in .drift-baseline.json
+# and explained in docs/GAPS.md. This hook fails only when you ADD drift.
+# See .claude/rules/devos.md §4.
+
+python scripts/check_drift.py --quiet
+if [ $? -ne 0 ]; then
+  echo ""
+  python scripts/check_drift.py
+  echo "-------------------------------------------------------------"
+  echo " This commit ADDS drift. Fix it — don't --no-verify past it."
+  echo " If the finding is wrong, fix the check, not the baseline."
+  echo " If you genuinely REDUCED drift, re-baseline:"
+  echo "     python scripts/check_drift.py --accept"
+  echo "-------------------------------------------------------------"
+  exit 1
+fi
+exit 0

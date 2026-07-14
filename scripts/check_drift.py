@@ -1,0 +1,465 @@
+#!/usr/bin/env python3
+"""Drift checks for the PropVista docs set.
+
+Every check here exists because the corresponding failure actually happened.
+See docs/OWNERSHIP.md §5 for the incident each one prevents.
+
+Usage:
+    python scripts/check_drift.py           # report
+    python scripts/check_drift.py --quiet   # exit code only (for hooks/CI)
+
+Exit codes:  0 = clean   1 = drift found
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+from dataclasses import dataclass, field
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+DOCS = ROOT / "docs"
+
+# --- The one file allowed to define visual values --------------------------
+DESIGN = DOCS / "DESIGN.md"
+
+# Docs that deliberately inline a copy of the DESIGN.md tokens, because a
+# single-paste Stitch prompt cannot reference another file.
+#
+# Sanctioned in OWNERSHIP.md §3.1 — but "sanctioned" is not "unwatched". Each of
+# these is a place the tokens can drift from DESIGN.md, and the whole brass/indigo
+# incident was a fork nobody was watching. Being on this list means the
+# generated-prompts-stale check WILL compare you against DESIGN.md.
+GENERATED_PROMPT_DOCS = [
+    DOCS / "11-stitch-design-prompts.md",
+    DOCS / "stitch-prompts.md",
+]
+
+
+@dataclass
+class Finding:
+    check: str
+    path: Path
+    line: int
+    text: str
+    why: str
+
+    def render(self) -> str:
+        rel = self.path.relative_to(ROOT).as_posix()
+        return f"  {rel}:{self.line}\n      {self.text.strip()[:100]}\n      → {self.why}"
+
+
+@dataclass
+class Check:
+    name: str
+    incident: str
+    findings: list[Finding] = field(default_factory=list)
+
+
+# ---------------------------------------------------------------------------
+# The meta layer: files whose JOB is to describe the system's failures.
+#
+# An incident log has to be allowed to name the incident. A decision record has
+# to quote the values it decided between ("the prose said #4F46E5, the token
+# said #3525cd") or it cannot explain itself. A runbook has to name the symptom
+# it is telling you to watch for.
+#
+# Exempting these is not a loophole — it is the difference between a record and
+# a violation. Keep the list SHORT and path-exact: a spec must never end up here.
+# ---------------------------------------------------------------------------
+META_PATHS = {
+    "docs/OWNERSHIP.md",             # the registry
+    "docs/GAPS.md",                  # the gap register
+    "docs/adr/README.md",            # decision records — must quote what was rejected
+    "docs/20-operations-runbook.md",  # names the symptoms to watch for
+    "docs/22-risk-register.md",      # names the risks
+    ".claude/rules/devos.md",        # the protocol
+}
+
+
+def is_meta(path: Path) -> bool:
+    return path.relative_to(ROOT).as_posix() in META_PATHS
+
+
+def md_files() -> list[Path]:
+    """Every markdown file in the project, excluding the meta layer."""
+    return sorted(
+        p
+        for p in ROOT.rglob("*.md")
+        if ".git" not in p.parts and not is_meta(p)
+    )
+
+
+def lines_of(path: Path) -> list[tuple[int, str]]:
+    try:
+        content = path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return []
+    return list(enumerate(content.splitlines(), start=1))
+
+
+# ---------------------------------------------------------------------------
+# CHECK 1 — the dead design system must never come back
+# Incident: 13-ui-ux-flows.md §4 defined brass/teal/Fraunces; 33 specs cited it.
+# ---------------------------------------------------------------------------
+
+DEAD_TOKENS = re.compile(
+    r"\b(color-brass|color-teal|color-coral|color-ink|color-paper|color-slate"
+    r"|color-amber|brass-hover|Fraunces|Newsreader|IBM Plex|General Sans"
+    r"|#C17F3C|#1F6F63|#C0392B|#12253B|#F3F5F6|#D9A441|#5B6472)\b",
+    re.IGNORECASE,
+)
+
+# A live DESIGN.md token name. Its presence on a line that also names a dead
+# token means the line is a migration mapping (old -> new), not a live citation.
+LIVE_TOKEN = re.compile(
+    r"\b(primary|secondary|tertiary|success-container|warning-container"
+    r"|error-container|neutral-container|inverse-surface|surface-container"
+    r"|on-surface|outline-variant|headline-md|Plus Jakarta Sans)\b"
+)
+
+# Lines that legitimately NAME the dead system in order to bury it.
+GRAVESTONE = re.compile(
+    r"deleted|superseded|dead|no longer|removed|was:|old \(|migration|do not use"
+    r"|used to|replaced|moot|\bWAS\b|~~",
+    re.IGNORECASE,
+)
+
+
+def check_dead_design_system() -> Check:
+    c = Check(
+        "dead-design-system",
+        "13-ui-ux-flows.md §4 defined a second design system (brass/teal). "
+        "33 specs cited it instead of DESIGN.md.",
+    )
+    live = design_hexes()
+    for path in md_files():
+        for n, line in lines_of(path):
+            if not DEAD_TOKENS.search(line):
+                continue
+            if GRAVESTONE.search(line):
+                continue
+            # A migration row maps old -> new on one line, so it necessarily names
+            # a dead token AND its live replacement. Naming the replacement on the
+            # same line IS the gravestone — that's what makes the row useful.
+            if any(h.lower() in live for h in HEX.findall(line)):
+                continue
+            if LIVE_TOKEN.search(line):
+                continue
+            c.findings.append(
+                Finding(
+                    c.name,
+                    path,
+                    n,
+                    line,
+                    "Dead design token. The system is DESIGN.md. If you are "
+                    "citing the old one to bury it, say so on the same line.",
+                )
+            )
+    return c
+
+
+# ---------------------------------------------------------------------------
+# CHECK 2 — no forked hex colors
+# Incident: DESIGN.md's prose and its own YAML disagreed on primary/canvas/text.
+# ---------------------------------------------------------------------------
+
+HEX = re.compile(r"#[0-9a-fA-F]{6}\b")
+
+# Files allowed to carry hex values, and why.
+HEX_ALLOWED = {
+    "docs/DESIGN.md",  # the owner
+    "docs/11-stitch-design-prompts.md",  # sanctioned generated artifact (OWNERSHIP §3.1)
+    "docs/stitch-prompts.md",  # sanctioned generated artifact — watched, see below
+    "docs/13-ui-ux-flows.md",  # the migration table burying the old system
+    "docs/GAPS.md",
+    "docs/OWNERSHIP.md",
+}
+
+
+def design_hexes() -> set[str]:
+    return {h.lower() for h in HEX.findall(DESIGN.read_text(encoding="utf-8"))}
+
+
+def check_forked_hex() -> Check:
+    c = Check(
+        "forked-hex",
+        "A hex color outside DESIGN.md is a fork waiting to drift. "
+        "This is how brass and indigo coexisted.",
+    )
+    known = design_hexes()
+    for path in md_files():
+        rel = path.relative_to(ROOT).as_posix()
+        if rel in HEX_ALLOWED:
+            continue
+        for n, line in lines_of(path):
+            for hx in HEX.findall(line):
+                c.findings.append(
+                    Finding(
+                        c.name,
+                        path,
+                        n,
+                        line,
+                        f"{hx} — hex colors live only in DESIGN.md. Cite the token name."
+                        + ("" if hx.lower() in known else "  (and this hex is NOT in DESIGN.md at all)"),
+                    )
+                )
+    return c
+
+
+# ---------------------------------------------------------------------------
+# CHECK 3 — the generated Stitch prompts must not diverge from DESIGN.md
+# Incident: this is the exception that caused the original mess. Watch it.
+# ---------------------------------------------------------------------------
+
+
+def check_generated_prompts_current() -> Check:
+    c = Check(
+        "generated-prompts-stale",
+        "The Stitch prompt docs inline a copy of the DESIGN.md tokens. If "
+        "DESIGN.md changes and they don't, we are back where we started.",
+    )
+    design = design_hexes()
+    for doc in GENERATED_PROMPT_DOCS:
+        if not doc.exists():
+            continue
+        prompt_hexes = {h.lower() for h in HEX.findall(doc.read_text(encoding="utf-8"))}
+        orphans = sorted(prompt_hexes - design)
+        if orphans:
+            c.findings.append(
+                Finding(
+                    c.name,
+                    doc,
+                    0,
+                    ", ".join(orphans),
+                    "These hexes appear in this Stitch prompt doc but NOT in DESIGN.md. "
+                    "Either DESIGN.md moved and this doc is stale (regenerate it), "
+                    "or someone hand-edited a token here (don't).",
+                )
+            )
+    return c
+
+
+# ---------------------------------------------------------------------------
+# CHECK 4 — no mono/serif claims
+# Incident: the type stack was Fraunces + Inter + IBM Plex Mono. It is now
+# Plus Jakarta Sans only, and prices kept coming back as monospace.
+# ---------------------------------------------------------------------------
+
+MONO_CLAIM = re.compile(r"\b(mono font|monospace|data font|serif heading)\b", re.IGNORECASE)
+MONO_NEGATED = re.compile(r"\bno\b.{0,30}\b(mono|serif)|never|not a different typeface|deleted", re.IGNORECASE)
+
+
+def check_mono_serif() -> Check:
+    c = Check(
+        "mono-serif",
+        "The system is Plus Jakarta Sans only. Prices are headline-md, not mono.",
+    )
+    for path in md_files():
+        for n, line in lines_of(path):
+            if MONO_CLAIM.search(line) and not MONO_NEGATED.search(line):
+                c.findings.append(
+                    Finding(c.name, path, n, line, "No monospace or serif face exists in this system.")
+                )
+    return c
+
+
+# ---------------------------------------------------------------------------
+# CHECK 5 — closed gaps must not still be cited as blocking
+# Incident: schema v1.1 closed G1/G2/leads.user_id/favorites-uniqueness.
+# Three portal specs STILL call them blocking open gaps.
+# ---------------------------------------------------------------------------
+
+# Only gaps that are FULLY closed. G6 is deliberately absent: its column exists
+# but its endpoint does not, so citing it as open is still correct (see G8).
+# A half-closed gap in this list would train people to ignore the check.
+CLOSED_GAPS = {
+    "G1": "notifications table — added in schema v1.1 §3.20",
+    "G2": "notification preferences — added in schema v1.1 §3.21",
+}
+BLOCKING_WORD = re.compile(
+    r"\b(blocking|blocked|does not exist|doesn't exist|no .{0,20}table|missing|gap|open|not currently possible|nowhere to be stored)\b",
+    re.IGNORECASE,
+)
+CLOSED_MARKER = re.compile(r"closed|✅|resolved|added in|fixed|swept", re.IGNORECASE)
+
+
+def check_stale_gap_citations() -> Check:
+    c = Check(
+        "stale-gap",
+        "A gap was closed in its owning doc but the specs that cite it were "
+        "never swept. Someone reads the spec and reports a blocker that is gone.",
+    )
+    gap_ref = re.compile(r"\b(" + "|".join(CLOSED_GAPS) + r")\b")
+    for path in md_files():
+        for n, line in lines_of(path):
+            m = gap_ref.search(line)
+            if not m:
+                continue
+            gid = m.group(1)
+            if BLOCKING_WORD.search(line) and not CLOSED_MARKER.search(line):
+                c.findings.append(
+                    Finding(
+                        c.name,
+                        path,
+                        n,
+                        line,
+                        f"{gid} is CLOSED ({CLOSED_GAPS[gid]}). See docs/GAPS.md §5. "
+                        "Update this citation or drop it.",
+                    )
+                )
+    return c
+
+
+# ---------------------------------------------------------------------------
+# CHECK 6 — sync DB driver in an async-mandatory architecture
+# Incident: SPRINT0_PLAN.md pins psycopg2-binary. CLAUDE.md requires async.
+# ---------------------------------------------------------------------------
+
+SYNC_DRIVER = re.compile(r"\bpsycopg2(-binary)?\b", re.IGNORECASE)
+FAKE_PKG = re.compile(r"@vitejs/plugin-tsx", re.IGNORECASE)
+
+# A line that names the banned thing in order to ban it is a gravestone, not a
+# violation — "asyncpg, NOT psycopg2" must not trip the psycopg2 check. Same
+# principle as the dead-design-system gravestones above: a warning is the
+# opposite of a usage, and a check that can't tell them apart teaches people to
+# stop writing warnings.
+BANNED_NEGATED = re.compile(
+    r"\bnot\b|\bnever\b|instead|does not exist|is not a real|blocks the event loop"
+    r"|synchronous|⚠|deprecated|do not use|banned|forbidden",
+    re.IGNORECASE,
+)
+
+
+def check_async_violation() -> Check:
+    c = Check(
+        "async-violation",
+        "CLAUDE.md: every I/O endpoint is async. SQLAlchemy's async engine "
+        "needs asyncpg; psycopg2 is sync-only and blocks the event loop.",
+    )
+    targets = (
+        list(md_files())
+        + [p for p in ROOT.rglob("requirements*.txt") if ".git" not in p.parts]
+        + [p for p in ROOT.rglob("package.json") if "node_modules" not in p.parts]
+    )
+    for path in targets:
+        if is_meta(path):
+            continue
+        for n, line in lines_of(path):
+            if BANNED_NEGATED.search(line):
+                continue  # the line is warning against it, not using it
+            if SYNC_DRIVER.search(line):
+                c.findings.append(
+                    Finding(c.name, path, n, line, "Use asyncpg. psycopg2 is synchronous.")
+                )
+            if FAKE_PKG.search(line):
+                c.findings.append(
+                    Finding(
+                        c.name,
+                        path,
+                        n,
+                        line,
+                        "@vitejs/plugin-tsx does not exist. @vitejs/plugin-react handles TSX.",
+                    )
+                )
+    return c
+
+
+# ---------------------------------------------------------------------------
+
+CHECKS = [
+    check_dead_design_system,
+    check_forked_hex,
+    check_generated_prompts_current,
+    check_mono_serif,
+    check_stale_gap_citations,
+    check_async_violation,
+]
+
+
+BASELINE = ROOT / ".drift-baseline.json"
+
+
+def load_baseline() -> dict[str, int]:
+    if not BASELINE.exists():
+        return {}
+    try:
+        return json.loads(BASELINE.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def main() -> int:
+    # Windows consoles default to cp1252 and choke on the arrows/box-drawing
+    # that live throughout these docs. Force UTF-8 rather than degrade the report.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
+
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--quiet", action="store_true", help="exit code only")
+    ap.add_argument(
+        "--accept",
+        action="store_true",
+        help="record current counts as the accepted baseline (only ever to LOWER it)",
+    )
+    args = ap.parse_args()
+
+    results = [fn() for fn in CHECKS]
+    counts = {r.name: len(r.findings) for r in results}
+    total = sum(counts.values())
+    base = load_baseline()
+
+    if args.accept:
+        BASELINE.write_text(json.dumps(counts, indent=2) + "\n", encoding="utf-8")
+        print(f"Baseline recorded: {total} known finding(s) in {BASELINE.name}")
+        return 0
+
+    # A check that always fails is a check everyone learns to skip. So we gate on
+    # REGRESSION, not on absolute zero: known debt is recorded in docs/GAPS.md and
+    # in the baseline; adding NEW drift is what fails a commit.
+    regressions = {
+        name: (counts[name], base.get(name, 0))
+        for name in counts
+        if counts[name] > base.get(name, 0)
+    }
+
+    if args.quiet:
+        return 1 if regressions else 0
+
+    print("\nPropVista drift check\n" + "=" * 60)
+    for r in results:
+        known = base.get(r.name, 0)
+        now = len(r.findings)
+        if now > known:
+            mark, note = "FAIL", f"  <-- REGRESSION (was {known})"
+        elif now:
+            mark, note = "debt", f"  (known, tracked in docs/GAPS.md)"
+        else:
+            mark, note = "ok  ", ""
+        print(f"\n[{mark}] {r.name}  ({now}){note}")
+        if now > known:
+            print(f"       why: {r.incident}")
+            for f in r.findings[:20]:
+                print(f.render())
+            if now > 20:
+                print(f"      … and {now - 20} more")
+
+    print("\n" + "=" * 60)
+    if regressions:
+        print(f"NEW drift introduced in: {', '.join(regressions)}")
+        print("Fix it, or if the finding is wrong, fix the check.")
+        print("See docs/OWNERSHIP.md for who owns what.\n")
+        return 1
+    if total:
+        print(f"No new drift. {total} known finding(s) tracked in docs/GAPS.md.\n")
+    else:
+        print("Clean. No forked truth.\n")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
