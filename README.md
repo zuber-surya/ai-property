@@ -48,7 +48,7 @@ git config core.hooksPath .githooks
 | Layer | Choice |
 |---|---|
 | Backend | Python + FastAPI (async), SQLAlchemy + Alembic — `backend/` |
-| Frontends | Two React (Vite + TS) apps — `public-site/` and `admin-portal/` |
+| Frontend | One React (Vite + TS) app — `frontend/`, route-based (`/` public, `/admin/*` CRM, lazy-loaded) |
 | Data | Supabase Postgres + `pgvector`. SQLAlchemy talks to Postgres directly; the Supabase client is used **only** for Auth and Storage |
 | LLM | Anthropic Claude via **Amazon Bedrock**. Embeddings: Titan Text Embeddings V2 (1024-dim) |
 | Architecture | Modular monolith. AI features are internal modules with clean interfaces |
@@ -79,7 +79,7 @@ pytest                             # test
 ruff check . && black .            # lint + format
 alembic upgrade head               # migrate
 
-# public-site/ and admin-portal/
+# frontend/ (one app: / public, /admin CRM)
 npm run dev / build / test / lint
 ```
 

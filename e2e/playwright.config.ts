@@ -19,7 +19,7 @@ export default defineConfig({
   },
   webServer: {
     command: 'npm run dev',
-    cwd: '../admin-portal',
+    cwd: '../frontend',
     url: 'http://127.0.0.1:5173',
     reuseExistingServer: true,
     timeout: 60_000,

@@ -104,7 +104,10 @@
   white-space: nowrap;
 }
 
-/* Status chips — pale fill + dark text. ALWAYS carry a text label. */
+/* Colour modifiers. Apply ALONGSIDE the base `.chip` in markup:
+     <span class="chip chip-info">Contacted</span>
+   NOTE: plain global CSS, so these set colour DIRECTLY — `composes:` is a
+   CSS-Modules-only feature and is silently inert here. Do not use it. */
 .chip-neutral { background: var(--neutral-container); color: var(--on-neutral-container); }
 .chip-info    { background: var(--info-container);    color: var(--on-info-container); }
 .chip-success { background: var(--success-container); color: var(--on-success-container); }
@@ -112,22 +115,23 @@
 .chip-error   { background: var(--error-container);   color: var(--on-error-container); }
 .chip-terminal{ background: var(--inverse-surface);   color: var(--inverse-on-surface); }
 
-/* Property status (DESIGN.md → Canonical status mappings) */
-.chip-status-draft    { composes: chip chip-neutral; }
-.chip-status-pending  { composes: chip chip-warning; }
-.chip-status-published{ composes: chip chip-success; }
-.chip-status-onhold   { composes: chip chip-info; }
-.chip-status-rejected { composes: chip chip-error; }
-.chip-status-sold     { composes: chip chip-terminal; }
+/* Semantic aliases — self-contained (no composes). Apply with `.chip`.
+   Property status → DESIGN.md Canonical status mappings. */
+.chip-status-draft    { background: var(--neutral-container); color: var(--on-neutral-container); }
+.chip-status-pending  { background: var(--warning-container); color: var(--on-warning-container); }
+.chip-status-published{ background: var(--success-container); color: var(--on-success-container); }
+.chip-status-onhold   { background: var(--info-container);    color: var(--on-info-container); }
+.chip-status-rejected { background: var(--error-container);   color: var(--on-error-container); }
+.chip-status-sold     { background: var(--inverse-surface);   color: var(--inverse-on-surface); }
 
 /* Lead stage. The three in-progress stages SHARE info (ADR-0018) — the
    text label distinguishes them. Do not invent three blues. */
-.chip-stage-new         { composes: chip chip-neutral; }
-.chip-stage-contacted   { composes: chip chip-info; }
-.chip-stage-visit       { composes: chip chip-info; }
-.chip-stage-negotiation { composes: chip chip-info; }
-.chip-stage-won         { composes: chip chip-success; }
-.chip-stage-lost        { composes: chip chip-neutral; opacity: 0.7; }
+.chip-stage-new         { background: var(--neutral-container); color: var(--on-neutral-container); }
+.chip-stage-contacted   { background: var(--info-container);    color: var(--on-info-container); }
+.chip-stage-visit       { background: var(--info-container);    color: var(--on-info-container); }
+.chip-stage-negotiation { background: var(--info-container);    color: var(--on-info-container); }
+.chip-stage-won         { background: var(--success-container); color: var(--on-success-container); }
+.chip-stage-lost        { background: var(--neutral-container); color: var(--on-neutral-container); opacity: 0.7; }
 
 /* Lead source. tertiary marks AI-DERIVED sources ONLY (ADR-0007). */
 .chip-source-ai    { background: var(--tertiary-fixed); color: var(--tertiary); }

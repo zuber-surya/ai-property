@@ -276,6 +276,26 @@ It is tempting to pixel-diff each page against `docs/stitch_design/<screen>/scre
 
 ---
 
+## ADR-0020 — One route-based frontend, superseding the two-app split
+
+**Supersedes** the "two separate React apps" decision in `02-architecture.md` §5.1.
+
+**Context.** The original architecture ran `public-site/` and `admin-portal/` as two independent React apps. The stated rationale — different audiences, independent deploy cadences, and (post-MVP) tenant branding on the public side only — was real but light, and by 2026-07-15 two of its three legs had weakened: branding is deferred (ADR-0010), and at MVP scale independent deploy cadences buy little against the daily cost of maintaining two apps, two build configs, two token outputs, and two of everything.
+
+**Decision.** **One `frontend/` app, route-based.** `/` and the customer routes are the public surface; `/admin/*` is the CRM. One build, one deploy, one design-token output, one API client.
+
+**The risk this reopens, stated plainly.** The two-app split made one thing true *by construction*: admin code could never be in the JavaScript bundle an anonymous buyer downloads. A single app breaks that guarantee.
+
+**Mitigation (mandatory, not optional).** The entire `/admin/*` route tree is **lazy-loaded** via `React.lazy` + `Suspense`, so it compiles to a separate chunk that a public visitor never fetches. Enforced by convention and visible in the bundle analysis; a future check could assert no admin module is reachable from the public entry chunk.
+
+**What this mitigation is NOT.** It is a *bundle-exposure and performance* measure, not a security control. **The security boundary is and always was server-side** — `require_role` on every admin endpoint, RLS on every tenant table (ADR-0003). The frontend hiding a screen was never a control (`08-auth-roles-spec.md` §5). So the accepted risk is narrow: *if* admin code leaks into the public chunk, an attacker learns what the admin UI looks like and which endpoints it calls — endpoints that will still return 403. No data is exposed by the frontend; data is protected at the server.
+
+**Consequences.** Half the frontend tooling disappears. The auth/tenant context now handles both modes in one provider (anonymous `X-Session-Id` for public, JWT for admin), switching by route. The customer portal being "an authenticated view of the same surface" becomes literally true rather than an aspiration. We give up the by-construction bundle isolation, and take on the standing obligation to keep `/admin/*` lazy — the day someone eager-imports an admin route, the mitigation is silently gone.
+
+**Status:** Accepted, with a standing obligation (keep `/admin/*` lazy).
+
+---
+
 ## Decisions still open
 
 These are not ADRs yet because nobody has decided. They live in `GAPS.md`:

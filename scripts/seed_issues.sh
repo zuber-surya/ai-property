@@ -173,23 +173,17 @@ issue "S0.1" "Scaffold backend/" "sprint-0" \
 
 **Acceptance:** \`/health\` → 200; ruff + black clean."
 
-issue "S0.2" "Scaffold public-site/" "sprint-0" \
-  "feature/sprint0-public-site-scaffold" "\`02-architecture.md\` §5.2 · \`.claude/rules/frontend.md\`" "-" \
-"- [ ] Vite + React + TS, **strict mode**, no unjustified \`any\`
-- [ ] \`@vitejs/plugin-react\` — ⚠️ **\`@vitejs/plugin-tsx\` is not a real package**
-- [ ] \`pages/\`, \`components/\`, \`hooks/\`, \`api/\`, \`context/\`
-- [ ] eslint + prettier; vitest + RTL, one smoke test
-- [ ] Design tokens from \`DESIGN.md\` → CSS vars
-- [ ] ⚠️ **That token file is a second sanctioned fork — add it to \`check_drift.py\`'s watch list.** An unwatched fork is how this project got two design systems
+issue "S0.2" "Scaffold frontend/ (one route-based app)" "sprint-0" \
+  "feature/sprint0-frontend-scaffold" "\`02-architecture.md\` §5.2 · \`.claude/rules/frontend.md\` · ADR-0020" "-" \
+"- [ ] **One app** (ADR-0020): \`/\` + customer routes public; \`/admin/*\` the CRM
+- [ ] ⚠️ **\`/admin/*\` MUST be lazy-loaded** — a separate chunk a public visitor never downloads
+- [ ] Vite + React + TS, **strict mode**; \`@vitejs/plugin-react\` (\`plugin-tsx\` is not real)
+- [ ] \`routes/public/\` + \`routes/admin/\` + shared \`components/ hooks/ api/ context/\`
+- [ ] eslint + prettier; vitest + RTL; Playwright smoke for BOTH routes
+- [ ] Design tokens generated from \`DESIGN.md\` (gen_tokens.py) — watched by check_drift
+- [ ] **Not tenant-branded** (ADR-0010)
 
-**Acceptance:** dev / build / lint / test all pass."
-
-issue "S0.3" "Scaffold admin-portal/" "sprint-0" \
-  "feature/sprint0-admin-portal-scaffold" "\`02-architecture.md\` §5.2" "-" \
-"- [ ] Same shape as S0.2
-- [ ] **Not tenant-branded** (ADR-0010) — carries the PropVista brand
-
-**Acceptance:** dev / build / lint / test all pass."
+**Acceptance:** dev / build / lint / test pass; the build emits a SEPARATE admin chunk."
 
 issue "S0.4" "Database + Alembic + the RLS migration helper" "sprint-0,security" \
   "feature/sprint0-db-alembic" "\`03-database-schema.md\` · \`.claude/rules/database.md\`" "-" \

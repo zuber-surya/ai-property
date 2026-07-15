@@ -1,0 +1,25 @@
+# Local dev database. Disposable — `docker compose down -v` wipes it.
+#
+# This is NOT the production database and has nothing to do with gap I1 (the
+# AWS/Bedrock region). Local dev just needs a Postgres with pgvector; production
+# is a separate, later decision.
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: propvista-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: propvista
+    ports:
+      - "5432:5432"
+    volumes:
+      - propvista-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d propvista"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  propvista-pgdata:

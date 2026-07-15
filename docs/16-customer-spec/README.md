@@ -3,7 +3,7 @@
 > **Doc 16 of the PropVista CRM documentation set.** The full, page-by-page and feature-by-feature specification for the **customer-facing surface** — the public site (anonymous visitors) and the customer portal (registered customers). This is the implementation-level companion to `01-prd.md` (Modules 1–7): where the PRD says *what* must exist, this set says *what each page contains, how it behaves, which endpoints it calls, and which tables it touches*.
 >
 > **Status:** Draft v1.0 · **Last updated:** July 2026
-> Implemented in: `public-site/` (see `02-architecture.md` §5.2)
+> Implemented in: `frontend/` — the public routes (`src/routes/public/`). See `02-architecture.md` §5.2, ADR-0020.
 > Depends on: `01-prd.md`, `03-database-schema.md`, `04-api-spec.md`, `05`/`06`/`07-ai-*.md`, `08-auth-roles-spec.md`, `13-ui-ux-flows.md`, `14-screen-workflows.md`
 > Admin counterpart: `docs/17-admin-spec/`
 

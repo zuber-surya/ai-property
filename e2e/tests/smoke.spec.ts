@@ -9,7 +9,7 @@ import { expect, test } from '@playwright/test';
  * actually mounted.
  */
 test('the admin portal renders in a real browser', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/admin');
   await expect(page.getByRole('heading', { name: 'PropVista Admin' })).toBeVisible();
 });
 
@@ -25,7 +25,10 @@ test('the admin portal renders in a real browser', async ({ page }) => {
  * className would pass even if the token never reached the stylesheet.
  */
 test('New and Contacted are visibly different colours (gap D1)', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/admin');
+  // /admin is lazy-loaded (ADR-0020) — wait for the chunk to mount before
+  // reading computed styles, or we sample the Suspense fallback.
+  await expect(page.getByText('Contacted', { exact: true })).toBeVisible();
 
   const bg = (label: string) =>
     page
@@ -36,4 +39,15 @@ test('New and Contacted are visibly different colours (gap D1)', async ({ page }
 
   expect(neutral).not.toBe('rgba(0, 0, 0, 0)'); // the token actually landed
   expect(info).not.toBe(neutral); // ← the entire point of D1
+});
+
+
+/**
+ * ADR-0020: one app, two surfaces. The public root must render its own surface,
+ * NOT the admin one.
+ */
+test('the public surface renders at /', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: 'PropVista' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'PropVista Admin' })).toHaveCount(0);
 });

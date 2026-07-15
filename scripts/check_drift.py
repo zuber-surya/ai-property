@@ -449,7 +449,7 @@ def check_false_gaps() -> Check:
 # they carry a banner saying so.
 # ---------------------------------------------------------------------------
 
-FRONTEND_APPS = ["admin-portal", "public-site"]
+FRONTEND_APPS = ["frontend"]  # one route-based app (ADR-0020)
 GENERATED_MARK = "GENERATED FROM docs/DESIGN.md"
 SRC_SUFFIXES = {".tsx", ".ts", ".jsx", ".js", ".css", ".scss"}
 

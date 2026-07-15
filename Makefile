@@ -1,17 +1,17 @@
 # PropVista — one-command local dev.
 #
 # Sprint 0's Definition of Done (15-development-plan.md §4) is literally:
-#   "a developer can clone the repo, run all three apps locally, and hit a real
+#   "a developer can clone the repo, run the apps locally, and hit a real
 #    (empty) staging deployment."
 #
 # That must be a command, not a wiki page.
 
-.PHONY: help setup dev backend admin site test check tokens verify clean
+.PHONY: help setup dev backend web test check tokens verify clean
 
 help:
 	@echo ""
-	@echo "  make setup    install everything (backend venv + both frontends)"
-	@echo "  make dev      run all three apps"
+	@echo "  make setup    install everything (backend venv + frontend)"
+	@echo "  make dev      run backend + frontend"
 	@echo "  make test     backend pytest + frontend vitest"
 	@echo "  make check    drift gate + lint + types  (run before every commit)"
 	@echo "  make tokens   regenerate design tokens FROM docs/DESIGN.md"
@@ -24,9 +24,8 @@ setup:
 	cd backend && uv venv --python 3.12 .venv && uv pip install -r requirements-dev.txt
 	@echo ">> design tokens (generated FROM docs/DESIGN.md — never hand-edited)"
 	python scripts/gen_tokens.py
-	@echo ">> frontends"
-	cd admin-portal && npm install --no-fund --no-audit
-	cd public-site && npm install --no-fund --no-audit
+	@echo ">> frontend (one app: / public, /admin CRM — ADR-0020)"
+	cd frontend && npm install --no-fund --no-audit
 	@echo ">> git hooks (the drift gate)"
 	git config core.hooksPath .githooks
 	@echo ""
@@ -36,17 +35,13 @@ setup:
 backend:
 	cd backend && ./.venv/Scripts/python.exe -m uvicorn app.main:app --reload --port 8000
 
-admin:
-	cd admin-portal && npm run dev
-
-site:
-	cd public-site && npm run dev
+web:
+	cd frontend && npm run dev
 
 dev:
-	@echo "Run these in three terminals:"
+	@echo "Run these in two terminals:"
 	@echo "  make backend    → http://localhost:8000/health"
-	@echo "  make admin      → the admin portal"
-	@echo "  make site       → the public site"
+	@echo "  make web        → / (public) and /admin (CRM), one app"
 
 # --- quality --------------------------------------------------------------
 tokens:
@@ -54,8 +49,7 @@ tokens:
 
 test:
 	cd backend && ./.venv/Scripts/python.exe -m pytest -q
-	cd admin-portal && npm run test
-	cd public-site && npm run test
+	cd frontend && npm run test
 
 check:
 	@echo ">> drift gate"
@@ -65,8 +59,7 @@ check:
 	@echo ">> backend lint + format"
 	cd backend && ./.venv/Scripts/python.exe -m ruff check . && ./.venv/Scripts/python.exe -m black --check .
 	@echo ">> frontend types"
-	cd admin-portal && npx tsc --noEmit
-	cd public-site && npx tsc --noEmit
+	cd frontend && node node_modules/typescript/bin/tsc --noEmit
 
 verify:
 	@echo "Load the verify skill: /verify"
@@ -74,4 +67,4 @@ verify:
 	@echo "Launch the app, drive the flow, screenshot, and LOOK at it."
 
 clean:
-	rm -rf backend/.venv admin-portal/node_modules public-site/node_modules
+	rm -rf backend/.venv frontend/node_modules

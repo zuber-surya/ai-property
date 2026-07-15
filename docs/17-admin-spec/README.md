@@ -3,7 +3,7 @@
 > **Doc 17 of the PropVista CRM documentation set.** The full, page-by-page specification for the **admin portal** — the CRM used by agents, tenant admins, and the platform super admin. Implementation-level companion to `01-prd.md` (Modules 8–16).
 >
 > **Status:** Draft v1.0 · **Last updated:** July 2026
-> Implemented in: `admin-portal/` (see `02-architecture.md` §5.2)
+> Implemented in: `frontend/` — the admin routes (`src/routes/admin/`, lazy-loaded). See `02-architecture.md` §5.2, ADR-0020.
 > Depends on: `01-prd.md`, `03-database-schema.md`, `04-api-spec.md`, `08-auth-roles-spec.md`, `13-ui-ux-flows.md`, `14-screen-workflows.md`
 > Customer counterpart: `docs/16-customer-spec/`
 
