@@ -21,11 +21,19 @@ def enable_tenant_rls(table: str) -> None:
     op.execute(f"ALTER TABLE {table} FORCE ROW LEVEL SECURITY;")
     # FORCE so the table owner is subject to the policy too — otherwise the
     # migration/admin role would silently bypass isolation.
+    # `nullif(..., '')` matters: when the session variable is unset,
+    # current_setting(..., true) returns '' — and ''::uuid ERRORS. Coercing the
+    # empty string to NULL makes an unset tenant match NO rows (fail closed,
+    # cleanly) instead of throwing. Proven by test_no_tenant_context_sees_nothing.
     op.execute(
         f"""
         CREATE POLICY tenant_isolation ON {table}
-            USING (tenant_id = current_setting('app.current_tenant_id', true)::uuid)
-            WITH CHECK (tenant_id = current_setting('app.current_tenant_id', true)::uuid);
+            USING (
+                tenant_id = nullif(current_setting('app.current_tenant_id', true), '')::uuid
+            )
+            WITH CHECK (
+                tenant_id = nullif(current_setting('app.current_tenant_id', true), '')::uuid
+            );
         """
     )
 

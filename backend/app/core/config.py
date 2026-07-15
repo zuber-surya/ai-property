@@ -9,18 +9,19 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     """All configuration. Secrets come from the environment — never hardcoded."""
 
-    model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", extra="ignore"
-    )
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     environment: Literal["local", "staging", "production"] = "local"
     log_level: str = "INFO"
 
     # Database — SQLAlchemy talks to Postgres directly (ADR-0005).
     # asyncpg, not psycopg2: a sync driver blocks the event loop on every query.
-    supabase_postgres_url: str = (
-        "postgresql+asyncpg://postgres:password@localhost:5432/propvista"
-    )
+    # Migrations + admin tooling connect as the superuser — bypasses RLS by
+    # design (ADR-0005). Never use this on a request path serving a tenant.
+    supabase_postgres_url: str = "postgresql+asyncpg://postgres:password@localhost:5432/propvista"
+    # The REQUEST PATH connects as this non-superuser role, so RLS applies.
+    # This is the connection every tenant request uses.
+    app_database_url: str = "postgresql+asyncpg://app_user:app_password@localhost:5432/propvista"
 
     # Supabase — Auth and Storage ONLY. Never data access.
     supabase_url: str = ""

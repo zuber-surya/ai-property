@@ -2,7 +2,8 @@
 
 from fastapi import APIRouter
 
-api_router = APIRouter()
+from app.api.v1.properties import admin_router, public_router
 
-# Routers are added here as each module lands (properties, leads, auth, ai/...).
-# Keep this file boring: it wires, it does not decide.
+api_router = APIRouter()
+api_router.include_router(public_router)
+api_router.include_router(admin_router)

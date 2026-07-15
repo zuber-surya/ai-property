@@ -1,24 +1,18 @@
 /**
- * The admin CRM, mounted under /admin/* and reached only through App.tsx's lazy
- * boundary. NOT tenant-branded (ADR-0010) — carries the PropVista brand.
- *
- * Its own nested <Routes> live here so the admin route tree stays inside this
- * lazy chunk.
+ * The admin CRM under /admin/*, reached only through App.tsx's lazy boundary,
+ * so the whole tree stays in a separate chunk (ADR-0020). NOT tenant-branded.
  */
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
+import Properties from './Properties';
 
-function AdminDashboard() {
+function Dashboard() {
   return (
     <main className="min-h-screen p-10">
       <h1 className="text-headline-lg text-on-surface">PropVista Admin</h1>
-      <p className="mt-3 text-body-md text-on-surface-variant">
-        Admin portal. Lazy-loaded chunk · Sprint 0.
-      </p>
-      <div className="mt-6 flex gap-2">
-        <span className="chip chip-status-published inline-block">Published</span>
-        <span className="chip chip-stage-contacted inline-block">Contacted</span>
-        <span className="chip chip-stage-new inline-block">New</span>
-      </div>
+      <p className="mt-3 text-body-md text-on-surface-variant">Lazy-loaded chunk.</p>
+      <Link to="/admin/properties" className="focus-ring mt-6 inline-block text-primary underline">
+        Manage properties →
+      </Link>
     </main>
   );
 }
@@ -26,8 +20,9 @@ function AdminDashboard() {
 export default function AdminApp() {
   return (
     <Routes>
-      <Route index element={<AdminDashboard />} />
-      <Route path="dashboard" element={<AdminDashboard />} />
+      <Route index element={<Dashboard />} />
+      <Route path="dashboard" element={<Dashboard />} />
+      <Route path="properties" element={<Properties />} />
     </Routes>
   );
 }

@@ -98,9 +98,7 @@ def register_exception_handlers(app: FastAPI) -> None:
         return _envelope(exc.code, exc.message, exc.status_code)
 
     @app.exception_handler(RequestValidationError)
-    async def validation_handler(
-        _: Request, exc: RequestValidationError
-    ) -> JSONResponse:
+    async def validation_handler(_: Request, exc: RequestValidationError) -> JSONResponse:
         return _envelope(
             "VALIDATION_ERROR",
             "The request could not be validated.",
@@ -122,9 +120,7 @@ def register_exception_handlers(app: FastAPI) -> None:
     async def unhandled_handler(request: Request, exc: Exception) -> JSONResponse:
         # The detail goes to the log. The client gets nothing that would help
         # an attacker — no driver name, no SQL, no stack frame.
-        logger.exception(
-            "unhandled_exception", extra={"path": request.url.path, "error": str(exc)}
-        )
+        logger.exception("unhandled_exception", extra={"path": request.url.path, "error": str(exc)})
         return _envelope(
             "INTERNAL_ERROR",
             "Something went wrong. Please try again.",

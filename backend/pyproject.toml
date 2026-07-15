@@ -1,9 +1,16 @@
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+# Alembic migrations are generated artifacts with long inline SQL — don't lint
+# their line length. The RLS policy SQL in particular reads better unwrapped.
+extend-exclude = ["alembic/versions"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+# B008: FastAPI REQUIRES `Depends()`/`Query()` in argument defaults — it is the
+# framework's dependency-injection mechanism, not a mutable-default bug. This is
+# the documented exception, not a weakening of the check.
+ignore = ["B008"]
 
 [tool.black]
 line-length = 100
