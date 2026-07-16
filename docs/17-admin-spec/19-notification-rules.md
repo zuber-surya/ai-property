@@ -65,7 +65,7 @@ Note the distinction from the customer side: this configures notifications to **
 |---|---|
 | Rule row | `notification_rules` (`event_type`, `channel`, `recipients` jsonb, `is_active`) |
 | Event dropdown | See §4.1 — **the event catalogue is undefined** |
-| Channel | Email / SMS / In-app. **Email and SMS need a provider that hasn't been chosen** |
+| Channel | Email / SMS / In-app. **Email and SMS delivery providers have been chosen** (SendGrid for email, Twilio for SMS per 02-architecture.md §3 and 03-database-schema.md §3.21) |
 | Recipients | The assigned agent · specific users · a role. `recipients` is a jsonb of "user IDs or role targets" |
 
 ---

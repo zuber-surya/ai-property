@@ -396,27 +396,86 @@ def check_async_violation() -> Check:
 # agreement. So the resurrection of these specific claims is now a hard failure.
 # ---------------------------------------------------------------------------
 
-FALSE_GAPS = [
-    (
-        re.compile(
-            r"no (job )?scheduler|scheduler (does not|doesn't) exist"
-            r"|BackgroundTasks cannot|cannot fire on a timer"
-            r"|nothing fires on a schedule",
-            re.IGNORECASE,
-        ),
-        "There IS a scheduler: 02-architecture.md §4.4 — pg_cron + a jobs worker, "
-        "decided 2026-07-13. mark_stale_leads() is listed in it. See GAPS.md §5A.",
-    ),
-    (
-        re.compile(
-            r"no email/?SMS provider|email/?SMS provider (is )?(not )?chosen"
-            r"|no (email|SMS) provider",
-            re.IGNORECASE,
-        ),
-        "The providers ARE chosen: 02-architecture.md §3 — SendGrid (email), "
-        "Twilio (SMS), decided 2026-07-13. See GAPS.md §5A.",
-    ),
-]
+# --- REBUILT 2026-07-16. It was reporting 0 with EIGHT live resurrections. ---
+#
+# Including one in 00-project-overview.md — the doc CLAUDE.md says to read
+# first — sitting in the table row directly BELOW a correctly-buried G9a. One
+# was swept, the other was not, and the gate said nothing. Two bugs:
+#
+#   1. It reused GRAVESTONE as its burial marker. GRAVESTONE matches \bWAS\b
+#      case-insensitively, and 108 lines across 35 files contain "was". Any
+#      line with the commonest verb in English bought an exemption. So did an
+#      unrelated "dead toggles" (via |dead|). This check was not weak — it was
+#      close to a no-op that printed "ok".
+#
+#   2. Its patterns encoded the ORIGINAL phrasing ("no email/SMS provider").
+#      But drift does not reproduce phrasing — it paraphrases. "no provider
+#      chosen", "a provider that hasn't been chosen", "not yet chosen", "Not
+#      chosen anywhere" and "depends on chosen provider (not yet selected)"
+#      all sailed straight through a check written to catch exactly this claim.
+#
+# So it now tests the CLAIM, not the phrasing: a SUBJECT (the email/SMS
+# delivery provider) + a NEGATED CHOICE, anywhere on the line. The subject gate
+# is what keeps it honest — a maps provider, a DNS provider, an identity
+# provider, an error tracker and a PDF library are different decisions with
+# different owners, and several are legitimately still open. Flagging those
+# would teach everyone to ignore this check (devos §4).
+#
+# `--selftest` locks both bugs shut: every phrasing that escaped is a fixture.
+
+# Burying a false gap means SAYING it is false. The old check accepted any line
+# containing "was" — that is not a retraction, that is the English language.
+FALSE_GAP_BURIED = re.compile(
+    r"~~|✅|\bfalse\b|\bnever\s+(?:existed|was|were|real|a\s+gap|true)\b"
+    r"|\bretracted\b|\bstale\s+summary\b|\bresurrection\b|§5A",
+    re.IGNORECASE,
+)
+
+# The email/SMS DELIVERY provider — and nothing else that calls itself one.
+DELIVERY_SUBJECT = re.compile(r"\b(?:e-?mail|sms|transactional|sendgrid|twilio)\b", re.I)
+
+# "no provider", "no email/SMS provider", "not chosen", "not yet selected",
+# "hasn't been chosen". A choice, negated.
+NEGATED_CHOICE = re.compile(
+    r"\bno\s+(?:\w+[-/\s]){0,3}provider\b"
+    r"|\b(?:not|never)\s+(?:yet\s+)?(?:been\s+)?(?:chosen|selected|configured|decided|picked)\b"
+    r"|\b(?:has|have|is|are|was|were|do|does)n['’]t\s+(?:yet\s+)?(?:been\s+)?"
+    r"(?:chosen|selected|configured|decided|picked)\b"
+    r"|\bunchosen\b|\bstill\s+(?:un)?decided\b",
+    re.IGNORECASE,
+)
+
+SCHEDULER_ABSENT = re.compile(
+    r"\bno\s+(?:job\s+|task\s+|cron\s+)?scheduler\b"
+    r"|\bscheduler\b[^.;|]{0,40}?(?:does\s+not|doesn['’]t|never)\s+exist"
+    r"|\bBackgroundTasks\b[^.;|]{0,30}?(?:cannot|can['’]t|is\s+unable)"
+    r"|\bcannot\s+fire\s+on\s+a\s+timer\b"
+    r"|\bnothing\s+(?:fires|runs)\s+on\s+a\s+(?:schedule|timer)\b",
+    re.IGNORECASE,
+)
+
+WHY_SCHEDULER = (
+    "There IS a scheduler: 02-architecture.md §4.4 — pg_cron + a jobs worker, "
+    "decided 2026-07-13. mark_stale_leads() is listed in it BY NAME. See GAPS.md §5A."
+)
+WHY_PROVIDER = (
+    "The providers ARE chosen: 02-architecture.md §3 / 03-database-schema.md §3.21 — "
+    "SendGrid (email), Twilio (SMS), decided 2026-07-13. See GAPS.md §5A."
+)
+
+
+def _false_gap_hits(line: str) -> list[str]:
+    """Return the reasons this line resurrects a false gap. Empty means clean."""
+    if FALSE_GAP_BURIED.search(line):
+        return []  # the line names the claim in order to retract it
+    hits = []
+    if SCHEDULER_ABSENT.search(line):
+        hits.append(WHY_SCHEDULER)
+    # The claim is "the email/SMS delivery provider is undecided" — it needs all
+    # three parts. Any one alone is an ordinary sentence about an ordinary thing.
+    if DELIVERY_SUBJECT.search(line) and "provider" in line.lower() and NEGATED_CHOICE.search(line):
+        hits.append(WHY_PROVIDER)
+    return hits
 
 
 def check_false_gaps() -> Check:
@@ -427,14 +486,57 @@ def check_false_gaps() -> Check:
     )
     for path in md_files():
         for n, line in lines_of(path):
-            # A line that names the false claim in order to bury it is a record,
-            # not a resurrection — same gravestone logic as everywhere else.
-            if GRAVESTONE.search(line) or re.search(r"false|never existed|✅|~~", line, re.I):
-                continue
-            for pattern, why in FALSE_GAPS:
-                if pattern.search(line):
-                    c.findings.append(Finding(c.name, path, n, line, why))
+            for why in _false_gap_hits(line):
+                c.findings.append(Finding(c.name, path, n, line, why))
     return c
+
+
+# Every MUST-CATCH line below is a VERBATIM line that escaped the old check and
+# sat live in the docs. Every MUST-NOT-CATCH line is a verbatim line that must
+# keep passing: a different provider decision, or an honest retraction. Both
+# halves matter. A check that misses the claim is useless; a check that flags
+# the maps provider gets switched off, and then it is worse than useless.
+FALSE_GAP_MUST_CATCH = [
+    "| **No email/SMS provider chosen.** In-app notifications now work; email and SMS remain dead toggles. Recommend shipping **in-app only** for MVP rather than switches that do nothing. | `10-deployment-devops.md` | FR7.2, FR15.2 |",
+    "| A12 | **No email/SMS provider chosen.** In-app notifications now work; email/SMS remain dead toggles. | [`19`](19-notification-rules.md) | `10-deployment-devops.md` |",
+    "| Channel | Email / SMS / In-app. **Email and SMS need a provider that hasn't been chosen** |",
+    "| Preferences grid | Event type × channel (FR7.2). **Email/SMS require a delivery provider that is not yet chosen** — see §11 |",
+    "- **Email deliverability:** a real transactional provider (SES, etc.) is required. Not chosen anywhere in `10-deployment-devops.md`.",
+    "- [ ] Whether the optional SMS/email confirmation (FR6.3) ships at MVP. It requires a transactional email/SMS provider, which is not chosen in `10-deployment-devops.md`.",
+    "- SMS/email confirmation (FR6.3) depends on chosen provider (not yet selected).",
+    "- [ ] **No email/SMS provider is chosen** in `10-deployment-devops.md`. Without one, \"email/SMS\" in FR7.2 is aspirational and only the in-app channel can ship, rather than shipping dead toggles.",
+    "No job scheduler exists, so FR10.2b cannot be built.",
+    "BackgroundTasks cannot fire on a timer.",
+]
+
+FALSE_GAP_MUST_NOT_CATCH = [
+    # Different provider decisions. Some are genuinely open — that is not this check's business.
+    "- Map provider not chosen (cost/API‑key implications).",
+    '**"Nearby landmarks" (FR5.1) has no data source.** No column, no endpoint, and no maps-provider integration is specified.',
+    "| **No error tracking** chosen (Sentry suggested, unconfirmed) | You find out from a user |",
+    "**PDF generation** needs a library and, for charts, a rendering step. Not chosen in `10-deployment-devops.md`.",
+    "**Supabase Auth as-is** as the identity provider for all users — no second auth system.",
+    # Real statements about the providers that WERE chosen.
+    "a bulk import produces batched notifications, not 200 per recipient; a provider outage does not prevent lead capture.",
+    "| `jobs` queue → SendGrid / Twilio | Dispatch runs in the jobs worker, never inline — a provider outage must not fail lead creation |",
+    # Honest retractions. These name the claim in order to kill it.
+    '| ~~**G9b**~~ | *"No email/SMS provider chosen."* | **False.** `02-architecture.md` §3 names SendGrid + Twilio. |',
+    "| ~~No job scheduler~~ ✅ **RESOLVED — and it never was a gap.** `02-architecture.md` §4.4 specifies pg_cron. |",
+    '`CLAUDE.md` carried a stale summary — *"no job scheduler, no email/SMS provider"* — long after `02-architecture.md` decided both.',
+    'a `false-gap` check that fails on any resurrection of "no scheduler" or "no email/SMS provider".',
+]
+
+
+def selftest_false_gaps() -> list[str]:
+    """Verify the false-gap check against the phrasings that already beat it once."""
+    failures = []
+    for line in FALSE_GAP_MUST_CATCH:
+        if not _false_gap_hits(line):
+            failures.append(f"MISSED (should flag): {line[:95]}")
+    for line in FALSE_GAP_MUST_NOT_CATCH:
+        if _false_gap_hits(line):
+            failures.append(f"FALSE POSITIVE (should pass): {line[:95]}")
+    return failures
 
 
 # ---------------------------------------------------------------------------
@@ -552,7 +654,28 @@ def main() -> int:
         action="store_true",
         help="record current counts as the accepted baseline (only ever to LOWER it)",
     )
+    ap.add_argument(
+        "--selftest",
+        action="store_true",
+        help="run the checks against their own fixtures and exit (also runs on every report)",
+    )
     args = ap.parse_args()
+
+    # The false-gap check silently reported 0 for a sprint while eight
+    # resurrections sat live in the docs. A gate nobody tests is a gate nobody
+    # has. This runs on every invocation — it is microseconds, and the one thing
+    # worse than no check is a check that reassures you while it fails.
+    selftest_failures = selftest_false_gaps()
+    if selftest_failures:
+        print("\nSELFTEST FAILED — the false-gap check no longer catches what it must:")
+        for f in selftest_failures:
+            print(f"  {f}")
+        print("\nFix the check. Do not delete the fixture. See GAPS.md §5A.\n")
+        return 1
+    if args.selftest:
+        n = len(FALSE_GAP_MUST_CATCH) + len(FALSE_GAP_MUST_NOT_CATCH)
+        print(f"selftest ok — {n} false-gap fixtures pass")
+        return 0
 
     results = [fn() for fn in CHECKS]
     counts = {r.name: len(r.findings) for r in results}

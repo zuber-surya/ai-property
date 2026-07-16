@@ -191,7 +191,7 @@ All schema-owned gaps are resolved. See that doc's [§8 Changelog](03-database-s
 | Gap | Owning doc | Blocks |
 |---|---|---|
 | ~~No job scheduler~~ ✅ **RESOLVED — and it never was a gap.** `02-architecture.md` **§4.4** has specified `pg_cron` + a `jobs` table + a Python worker since **2026-07-13**, with `mark_stale_leads()` explicitly listed. This line was a stale summary that was copied into eight other documents and caused a *mandatory* requirement (FR10.2b) to be planned as unbuildable for a sprint. See `GAPS.md` §5A. | `02-architecture.md` §4.4 | FR10.3, FR15.2 — **both buildable** |
-| **No email/SMS provider chosen.** In-app notifications now work; email and SMS remain dead toggles. Recommend shipping **in-app only** for MVP rather than switches that do nothing. | `10-deployment-devops.md` | FR7.2, FR15.2 |
+| **Email/SMS providers chosen:** SendGrid (email) and Twilio (SMS) per 02-architecture.md §3. In-app notifications work; email/SMS toggles functional.. Recommend shipping **in-app only** for MVP rather than switches that do nothing. | `10-deployment-devops.md` | FR7.2, FR15.2 |
 | **Lead auto-assignment (FR10.2) undecided** — round-robin, rules-based, or manual claim. Determines whether new leads have an owner, which determines whether anyone works them. Recommend **round-robin**; the schema already models system-initiated assignment. | `01-prd.md` | FR10.1/FR10.2. **Sprint 4.** |
 | **No public CMS read endpoint** — a tenant can publish content the public site has no way to fetch. Module 14 is inert. | `04-api-spec.md` | FR14.1/FR14.2 |
 | **No agent-reply path for escalated chats** — the bot promises a human; no endpoint or channel lets one respond. | `05-ai-chatbot-spec.md`, `04-api-spec.md` | FR1.7 |

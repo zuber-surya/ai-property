@@ -201,7 +201,7 @@ Notes / Open Questions
 - Tenant contact info has no home in tenants table → need address/phone/email/hours columns or drop the panel.
 - Callback time slot has no storage column in leads → must add before implementing.
 - Rate‑limiting / bot protection on POST /leads currently unspecified for non‑AI public endpoints (recommend per‑IP limit + honeypot/CAPTCHA).
-- Optional SMS/email confirmation (FR6.3) depends on chosen provider (not yet selected).
+- Optional SMS/email confirmation (FR6.3) depends on chosen provider, which **has been selected** (SendGrid for email, Twilio for SMS per 02-architecture.md §3 and 03-database-schema.md §3.21).
 
 ---
 6. Auth – Register / Login (/login, /register) – 06-auth-register-login.md
@@ -666,10 +666,10 @@ SIDEBAR (every screen): a fixed left rail ~240px. PropVista logo at top, the
 STATUS CHIPS — fully rounded, pale fil, ALWAYS with
   a text label:
     Property: Draft #e2e1ec/#1a1a24 · Pending Approval #ffddb0/#2c1700 ·
-              Published #c3f0da/#00522
+              Published #c3f0da/#00522f
               Rejected #ffdad6/#93000a · On hold / Archived #e2e1ec/#1a1a24
     Lead:     New #e2e1ec/#1a1a24 · Contacted / Site visit / Negotiation
-              #e2e1ec/#1a1a24 · Won #c3f0da/#00522f · Lost #e2e1ec/#1a1a24
+              #bfe9ff/#00344a · Won #c3f0da/#00522f · Lost #e2e1ec/#1a1a24
 
 LEAD-SOURCE CHIPS — the AI-derived ones get tertiary; the rest do not:
     💬 Chatbot  #e9ddff / #571ac0   ← AI
