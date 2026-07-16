@@ -289,15 +289,111 @@ def check_mono_serif() -> Check:
 # Only gaps that are FULLY closed. G6 is deliberately absent: its column exists
 # but its endpoint does not, so citing it as open is still correct (see G8).
 # A half-closed gap in this list would train people to ignore the check.
+#
+# --- EXTENDED 2026-07-16. It knew about exactly two gaps and reported 0 while
+# G7, D1, P1, P2 and P3 were all closed and still cited as open across eight
+# files — including GAPS.md itself, which was wrong about THREE OF ITS OWN ROWS.
+#
+# That is the inverse of the §5A failure: §5A was a false claim spreading
+# outward from a stale summary; this was a true fix that never propagated back
+# INTO the register. The register being wrong is worse than a spec being wrong,
+# because the register is the thing every spec is told to trust.
+#
+# The rule this produced: when you close a gap, add it here in the same commit.
+# The check then finds the citations for you — the findings ARE the sweep list.
 CLOSED_GAPS = {
     "G1": "notifications table — added in schema v1.1 §3.20",
     "G2": "notification preferences — added in schema v1.1 §3.21",
+    "G7": "agent-reply path for escalated chats — closed 2026-07-14, 04-api-spec.md §12A",
+    "D1": "the `info` status colour — closed 2026-07-14, DESIGN.md + ADR-0018",
+    "P1": "lead auto-assignment — DECIDED 2026-07-13: manual claim, 01-prd.md FR10.2",
+    "P2": "01-prd.md FR10.1 — already corrected; stages are a fixed set",
+    "P3": "04-api-spec.md §14 — already corrected; reports are stateless",
 }
+# --- REBUILT 2026-07-16, the moment CLOSED_GAPS grew past G1/G2 -------------
+#
+# The old pattern matched the bare words `gap` and `open`. That is TAUTOLOGICAL:
+# a line citing a gap ID says "gap" almost by definition — "*(closes gap G7)*"
+# was flagged as claiming G7 was open. It survived only because CLOSED_GAPS held
+# two IDs that happened never to appear in prose. Adding five real IDs surfaced
+# 9 findings and ALL 9 WERE FALSE — including the section that closes G7 and the
+# DESIGN.md paragraph that closes D1.
+#
+# Shipping that would have been worse than no check: 9 false positives teaches
+# everyone to skim past the one true finding (devos §4 — "a false positive that
+# gets ignored trains everyone to ignore the true ones too").
+#
+# So it now matches a PRESENT-TENSE CLAIM OF BLOCKAGE, not the vocabulary of
+# gaps. "still open" blocks; "sat open for three days" is history. "does not
+# exist" blocks; "closes gap G7" is a closure.
 BLOCKING_WORD = re.compile(
-    r"\b(blocking|blocked|does not exist|doesn't exist|no .{0,20}table|missing|gap|open|not currently possible|nowhere to be stored)\b",
+    r"\bis\s+(?:still\s+)?blocking\b|\bstill\s+blocking\b|\bblocks\b"
+    r"|\bblocked\s+by\b|\bis\s+blocked\b|\bremains?\s+blocked\b"
+    r"|\bstill\s+(?:an?\s+)?(?:open|missing|absent|blocking)\b"
+    r"|\bstill\s+(?:calls?|lists?|promises?)\s+(?:it\s+)?(?:open|blocking)\b"
+    r"|\bopen\s+gap\b|\bblocking\s+(?:schema\s+)?gap\b"
+    r"|\bdoes\s+not\s+exist\b|\bdoesn['’]t\s+exist\b|\bdon['’]t\s+exist\b"
+    r"|\bnot\s+currently\s+possible\b|\bnowhere\s+to\s+be\s+stored\b"
+    r"|\bno\s+\w{0,20}\s?table\b"
+    r"|\bunbuildable\b|\bcannot\s+be\s+built\b|\bhas\s+no\s+data\s+source\b",
     re.IGNORECASE,
 )
-CLOSED_MARKER = re.compile(r"closed|✅|resolved|added in|fixed|swept", re.IGNORECASE)
+
+# A line that names a closed gap in order to RECORD its closure, or to tell the
+# story of when it was open, is a gravestone. Same principle as the
+# dead-design-system and false-gap burial gates.
+CLOSED_MARKER = re.compile(
+    r"clos(?:ed|es|ing|ure)|✅|~~|resolved|added\s+in|fixed|swept|no\s+longer"
+    r"|until\s+\d{4}-\d{2}-\d{2}|\bwas\s+never\b|\bnever\s+was\b|\bdecided\b"
+    r"|\bcorrected\b|\bnow\s+(?:exists?|reads?)\b|\bhistor(?:y|ical)\b",
+    re.IGNORECASE,
+)
+
+# Every fixture below is a VERBATIM line from the repo. The MUST_NOT_CATCH half
+# is the 9 false positives this check produced the first time it was extended —
+# locked shut so the next person to add a gap ID finds out immediately.
+STALE_GAP_MUST_CATCH = [
+    "| G1 | `GET /portal/notifications` was specified with nothing to back it. The notifications table does not exist. |",
+    "This is a blocking schema gap: `leads` has no `user_id` (G1).",
+    "D1 is still open — three of the five pipeline stages have no honest colour.",
+    "FR10.2b is unbuildable: G9a means nothing fires on a timer.",
+    "G2 — notification preferences have nowhere to be stored.",
+]
+
+STALE_GAP_MUST_NOT_CATCH = [
+    "## 12A. Admin — Live Chat Handoff *(closes gap G7)*",
+    "## 10A. The Handoff State Machine *(closes gap G7)*",
+    "| **Status chips** | `New` and `Contacted` must be **visibly different colours** — neutral vs. info. If they look the same, the `info` token didn't land (gap D1). |",
+    "> **SCREEN 10 (Agent Chat Console) is new.** It closes gap G7 — until 2026-07-14 the bot could escalate and no human could reply.",
+    "Then the ramp shipped without an in-progress color, and **three of the five lead stages had to render `neutral`** — a placeholder, not an answer. `info` closes that (gap **D1**).",
+    "| `/admin/chat` | **Live agent chat console** (handoff from chatbot) | `22-agent-chat-console.md` | agent, admin | MVP (Gap G7) |",
+    "Until now it didn't exist, and neither did the endpoints. `POST /ai/chat/escalate` handed a conversation to a human who had no way to answer.",
+    "> This checkbox sat open for three days *after* §14 answered it, and `GAPS.md` P3 cited that contradiction as evidence §14 was stale — when §14 was correct and this line was the residue.",
+    "| **P2** | *\"`01-prd.md` FR10.1 is stale.\"* | **Closed — FR10.1 was corrected and this row was never swept.** |",
+]
+
+
+def _stale_gap_hit(line: str, gap_ref: re.Pattern) -> str | None:
+    """Return the gap ID this line falsely calls blocking, or None."""
+    m = gap_ref.search(line)
+    if not m:
+        return None
+    if CLOSED_MARKER.search(line):
+        return None  # naming the gap to record its closure, or its history
+    return m.group(1) if BLOCKING_WORD.search(line) else None
+
+
+def selftest_stale_gaps() -> list[str]:
+    """Verify the stale-gap check against the false positives it once produced."""
+    gap_ref = re.compile(r"\b(" + "|".join(list(CLOSED_GAPS) + ["G9a"]) + r")\b")
+    failures = []
+    for line in STALE_GAP_MUST_CATCH:
+        if not _stale_gap_hit(line, gap_ref):
+            failures.append(f"MISSED (should flag): {line[:95]}")
+    for line in STALE_GAP_MUST_NOT_CATCH:
+        if _stale_gap_hit(line, gap_ref):
+            failures.append(f"FALSE POSITIVE (should pass): {line[:95]}")
+    return failures
 
 
 def check_stale_gap_citations() -> Check:
@@ -309,11 +405,10 @@ def check_stale_gap_citations() -> Check:
     gap_ref = re.compile(r"\b(" + "|".join(CLOSED_GAPS) + r")\b")
     for path in md_files():
         for n, line in lines_of(path):
-            m = gap_ref.search(line)
-            if not m:
-                continue
-            gid = m.group(1)
-            if BLOCKING_WORD.search(line) and not CLOSED_MARKER.search(line):
+            # One helper, shared with selftest_stale_gaps() — so the fixtures
+            # test the code that actually runs, not a paraphrase of it.
+            gid = _stale_gap_hit(line, gap_ref)
+            if gid:
                 c.findings.append(
                     Finding(
                         c.name,
@@ -454,6 +549,43 @@ SCHEDULER_ABSENT = re.compile(
     re.IGNORECASE,
 )
 
+# --- ADDED 2026-07-16 -------------------------------------------------------
+# The claim above has a TWIN the check never saw: not "there is no scheduler",
+# but "the scheduler is BackgroundTasks/Celery/SQS" — the mechanism that §4.4
+# REPLACED, still being presented as the plan.
+#
+# It sat live in TWO docs for three days while false-gap reported 0:
+#   10-deployment-devops.md §1  "BackgroundTasks initially → AWS SQS + a worker
+#                                ... if promoted to Celery/RQ (per §4.3)"
+#   12-srs.md NFR-SCALE-3       "promotable from BackgroundTasks to Celery/RQ"
+#
+# Both cite "§4.3" — a section that no longer holds background work at all. The
+# decision moved to §4.4 and its dependents were never swept. This is the same
+# incident as G9a wearing different words, which is precisely why phrasing-based
+# checks fail: drift paraphrases. So test the CLAIM — "the job mechanism is one
+# of the superseded ones" — not the sentence it arrived in.
+STALE_JOB_MECHANISM = re.compile(r"\b(?:BackgroundTasks|Celery|RQ|SQS)\b")
+
+# Naming the dead mechanism in order to bury it is the OPPOSITE of proposing it.
+# "No Celery, no Redis" is the decision being stated; "Replaces the earlier
+# BackgroundTasks note" is the history being recorded. Both must keep passing —
+# a check that punishes the warning teaches people to delete the warning.
+JOB_MECHANISM_BURIED = re.compile(
+    r"\bno\s+(?:Celery|Redis|SQS|RQ)\b"
+    r"|\bnot\s+viable\b|\breplaces?\b|\bsupersed\w+|\bearlier\b|\binstead\s+of\b"
+    r"|\bnever\b|\bdeprecated\b|\bdo\s+not\s+use\b|\bwas\s+not\b|\bused\s+to\b"
+    r"|~~|✅|§5A",
+    re.IGNORECASE,
+)
+
+WHY_JOB_MECHANISM = (
+    "The job mechanism is pg_cron + a Python worker polling the `jobs` table "
+    "(02-architecture.md §4.4, decided 2026-07-13). No Celery, no Redis, no SQS. "
+    "BackgroundTasks was REPLACED — a lost BackgroundTask is a published property "
+    "that silently never enters the search index. If you are burying the old "
+    "mechanism, say so on the same line. See GAPS.md §5A."
+)
+
 WHY_SCHEDULER = (
     "There IS a scheduler: 02-architecture.md §4.4 — pg_cron + a jobs worker, "
     "decided 2026-07-13. mark_stale_leads() is listed in it BY NAME. See GAPS.md §5A."
@@ -466,9 +598,17 @@ WHY_PROVIDER = (
 
 def _false_gap_hits(line: str) -> list[str]:
     """Return the reasons this line resurrects a false gap. Empty means clean."""
+    # The stale-mechanism claim has its OWN burial vocabulary ("no Celery",
+    # "replaces the earlier ... note"), so it is tested before the generic
+    # retraction gate — those lines are records, not resurrections.
+    mechanism_hits = []
+    if STALE_JOB_MECHANISM.search(line) and not JOB_MECHANISM_BURIED.search(line):
+        mechanism_hits.append(WHY_JOB_MECHANISM)
+
     if FALSE_GAP_BURIED.search(line):
-        return []  # the line names the claim in order to retract it
-    hits = []
+        return mechanism_hits  # the line names the claim in order to retract it
+
+    hits = list(mechanism_hits)
     if SCHEDULER_ABSENT.search(line):
         hits.append(WHY_SCHEDULER)
     # The claim is "the email/SMS delivery provider is undecided" — it needs all
@@ -507,6 +647,11 @@ FALSE_GAP_MUST_CATCH = [
     "- [ ] **No email/SMS provider is chosen** in `10-deployment-devops.md`. Without one, \"email/SMS\" in FR7.2 is aspirational and only the in-app channel can ship, rather than shipping dead toggles.",
     "No job scheduler exists, so FR10.2b cannot be built.",
     "BackgroundTasks cannot fire on a timer.",
+    # --- ADDED 2026-07-16. Both VERBATIM, both live for three days while this
+    # check reported 0. The G9a claim, wearing the mechanism instead of denying
+    # the scheduler — and both citing a §4.3 that no longer holds background work.
+    "| Background jobs | FastAPI `BackgroundTasks` initially → AWS SQS + a worker (ECS task or Lambda) if promoted to Celery/RQ (per `02-architecture.md` Section 4.3) | |",
+    "| `NFR-SCALE-3` | Background job processing (embedding generation, notifications) must be promotable from FastAPI `BackgroundTasks` to a queue-based worker (Celery/RQ) without changing the public API contract, per the upgrade path already noted in `02-architecture.md` Section 4.3. |",
 ]
 
 FALSE_GAP_MUST_NOT_CATCH = [
@@ -524,6 +669,14 @@ FALSE_GAP_MUST_NOT_CATCH = [
     "| ~~No job scheduler~~ ✅ **RESOLVED — and it never was a gap.** `02-architecture.md` §4.4 specifies pg_cron. |",
     '`CLAUDE.md` carried a stale summary — *"no job scheduler, no email/SMS provider"* — long after `02-architecture.md` decided both.',
     'a `false-gap` check that fails on any resurrection of "no scheduler" or "no email/SMS provider".',
+    # --- ADDED 2026-07-16. The mechanism check must not punish the docs that
+    # BURY the old mechanism. These are verbatim and every one must keep passing:
+    # a check that flags the gravestone gets the gravestone deleted.
+    "| Async Jobs | **Python worker polling a `jobs` table** | Embedding generation, de-indexing, bulk CSV import, notification dispatch. **No Celery, no Redis** |",
+    "Background work runs as **pg_cron (SQL-only time jobs) + a Python worker polling this table** (decided 2026-07-13). No Celery, no Redis. See `02-architecture.md` §4.4.",
+    '*Decided 2026-07-13. Replaces the earlier "FastAPI BackgroundTasks, promote to Celery later" note, which was not viable: a lost `BackgroundTask` means a published property that silently never enters the search index.*',
+    "- [x] ~~Whether background jobs start with FastAPI `BackgroundTasks` or Celery/RQ.~~ **DECIDED 2026-07-13 — see §4.4: `pg_cron` + a Python jobs worker.**",
+    "| 6 | **pg_cron (SQL jobs) + a Python worker polling `jobs`** | No Celery, no Redis. Retry/backoff/dead-lettering are hand-rolled (§3.26, §7) |",
 ]
 
 
@@ -665,16 +818,17 @@ def main() -> int:
     # resurrections sat live in the docs. A gate nobody tests is a gate nobody
     # has. This runs on every invocation — it is microseconds, and the one thing
     # worse than no check is a check that reassures you while it fails.
-    selftest_failures = selftest_false_gaps()
+    selftest_failures = selftest_false_gaps() + selftest_stale_gaps()
     if selftest_failures:
-        print("\nSELFTEST FAILED — the false-gap check no longer catches what it must:")
+        print("\nSELFTEST FAILED — a check no longer catches what it must:")
         for f in selftest_failures:
             print(f"  {f}")
         print("\nFix the check. Do not delete the fixture. See GAPS.md §5A.\n")
         return 1
     if args.selftest:
         n = len(FALSE_GAP_MUST_CATCH) + len(FALSE_GAP_MUST_NOT_CATCH)
-        print(f"selftest ok — {n} false-gap fixtures pass")
+        n += len(STALE_GAP_MUST_CATCH) + len(STALE_GAP_MUST_NOT_CATCH)
+        print(f"selftest ok — {n} false-gap + stale-gap fixtures pass")
         return 0
 
     results = [fn() for fn in CHECKS]
