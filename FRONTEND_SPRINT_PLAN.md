@@ -473,7 +473,7 @@ Start admin portal development in parallel with Sprint 2 of public site (once au
 **2A.3.4 — Property Approvals Status**
 - Page: `src/pages/AdminPropertyApprovals.tsx` (route `/admin/properties?status=pending_approval`)
 - Shows: only pending-approval properties, with "Approve" / "Reject" buttons + reason field
-- Approval workflow: admin-only action, fires webhook (Gap G10 notes in `docs/GAPS.md`)
+- Approval workflow: admin-only action. **Publishing enqueues the `jobs` pipeline** — embed → index → match saved profiles → notify (`02-architecture.md` §4.4). **Rejection requires a reason.** *(This line used to say "fires webhook (Gap G10)". There is no G10 in `GAPS.md`, and there is no approval webhook in any spec — both were invented here.)*
 - **API calls:**
   - PATCH `/api/v1/admin/properties/{id}/approve` + PATCH `.../reject`
 - **Testing:** Approve property → status changes to published; shows up in public search

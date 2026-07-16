@@ -163,7 +163,7 @@ These will get resolved as we build out the later documents — flagging them he
 - [x] Supabase Auth usage → **used as-is** as the identity provider for all users (customer, agent, admin, super_admin); the application's own `users` table (not the JWT) remains the source of truth for role/tenant, so role changes take effect immediately. See `08-auth-roles-spec.md` Section 1.
 - [ ] Confirm specific Claude model version per task (e.g. a lighter/faster model for quick search-query parsing vs. a stronger model for chatbot conversation and recommendation reasoning) — to be decided in the respective AI spec docs, with cost/latency tradeoffs in mind.
 - [x] Embedding model for `pgvector` → **Amazon Titan Text Embeddings V2, 1024 dimensions** (via Bedrock). See `06-ai-search-spec.md` and `03-database-schema.md`.
-- [x] Hosting target → **AWS-native** (App Runner or ECS for the backend, S3/CloudFront for both React apps), confirmed directionally to keep Bedrock latency/cost low. Exact service (App Runner vs. ECS) remains open — see `10-deployment-devops.md` Section 9.
+- [x] Hosting target → **AWS-native** (App Runner or ECS for the backend, S3/CloudFront for the React app), confirmed directionally to keep Bedrock latency/cost low. Exact service (App Runner vs. ECS) remains open — see `10-deployment-devops.md` Section 9.
 - [x] ORM/data-access layer → **SQLAlchemy + Alembic**, per `02-architecture.md`.
 
 ### 9.1 Blocking Spec Gaps (surfaced by docs 16 & 17)
@@ -191,13 +191,22 @@ All schema-owned gaps are resolved. See that doc's [§8 Changelog](03-database-s
 | Gap | Owning doc | Blocks |
 |---|---|---|
 | ~~No job scheduler~~ ✅ **RESOLVED — and it never was a gap.** `02-architecture.md` **§4.4** has specified `pg_cron` + a `jobs` table + a Python worker since **2026-07-13**, with `mark_stale_leads()` explicitly listed. This line was a stale summary that was copied into eight other documents and caused a *mandatory* requirement (FR10.2b) to be planned as unbuildable for a sprint. See `GAPS.md` §5A. | `02-architecture.md` §4.4 | FR10.3, FR15.2 — **both buildable** |
-| **Email/SMS providers chosen:** SendGrid (email) and Twilio (SMS) per 02-architecture.md §3. In-app notifications work; email/SMS toggles functional.. Recommend shipping **in-app only** for MVP rather than switches that do nothing. | `10-deployment-devops.md` | FR7.2, FR15.2 |
-| **Lead auto-assignment (FR10.2) undecided** — round-robin, rules-based, or manual claim. Determines whether new leads have an owner, which determines whether anyone works them. Recommend **round-robin**; the schema already models system-initiated assignment. | `01-prd.md` | FR10.1/FR10.2. **Sprint 4.** |
-| **No public CMS read endpoint** — a tenant can publish content the public site has no way to fetch. Module 14 is inert. | `04-api-spec.md` | FR14.1/FR14.2 |
-| **No agent-reply path for escalated chats** — the bot promises a human; no endpoint or channel lets one respond. | `05-ai-chatbot-spec.md`, `04-api-spec.md` | FR1.7 |
-| **What `tenants.status = suspended` / `trial` actually *do*** — three values, no defined behavior. | `01-prd.md` | FR16.1 |
-| **No per-tenant SSL provisioning** for custom domains. | `10-deployment-devops.md` | FR16.2 |
-| Missing endpoints: property reject, requirement-profile delete, autosuggest, bulk operations, chatbot/weights preview, resend/revoke invite. | `04-api-spec.md` | Various |
+| **No public CMS read endpoint** — a tenant can publish content the public site has no way to fetch. Module 14 is inert. (`GAPS.md` **G5**) | `04-api-spec.md` | FR14.1/FR14.2 |
+| **No per-tenant SSL provisioning** for custom domains. Post-MVP with branding (ADR-0010), but it carries infrastructure lead time. (`GAPS.md` **A15**) | `10-deployment-devops.md` | FR16.2 |
+| Missing endpoints: requirement-profile delete (the column exists — `GAPS.md` **G8**), autosuggest (**G3**), chatbot/weights preview, resend/revoke invite. | `04-api-spec.md` | Various |
+
+#### ✅ Closed — this table was wrong for three days
+
+**Everything below was closed or decided on 2026-07-13/14 and left sitting under "⛔ Still blocking" until 2026-07-16** — in the document `CLAUDE.md` tells every new reader to open *first*. That is the worst possible place for a stale gap list, and it is why `OWNERSHIP.md` §4 says the sweep ships in the same commit as the fix.
+
+| Was listed as blocking | The truth |
+|---|---|
+| ~~*"Email/SMS providers"*~~ — the row even contradicted itself, saying providers **were** chosen and then recommending "in-app only … rather than switches that do nothing" | ✅ **SendGrid + Twilio, decided 2026-07-13** (`02-architecture.md` §3). All three channels ship at MVP. The "no provider" version of this claim was the false gap ~~G9b~~ (`GAPS.md` §5A). ⚠️ Indian SMS needs **DLT registration** — regulatory lead time |
+| ~~*"Lead auto-assignment undecided — recommend round-robin"*~~ | ✅ **Decided 2026-07-13: manual claim from a shared queue, no auto-assignment** (`01-prd.md` FR10.2, ADR-0014). The recommendation here was overruled. Safety net: the **mandatory** stale-lead alert (FR10.2b), which is buildable (`02-architecture.md` §4.4) |
+| ~~*"No agent-reply path for escalated chats"*~~ | ✅ **Closed 2026-07-14** (`GAPS.md` G7). `04-api-spec.md` §12A + `05-ai-chatbot-spec.md` §10A + `17-admin-spec/22`. No migration needed |
+| ~~*"What `tenants.status = suspended`/`trial` do — no defined behavior"*~~ | ✅ **Defined 2026-07-13**: `01-prd.md` FR16.1, `03-database-schema.md` §3.1. `suspended` = public site serving, admin login blocked |
+| ~~*"Missing: property reject, bulk operations"*~~ | ✅ **Both exist**: `04-api-spec.md` §8 — `POST /admin/properties/{id}/reject`, `POST /admin/properties/bulk-status` |
+| ~~*"No job scheduler"*~~ | ✅ **Never real** — see the row already recorded below |
 
 ---
 

@@ -1,6 +1,6 @@
 # Feature: Favorites & Anonymous Session Migration
 
-> **Appears on:** [Homepage](01-homepage.md), [Property Listing](02-property-listing.md), [Property Details](03-property-details.md), [Portal Favorites](08-portal-favorites.md) · **PRD Modules:** 4, 7 · **Component:** `public-site/src/components/property/FavoriteButton.tsx` + `context/SessionContext.tsx`
+> **Appears on:** [Homepage](01-homepage.md), [Property Listing](02-property-listing.md), [Property Details](03-property-details.md), [Portal Favorites](08-portal-favorites.md) · **PRD Modules:** 4, 7 · **Component:** `frontend/src/components/property/FavoriteButton.tsx` + `context/SessionContext.tsx`
 > Part of [Doc 16 — Customer Spec](README.md).
 
 ---

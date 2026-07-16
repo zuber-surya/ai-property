@@ -394,9 +394,10 @@ Every endpoint group above maps 1:1 to a PRD module (`01-prd.md`, Section 1 Modu
 
 ## 17. Open Questions / Assumptions to Confirm
 
-- [ ] Whether OpenAPI-generated TypeScript types (from FastAPI's auto schema) will be consumed directly by both React apps, per the shared-types recommendation in `02-architecture.md`.
-- [ ] Exact rate-limit thresholds per AI endpoint — deferred to `10-deployment-devops.md`.
-- [ ] Whether report generation (`/admin/reports/generate`) is synchronous or should return a job ID for async generation on large date ranges.
+- [ ] Whether OpenAPI-generated TypeScript types (from FastAPI's auto schema) are consumed directly by the React app, per the shared-types recommendation in `02-architecture.md`.
+- [ ] Exact rate-limit thresholds per AI endpoint — deferred to `10-deployment-devops.md` (`GAPS.md` X1).
+- [x] ~~Whether report generation (`/admin/reports/generate`) is synchronous or should return a job ID for async generation on large date ranges.~~ **DECIDED 2026-07-13 — synchronous and row-capped, see §14.** There is no report ID and no `reports` table; an over-cap range returns `400 REPORT_TOO_LARGE` rather than a silent truncation.
+  > This checkbox sat open for three days *after* §14 answered it, and `GAPS.md` P3 cited that contradiction as evidence §14 was stale — when §14 was correct and this line was the residue. **An answered open-question is a lie with a checkbox** (`GAPS.md` §5A rule 2). Close the question in the same commit as the decision.
 
 ---
 

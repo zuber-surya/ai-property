@@ -1,6 +1,6 @@
 # Coding Standards — PropVista CRM
 
-> **Doc 09 of the PropVista CRM documentation set.** Conventions Claude Code (and any human contributors) should follow consistently across the FastAPI backend and both React apps, so the codebase stays coherent as it's built incrementally, doc by doc, module by module.
+> **Doc 09 of the PropVista CRM documentation set.** Conventions Claude Code (and any human contributors) should follow consistently across the FastAPI backend and the React frontend, so the codebase stays coherent as it's built incrementally, doc by doc, module by module.
 >
 > **Status:** Draft v1.0 · **Last updated:** July 2026
 > Depends on: `02-architecture.md` (folder structure), `03-database-schema.md`, `04-api-spec.md`

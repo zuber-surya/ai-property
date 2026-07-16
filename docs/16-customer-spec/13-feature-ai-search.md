@@ -1,6 +1,6 @@
 # Feature: AI Search (USP 1 of 3)
 
-> **Appears on:** [Homepage](01-homepage.md) hero, [Property Listing](02-property-listing.md) header · **PRD Module:** 2 · **Component:** `public-site/src/components/search/`
+> **Appears on:** [Homepage](01-homepage.md) hero, [Property Listing](02-property-listing.md) header · **PRD Module:** 2 · **Component:** `frontend/src/components/search/`
 > Part of [Doc 16 — Customer Spec](README.md). **Full pipeline spec: `06-ai-search-spec.md`** — this file covers the *customer-facing behavior*; that doc covers parsing, embedding, ranking, and the model.
 
 ---

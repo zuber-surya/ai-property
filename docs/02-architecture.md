@@ -365,13 +365,17 @@ Full CI/CD and hosting detail in `10-deployment-devops.md`.
 
 ---
 
-## 9. Third-Party Integrations (Placeholders)
+## 9. Third-Party Integrations
 
-| Integration | Used For | Notes |
+> ⚠️ **This section used to say "SMS/WhatsApp provider — Choice TBD" and "Email provider — TBD" while §3 above already named Twilio and SendGrid.** One section of this document contradicted another, and **that contradiction is where the false gap ~~G9b~~ came from**: a summary read §9, not §3, and "no email/SMS provider chosen" spread to eight documents (`GAPS.md` §5A). The rows below now match §3. **§3 owns the decision — do not restate it here, and never let these two disagree again.**
+
+| Integration | Used For | Status |
 |---|---|---|
-| Maps provider (e.g. Google Maps/Mapbox) | Property location, map view | Choice TBD |
-| SMS/WhatsApp provider | Notifications, callback confirmations | Choice TBD |
-| Email provider | Transactional email (confirmations, notifications) | Supabase-compatible or separate (e.g. SES, given AWS/Bedrock usage) |
+| Maps provider (e.g. Google Maps/Mapbox) | Property location, map view | ⛔ **Genuinely undecided.** Cost/API-key implications. The only open provider choice |
+| **Twilio** — SMS | Notifications, callback confirmations | ✅ **Decided 2026-07-13** (§3). Opt-in, per-tenant capped. Indian SMS requires **DLT registration** — regulatory lead time |
+| **SendGrid** — email | Transactional email (confirmations, notifications) | ✅ **Decided 2026-07-13** (§3) |
+
+WhatsApp is **not** in scope for the MVP — it appeared here only as a slash in "SMS/WhatsApp" and was never a requirement in `01-prd.md`. If it is wanted, it goes in the PRD first.
 
 ---
 
@@ -388,9 +392,9 @@ Full CI/CD and hosting detail in `10-deployment-devops.md`.
 ## 11. Open Questions / Assumptions to Confirm
 
 - [x] ORM choice for FastAPI → **SQLAlchemy + Alembic** for migrations, used alongside the Supabase-hosted Postgres instance (Supabase Auth/Storage still used as-is; Supabase's own client is not used for data access — SQLAlchemy talks directly to the Postgres connection string).
-- [ ] Monorepo (Turborepo/pnpm workspaces) vs. two fully independent React repos — recommendation given, not yet confirmed.
+- [x] ~~Monorepo (Turborepo/pnpm workspaces) vs. two fully independent React repos.~~ **DECIDED 2026-07-15 — moot. There is one React app** (`frontend/`), route-based, so there is nothing to orchestrate: no monorepo tooling, no workspaces. See **ADR-0020** and §5.1.
 - [x] ~~Whether background jobs start with FastAPI `BackgroundTasks` or Celery/RQ.~~ **DECIDED 2026-07-13 — see §4.4: `pg_cron` + a Python jobs worker.** This line sat here contradicting §4.4 for a day, and it is a large part of why a *mandatory* requirement (FR10.2b) was reported as unbuildable. **An open question that has been answered is not harmless — it is a lie with a checkbox.**
-- [ ] Maps and SMS/WhatsApp provider selection.
+- [ ] **Maps provider selection** (§9) — the one provider choice still open. SMS and email are **decided** (Twilio / SendGrid, §3); if you are reading this line as "providers are undecided", that is the exact misreading that produced ~~G9b~~.
 
 ---
 

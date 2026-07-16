@@ -1,6 +1,6 @@
 # Feature: Lead Capture
 
-> **Appears on:** [Property Details](03-property-details.md) (modal), [Contact](05-contact-page.md) (inline), [Chatbot](14-feature-ai-chatbot.md) (conversational), [Favorites](08-portal-favorites.md) ("Ask about this") · **PRD Module:** 6 · **Component:** `public-site/src/components/shared/LeadForm/`
+> **Appears on:** [Property Details](03-property-details.md) (modal), [Contact](05-contact-page.md) (inline), [Chatbot](14-feature-ai-chatbot.md) (conversational), [Favorites](08-portal-favorites.md) ("Ask about this") · **PRD Module:** 6 · **Component:** `frontend/src/components/shared/LeadForm/`
 > Part of [Doc 16 — Customer Spec](README.md).
 
 ---

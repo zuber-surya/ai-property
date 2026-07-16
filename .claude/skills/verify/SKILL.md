@@ -19,9 +19,11 @@ This skill exists to close that gap (ADR-0019).
 # Backend
 cd backend && ./.venv/Scripts/python.exe -m uvicorn app.main:app --reload --port 8000
 
-# The app you changed
-cd admin-portal && npm run dev     # or public-site
+# The frontend — ONE app (ADR-0020): / is public, /admin/* is the CRM
+cd frontend && npm run dev         # 127.0.0.1:5173
 ```
+
+(Or `make backend` / `make web` from the repo root.)
 
 Sanity first — if `/health` isn't 200, nothing downstream means anything:
 
@@ -45,7 +47,9 @@ import { chromium } from '@playwright/test';
 
 const browser = await chromium.launch();
 const page = await browser.newPage();
-await page.goto('http://localhost:5173/admin/leads');
+// 127.0.0.1, not localhost: on Windows 'localhost' resolves to ::1 and Vite
+// binds to 127.0.0.1 (see frontend/vite.config.ts).
+await page.goto('http://127.0.0.1:5173/admin/leads');
 
 // Drive the thing you actually changed.
 await page.dragAndDrop('[data-lead="priya"]', '[data-column="contacted"]');
@@ -80,9 +84,9 @@ That render is a *reference*, not pixel-truth. The real page legitimately differ
 ## 5. Before you call it verified
 
 ```bash
-python scripts/check_drift.py          # no NEW drift
+make check                             # drift gate + tokens-current + lint + types
 cd backend && ./.venv/Scripts/python.exe -m pytest -q
-cd admin-portal && npm run lint && npm run test && npx tsc --noEmit
+cd frontend && npm run lint && npm run test
 ```
 
 Then the `docs/09-coding-standards.md` §8 self-check.

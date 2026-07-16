@@ -176,9 +176,11 @@ An ADR that grows past a screen graduates to its own file (`adr/0001-slug.md`); 
 
 **Decision.** Fixed enum for MVP: `new` · `contacted` · `site_visit_scheduled` · `negotiation` · `closed_won` · `closed_lost`. Configurable stages are out of scope.
 
-**Consequences.** FR10.1 is **stale and must be corrected** (`GAPS.md` P2). Customer-facing screens must translate these — `negotiation` must never reach a buyer as the word "negotiation", and `closed_lost` is never "Lost".
+**Consequences.** Customer-facing screens must translate these — `negotiation` must never reach a buyer as the word "negotiation", and `closed_lost` is never "Lost".
 
-**Status:** Accepted; owning doc not yet updated.
+> ⚠️ **This entry said "FR10.1 is stale and must be corrected (`GAPS.md` P2)" and carried the status *"owning doc not yet updated"* until 2026-07-16. The PRD had in fact been updated** — FR10.1 reads *"**Stages are a fixed set** — decided 2026-07-13"*, and `03-database-schema.md` §10.1 #1 recorded it as *"`01-prd.md` updated to match"*. The consequence was discharged and three files kept saying it wasn't. Preserved rather than deleted, per ADR-0014's precedent: an ADR that hides its own errors is worth less than one that admits them.
+
+**Status:** Accepted. Owning doc updated (`01-prd.md` FR10.1); verified 2026-07-16.
 
 ---
 
@@ -304,5 +306,6 @@ These are not ADRs yet because nobody has decided. They live in `GAPS.md`:
 |---|---|---|
 | **I1** | Which AWS region — and does Bedrock's Claude availability survive an India-first product? | All provisioning |
 | **DLT** | Indian SMS requires DLT registration of entity, sender IDs and templates. Twilio is chosen (`02-architecture.md` §3) — but the registration is a *regulatory* lead time, not an engineering one. **Start it now.** | Notifications, both surfaces |
-| **D1** | The missing `info` status color | Kanban, leads table, portal inquiries |
 | **G4** | Is "Saved Searches" a real feature or an unscoped persona artifact? | Portal dashboard |
+
+> ~~**D1** — the missing `info` status color~~ ✅ **Closed 2026-07-14 by ADR-0018** (an `info` cyan family; the three in-progress lead stages share it). This table still listed it as open for two days. ⚠️ The Kanban / leads-table / lead-detail Stitch screens were generated **before** `info` existed and must be regenerated.

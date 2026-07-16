@@ -40,7 +40,7 @@
 | `P.2` Provision Supabase + AWS | **I1** — Bedrock region vs. India users vs. Supabase co-location | `10-deployment-devops.md` | Provisioning in the wrong region is expensive to undo |
 | `P.3` Font pipeline | **I2** — Plus Jakarta Sans hosting undecided | `13-ui-ux-flows.md` §5 | Frontend build can't be finalised |
 | `S0.5` CI + staging deploy | **I1** (same) | `10-deployment-devops.md` | — |
-| `S4.5` Lead Kanban stage colors | **D1** — no `info` status color | `DESIGN.md` | 3 of 5 pipeline stages have no honest color |
+| ~~`S4.5`~~ | ~~**D1**~~ ✅ **UNBLOCKED 2026-07-14** | — | The `info` cyan family is in `DESIGN.md` (ADR-0018); the three in-progress stages share it. ⚠️ The Kanban / leads-table / lead-detail **Stitch screens predate `info`** and must be regenerated |
 | ~~`S4.6`~~ | ~~**G9a**~~ ✅ **UNBLOCKED — the gap was never real** | — | `02-architecture.md` **§4.4** has specified `pg_cron` + a jobs worker since 2026-07-13, with **`mark_stale_leads()` listed by name**. FR10.2b was buildable all along (`GAPS.md` §5A) |
 | *(Phase 2)* CMS public page | **G5** — no public read endpoint | `04-api-spec.md` | The module is inert |
 | ~~*(Phase 2)* Chat escalation reply~~ | ~~**G7**~~ ✅ **UNBLOCKED 2026-07-14** | — | Endpoints now exist (`04-api-spec.md` §12A), handoff state machine specced (`05-ai-chatbot-spec.md` §10A), screen specced (`17-admin-spec/22`). **No migration needed.** |
@@ -96,7 +96,7 @@ Must be true before any application code is written.
 
 ## 4. Sprint 0 — Environment & Foundation
 
-**Goal & DoD:** `15-development-plan.md` §4 — *a developer can clone the repo, run all three apps locally, and hit a real (empty) staging deployment.*
+**Goal & DoD:** `15-development-plan.md` §4 — *a developer can clone the repo, run both apps locally, and hit a real (empty) staging deployment.*
 
 ### `S0.1` — Scaffold `backend/`
 - **Branch:** `feature/sprint0-backend-scaffold`
@@ -111,21 +111,20 @@ Must be true before any application code is written.
 - [ ] `.env.example` with placeholders (commit this; never a real `.env`)
 - **Acceptance:** `uvicorn app.main:app --reload` serves `/health` → 200; `ruff` + `black` clean.
 
-### `S0.2` — Scaffold `public-site/`
-- **Branch:** `feature/sprint0-public-site-scaffold`
-- **Spec:** `02-architecture.md` §5.2 · `.claude/rules/frontend.md`
+### `S0.2` — Scaffold `frontend/` (ONE app, route-based)
+- **Branch:** `feature/sprint0-frontend-scaffold`
+- **Spec:** `02-architecture.md` §5.2 · `.claude/rules/frontend.md` · **ADR-0020**
 - [ ] Vite + React + TypeScript, **strict mode on**, no unjustified `any`
 - [ ] `@vitejs/plugin-react` — ⚠️ **`@vitejs/plugin-tsx` does not exist.** The React plugin handles TSX.
-- [ ] Folder shape: `pages/`, `components/`, `hooks/`, `api/`, `context/`
+- [ ] Folder shape: `routes/public/` + `routes/admin/` + shared `components/`, `hooks/`, `api/`, `context/`, `styles/`
+- [ ] ⚠️ **`/admin/*` MUST be lazy-loaded** (`React.lazy` + `Suspense`) — a separate chunk a public visitor never downloads. This is the mandatory ADR-0020 mitigation; the day someone eager-imports an admin route it is silently gone. **Not** a security boundary — that is server-side (`require_role`, RLS).
+- [ ] **Not tenant-branded** (ADR-0010) — one fixed palette from `DESIGN.md`, no theming layer.
 - [ ] `eslint` + `prettier`; `vitest` + React Testing Library, one smoke test
-- [ ] Design tokens from `DESIGN.md` → the CSS-var / Tailwind config
-  - ⚠️ **This is a second sanctioned fork of the tokens.** Mark the generated file, and **add it to `check_drift.py`'s watch list** — the same way doc 11 §17/§18 are watched. An unwatched fork is how this project got two design systems.
-- **Acceptance:** `npm run dev` serves a page; `build`, `lint`, `test` all pass.
+- [ ] Design tokens generated from `DESIGN.md` (`scripts/gen_tokens.py` — task `B.1`), never hand-typed
+  - ⚠️ **This is a sanctioned fork of the tokens.** The generated files carry a banner, and `check_drift.py`'s `forked-hex-frontend` check watches `frontend/src/**` for any hex literal. An unwatched fork is how this project got two design systems.
+- **Acceptance:** `npm run dev` serves `/` and `/admin`; `build`, `lint`, `test` pass; `/admin` is a separate chunk in the build output.
 
-### `S0.3` — Scaffold `admin-portal/`
-- **Branch:** `feature/sprint0-admin-portal-scaffold`
-- Same shape as `S0.2`. **Not tenant-branded** (ADR-0010) — it carries the PropVista brand.
-- **Acceptance:** as `S0.2`.
+> ~~`S0.3` — Scaffold `admin-portal/`~~ **Merged into `S0.2` by ADR-0020 (2026-07-15).** The two-app split is superseded: one `frontend/`, one build, one deploy, one token output. Half the frontend tooling disappears; the standing cost is the lazy-loading obligation above.
 
 ### `S0.4` — Database + Alembic  ⛔ *(depends on `P.2`)*
 - **Branch:** `feature/sprint0-db-alembic`
@@ -143,7 +142,7 @@ Must be true before any application code is written.
 - **Spec:** `10-deployment-devops.md` §3 · `21-release-management.md` §4
 - [ ] GitHub Actions on PR: `ruff`/`black`/`eslint`/`prettier`, `pytest`, `tsc`, `vitest`
 - [ ] **Add `python scripts/check_drift.py` to CI** — same gate as pre-commit
-- [ ] On merge to `main`: build image + two static builds → Alembic → staging
+- [ ] On merge to `main`: build image (API + jobs worker) + one static build → Alembic → staging
 - [ ] **Manual approval gate before production.** Deliberate: one bad migration touches every tenant at once, and there is no blast-radius containment between tenants
 - [ ] **Migrations run only via CI.** Never by hand, in any environment, ever
 - [ ] **Secret scanning** — a committed key is the likeliest real breach for a small team (`22-risk-register.md`)
@@ -151,7 +150,7 @@ Must be true before any application code is written.
 
 ### `S0.6` — Local dev in one command
 - **Branch:** `feature/sprint0-local-dev`
-- **Why:** the sprint's DoD is literally *"a developer can clone the repo and run all three apps."* That must be one command, not a wiki page.
+- **Why:** the sprint's DoD is literally *"a developer can clone the repo and run it."* That must be one command, not a wiki page. (`make setup` / `make dev` — the root `Makefile`.)
 - [ ] `make setup` / `dev` / `test` / `check` (or npm-script equivalents)
 - [ ] Seed script: **two tenants, always.** A single-tenant fixture cannot catch a cross-tenant bug (`18-test-strategy.md` §7)
 - [ ] Seed properties across **all six** statuses, and leads across every stage and source
@@ -234,7 +233,7 @@ Must be true before any application code is written.
 | `S4.2` | `POST /leads` + idempotency (`leads.idempotency_key`) | `feature/lead-capture-endpoint` | `TC-LEAD-01`: **every lead has a non-null `source`** |
 | `S4.3` | Public: contact form + callback slot picker | `feature/lead-contact-form` | |
 | `S4.4` | **Atomic** lead claim — two agents claiming at once must not both succeed | `feature/lead-atomic-claim` | `03` §3.8.1 · ADR-0014 |
-| `S4.5` | Admin Lead Kanban + table view ⛔ **D1** | `feature/lead-crm-kanban` | 3 of 5 stages are *in progress* and have **no honest color**. `neutral` is a placeholder, not an answer |
+| `S4.5` | Admin Lead Kanban + table view ✅ | `feature/lead-crm-kanban` | The three in-progress stages render **`info`** (ADR-0018) — they share one colour deliberately; the text label and the column position distinguish them. Do not invent three blues |
 | `S4.6` | **Stale-lead alert — FR10.2b, MANDATORY** ✅ buildable | `feature/lead-stale-alert` | A **`pg_cron`** job (`02-architecture.md` §4.4) enqueues into `jobs`; the worker dispatches. `mark_stale_leads()` is already named in §4.4 |
 
 > **`S4.6` is the sharpest item in this backlog.** Manual claim (ADR-0014) is only safe *because* of the staleness alert — it is the floor under the entire design. **That floor does not exist.** Either pick a scheduler (`pg_cron` is free and already in the stack) or reopen the auto-assignment decision. Do not build the pipeline and hope.
@@ -313,9 +312,9 @@ Stitch silently picked an icon set and a font-delivery mechanism. **Neither is i
 
 **`DESIGN.md` is the only file that defines a colour.** The Tailwind config must be **generated from it**, never hand-typed — otherwise it is a sixth fork, and this project already has five.
 
-- [ ] `scripts/gen_tokens.py` — parse the `DESIGN.md` YAML front-matter → emit `admin-portal/src/styles/tokens.css` + the Tailwind `theme.extend`.
+- [ ] `scripts/gen_tokens.py` — parse the `DESIGN.md` YAML front-matter → emit `frontend/src/styles/tokens.css` + `frontend/tailwind.tokens.cjs` (the Tailwind `theme.extend`).
 - [ ] Header the generated files: `/* GENERATED FROM docs/DESIGN.md — DO NOT EDIT */`.
-- [ ] **Extend `scripts/check_drift.py`** with a `forked-hex-frontend` check: fail on any hex literal in `admin-portal/src/**` or `public-site/src/**` outside the generated token files.
+- [ ] **Extend `scripts/check_drift.py`** with a `forked-hex-frontend` check: fail on any hex literal in `frontend/src/**` outside the generated token files.
   - Without this, a developer pastes one line of Stitch HTML and the whole discipline is gone. **The check IS the discipline.**
 - [ ] Semantic classes, so a component never touches a raw token: `.chip-status-published`, `.chip-source-ai`, `.ai-widget` (the primary→tertiary gradient border + glow).
 
@@ -389,7 +388,7 @@ Stitch silently picked an icon set and a font-delivery mechanism. **Neither is i
 | `TC-PROP-03` | An agent without `properties.edit` gets **403** on writes |
 | `TC-TENANT-01` | Tenant A cannot read/write Tenant B's properties — **failing at the DB layer** |
 
-**DoD:** an admin adds, edits, approves and features a property **through the real UI** and it persists on reload · all TC cases pass · `check_drift.py` clean · **no hex literal anywhere in `admin-portal/src/`** · `09-coding-standards.md` §8 self-check run.
+**DoD:** an admin adds, edits, approves and features a property **through the real UI** and it persists on reload · all TC cases pass · `check_drift.py` clean · **no hex literal anywhere in `frontend/src/`** · `09-coding-standards.md` §8 self-check run.
 
 ---
 
@@ -399,9 +398,10 @@ Stitch silently picked an icon set and a font-delivery mechanism. **Neither is i
 **Depends on:** Sprint 2.
 **Screens:** 3 · **39 pts**
 
-> ### ⛔ Two blockers. Read before committing capacity.
+> ### ✅ Both former blockers are gone. Sprint 4 is unblocked.
 >
-> **D1 — `DESIGN.md` has no "in progress" colour.** Three of the five pipeline stages (`contacted`, `site_visit_scheduled`, `negotiation`) are *in progress* — not done, not failed, not inert, and **not a warning**. None of `success`/`warning`/`error`/`neutral` fits. The Stitch screens render them `neutral` because the prompt said so, and **`neutral` is a placeholder, not an answer.** Add an `info` family to `DESIGN.md` **before** `S4-UI-1`, or you build the board twice.
+> ~~**D1 — no "in progress" colour.**~~ ✅ **CLOSED 2026-07-14.** `DESIGN.md` has an **`info`** cyan family (ADR-0018), and the three in-progress stages (`contacted`, `site_visit_scheduled`, `negotiation`) **share it** — the text label and the Kanban column already distinguish them, and three near-identical blues would recreate the exact failure ADR-0009 was written to fix.
+> ⚠️ **The Stitch screens for Kanban / leads table / lead detail were generated before `info` existed** and render those stages `neutral`. **Regenerate them, or you build the board twice** — which was this blocker's original warning, still live in a different form.
 >
 > ~~**G9a — no scheduler.**~~ ✅ **WITHDRAWN.** `02-architecture.md` §4.4 has had `pg_cron` + a jobs worker since 2026-07-13, and **`mark_stale_leads()` is listed in it by name.** `S4-API-5` is fully buildable. This entry was a stale summary copied from `CLAUDE.md`, and it cost this sprint a fictitious blocker — see `GAPS.md` §5A.
 

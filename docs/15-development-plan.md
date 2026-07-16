@@ -10,7 +10,7 @@
 ## 1. Before You Start: Environment & Setup
 
 1. **Install Claude Code** in VS Code (the Claude Code extension, or the CLI integrated into the VS Code terminal).
-2. **Initialize the repo** with the structure from `02-architecture.md` Section 4.2/5.2 — three top-level folders: `backend/`, `public-site/`, `admin-portal/`.
+2. **Initialize the repo** with the structure from `02-architecture.md` Section 4.2/5.2 — two top-level app folders: `backend/` and `frontend/` (one route-based React app: `/` public, `/admin/*` CRM, lazy-loaded — ADR-0020, superseding the earlier two-app split).
 3. **Create a `docs/` folder at the repo root** and drop all 15 documents (`00`–`14`) into it — this is what makes Claude Code's output consistent with everything we've planned.
 4. **Create a `CLAUDE.md`** at the repo root (project-level instructions Claude Code reads automatically each session). At minimum it should say:
    - "Read `docs/00-project-overview.md` through `docs/14-screen-workflows.md` before making architectural decisions."
@@ -18,7 +18,7 @@
    - "Every new endpoint must exist in `docs/04-api-spec.md` first; every schema change needs an Alembic migration."
    - I can generate this file for you now if useful — just ask.
 5. **Set up `.env` files** per `09-coding-standards.md` Section 7 — Supabase connection string, Supabase service key, AWS credentials for Bedrock. Never commit these; commit only `.env.example`.
-6. **Set up the base tooling**: `black`/`ruff` for Python, `eslint`/`prettier` for both React apps, `pytest`, `Vitest` — per `09-coding-standards.md` Sections 2.1 and 3.1.
+6. **Set up the base tooling**: `black`/`ruff` for Python, `eslint`/`prettier` for the React app, `pytest`, `Vitest` — per `09-coding-standards.md` Sections 2.1 and 3.1.
 
 ---
 
@@ -48,12 +48,12 @@ Assumes 2-week sprints — adjust pace to your actual team size; the sequencing 
 
 ### Sprint 0 — Environment & Foundation
 **Goal:** A running skeleton, not features yet.
-- Scaffold `backend/` (FastAPI app, folder structure per `02-architecture.md` §4.2), `public-site/` and `admin-portal/` (Vite + React, §5.2).
+- Scaffold `backend/` (FastAPI app, folder structure per `02-architecture.md` §4.2) and `frontend/` (one Vite + React app, route-based — §5.2, ADR-0020).
 - Set up Supabase project (Postgres, Auth, Storage), connect via SQLAlchemy + Alembic.
 - Set up CI skeleton (lint + test on PR, per `10-deployment-devops.md` §3).
 - `/health` endpoint working end-to-end (backend deployed to staging, per `10-deployment-devops.md` §1).
 - **Test cases:** CI pipeline runs and passes on an empty commit; `/health` returns 200 in staging.
-- **Definition of Done:** A developer can clone the repo, run all three apps locally, and hit a real (empty) staging deployment.
+- **Definition of Done:** A developer can clone the repo, run both apps locally (`make setup` → `make dev`), and hit a real (empty) staging deployment.
 
 ### Sprint 1 — Data Layer, Auth & Tenancy
 **Goal:** Every subsequent feature can assume auth and tenant scoping work.

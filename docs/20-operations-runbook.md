@@ -85,7 +85,11 @@ This system fails in two very different ways, and the second one is the dangerou
 
 ### 4.6 An escalated chat is sitting unhandled
 
-Not an infra incident. A **customer is waiting right now**, and this is the only real-time obligation in the product. Route it to an on-duty agent. If it happens repeatedly, the escalation notification rule is not working — and note that **email/SMS delivery does not exist yet** (`GAPS.md` G9b), so the only channel that works is in-app.
+Not an infra incident. A **customer is waiting right now**, and this is the only real-time obligation in the product. Route it to an on-duty agent. If it happens repeatedly, the escalation notification rule is not working.
+
+⚠️ **Until the notifier code ships, in-app is the only channel that actually delivers** — so this queue is a **pull** signal and works only if someone is looking at the screen. That is an *implementation* state (§5), **not a spec gap**: the providers are decided (SendGrid + Twilio, `02-architecture.md` §3).
+
+> This paragraph used to cite *"`GAPS.md` G9b"* as the reason. **There is no G9b** — it is one of the two gaps that never existed (`GAPS.md` §5A), and citing a retracted ID as a live blocker is how the false claim stayed alive. A proactive alert is buildable today: add a `pg_cron` job beside `mark_stale_leads()` (§4.4) — *"escalated and unclaimed for N minutes → enqueue a notification"*.
 
 ---
 

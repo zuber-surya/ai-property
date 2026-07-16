@@ -29,10 +29,13 @@
 Task: Add POST /api/v1/admin/properties/approve
 
 1. CLAUDE.md § Rules #5 → "Every endpoint must exist in docs/04-api-spec.md first"
-   → Update docs/04-api-spec.md §6 first
-   
+   → Grep to prove it:  grep -n "properties/{id}/approve" docs/04-api-spec.md
+   → No hit? The spec changes FIRST. (This one IS specced — §8.)
+
 2. Read .claude/modules/property.md
-   → Tells you: "Tables: properties, property_approvals. 
+   → Tells you: "Tables: properties, property_media, property_embeddings.
+               (There is no property_approvals table — approval is a
+                status transition on properties.status.)
                Rules: backend.md, database.md, testing.md, security.md"
    
 3. Read those four rule files
@@ -41,10 +44,13 @@ Task: Add POST /api/v1/admin/properties/approve
    → testing.md: "Unit test service (repos mocked); integration test with real Postgres"
    → security.md: "Enforce tenant_id + role on every query"
 
-4. Read docs/04-api-spec.md §6 (you updated it) + docs/17-admin-spec/06-property-approvals-status.md
-   → Tells you: "Screen shows draft → pending → published flow. 
-                 Approval is admin-only (role check). 
-                 Fires approval webhook (Gap G10)."
+4. Read docs/04-api-spec.md §8 (you updated it) + docs/17-admin-spec/06-property-approvals-status.md
+   → Tells you: "Screen shows draft → pending → published flow.
+                 Approval is admin-only (role check).
+                 Publishing ENQUEUES the jobs pipeline: embed → index →
+                 match saved profiles → notify (02-architecture.md §4.4).
+                 Rejection REQUIRES a reason — an approval gate that can
+                 only say 'yes' isn't one."
 
 5. Code with confidence knowing exactly what you're building and why
 ```
