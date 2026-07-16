@@ -195,4 +195,4 @@ Other rules:
 - [ ] **BLOCKING — leads have no owner.** `leads` needs `user_id` + `session_id` (see §8). Nothing on this page is correct or safe until that's decided. Fix `03-database-schema.md` first.
 - [ ] **No customer follow-up endpoint.** FR7.1 implies a customer can track an inquiry, but the "send a follow-up" action has no API. Options: a `POST /portal/inquiries/{id}/message` (needs adding to `04-api-spec.md`), or drop the action for MVP and route follow-ups through the chatbot instead — which is arguably the better product answer, since the bot can already escalate to the assigned agent.
 - [ ] Whether the customer sees the assigned agent's name at all (tenant preference — some brokerages won't want it).
-- [ ] Whether stage changes push a notification (FR3.4 covers new *matches*, not inquiry updates). Ties to **Gap G1**.
+- [ ] Whether stage changes push a notification. **Not a storage question** — `notifications` (§3.20) already lists `inquiry_update` as a `type`. It is a **scope** question: FR3.4 covers new *matches* only, and `GAPS.md` §4 lists `inquiry_update` as an unapproved proposal. Decide in `01-prd.md` before building it.

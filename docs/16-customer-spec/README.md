@@ -145,7 +145,7 @@ Found while writing this set. **These are documentation gaps, not implementation
 
 | # | Gap | Resolution |
 |---|---|---|
-| G1 | No `notifications` table, yet `GET /portal/notifications` was specified | `notifications` added (§3.20). ⚠️ Email/SMS still have **no provider** — ship the in-app channel only |
+| G1 | `GET /portal/notifications` was specified with nothing to back it | **Closed** — `notifications` added in §3.20. Email → **SendGrid**, SMS → **Twilio**, in-app → `notifications`; all three decided 2026-07-13 and named in §3.21. (The "no provider" line that stood here was the false gap ~~G9b~~ — `GAPS.md` §5A.) |
 | G2 | No notification-preferences storage (FR7.2) | `notification_preferences` added (§3.21) |
 | G6 | No delete for a requirement profile (FR7.3) | `requirement_profiles.deleted_at` added (§3.11). **The endpoint is still missing** — see G8 |
 | — | **`leads` had no owner** — inquiry history (FR7.1) had no correct implementation, and matching on `customer_email` was a **data-leak vector** | `leads.user_id` + `session_id` added, migrated on registration alongside `favorites` (§3.8) |

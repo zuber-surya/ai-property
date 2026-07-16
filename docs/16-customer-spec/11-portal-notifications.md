@@ -150,8 +150,8 @@ Background — how a notification gets created (FR3.4):
 
 | Trigger | Call | Notes |
 |---|---|---|
-| Mount | `GET /portal/notifications` | `04-api-spec.md` §6. **No table backs this — Gap G1** |
-| Save preferences | `PUT /portal/notifications/preferences` | `04-api-spec.md` §6. **No storage — Gap G2** |
+| Mount | `GET /portal/notifications` | `04-api-spec.md` §6. Backed by `notifications` (`03-database-schema.md` §3.20) |
+| Save preferences | `PUT /portal/notifications/preferences` | `04-api-spec.md` §6. Backed by `notification_preferences` (`03-database-schema.md` §3.21) |
 | Mark read / mark all read | *(none exists)* | Not in the API spec. Needs adding, or fold into `GET` semantics (bad) |
 
 ---
@@ -160,8 +160,8 @@ Background — how a notification gets created (FR3.4):
 
 | Table | Access |
 |---|---|
-| *`notifications`* | **Does not exist — Gap G1** |
-| *notification preferences* | **Does not exist — Gap G2** |
+| `notifications` | Read + mark-read (`03-database-schema.md` §3.20). Ownership is per-`user_id`, not per-tenant |
+| `notification_preferences` | Read + write (`03-database-schema.md` §3.21). `UNIQUE (user_id, event_type)` |
 | `requirement_matches` | Read (the source of `new_match` notifications) |
 | `leads`, `lead_activities` | Read (the source of `inquiry_update` notifications) |
 | `notification_rules` | **Not this.** This is the *admin's* rule config (Module 15), a different concern with a different owner |
@@ -200,9 +200,9 @@ Background — how a notification gets created (FR3.4):
 
 ## 11. Open Questions
 
-- [ ] **Gap G1 — no `notifications` table.** Blocking.
-- [ ] **Gap G2 — no preference storage.** Blocking for FR7.2.
-- [ ] **No email/SMS provider is chosen** in `10-deployment-devops.md`. Without one, "email/SMS" in FR7.2 is aspirational and only the in-app channel can ship. **Recommend: ship in-app only for MVP**, and mark email/SMS explicitly deferred rather than shipping dead toggles.
+- [x] ~~**Gap G1** — no `notifications` table.~~ **Closed** — `03-database-schema.md` §3.20 (`GAPS.md` §5).
+- [x] ~~**Gap G2** — no preference storage.~~ **Closed** — `03-database-schema.md` §3.21 (`GAPS.md` §5).
+- [x] ~~**No email/SMS provider is chosen.**~~ **This was never true** — it is the false gap ~~G9b~~ (`GAPS.md` §5A). Providers were decided 2026-07-13 and are named in `03-database-schema.md` §3.21: email → **SendGrid**, SMS → **Twilio**, in-app → the `notifications` table. All three ship at MVP. ⚠️ Indian SMS needs **DLT registration** — a calendar lead-time item, not an engineering one.
 - [ ] Which notification types are actually in scope (§3.1) — only `new_match` is in the PRD today.
 - [ ] Whether in-app notifications need realtime push (Supabase Realtime) or poll-on-load is sufficient. **Poll-on-load is sufficient for MVP**; a property alert is not time-critical.
 

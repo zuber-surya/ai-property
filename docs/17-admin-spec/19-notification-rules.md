@@ -99,10 +99,10 @@ The lead service evaluates the tenant's active notification_rules
    │   Resolve the recipients (assigned agent / specific users / role)
    │        │
    │        ▼
-   │   Dispatch per channel:
-   │        · in-app → write a notification row  ⚠ no table (customer G1)
-   │        · email  → queue                     ⚠ no provider chosen
-   │        · SMS    → queue                     ⚠ no provider chosen
+   │   Dispatch per channel (in the jobs worker, never inline — §3.21):
+   │        · in-app → write a `notifications` row   (schema §3.20)
+   │        · email  → queue → SendGrid              (decided 2026-07-13)
+   │        · SMS    → queue → Twilio                (⚠ Indian DLT registration)
    │
    ▼
 The agent finds out. Which is the entire point — a CRM that captures
@@ -156,8 +156,8 @@ Reasonable set (**needs adding to `01-prd.md`**):
 |---|---|
 | `notification_rules` | Read / Write |
 | `users` | Read (recipient picker; role resolution) |
-| *`notifications`* | Write on dispatch — **doesn't exist (customer Gap G1)** |
-| *email/SMS queue* | **No provider chosen** |
+| `notifications` | Write on dispatch (`03-database-schema.md` §3.20) — the in-app channel |
+| `jobs` queue → SendGrid / Twilio | Write. Dispatch runs in the jobs worker (§3.21, `02-architecture.md` §4.4), never inline — a provider outage must not fail lead creation |
 
 ---
 

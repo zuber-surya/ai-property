@@ -125,7 +125,7 @@ Dashboard renders
 | Mount | `GET /portal/favorites` | `04-api-spec.md` §6 |
 | Mount | `GET /portal/requirements` | |
 | Mount | `GET /portal/inquiries` | Returns the customer's leads + their current stage |
-| Mount | `GET /portal/notifications` | **Gap G1** — no `notifications` table exists to serve this |
+| Mount | `GET /portal/notifications` | Backed by `notifications` (`03-database-schema.md` §3.20) |
 | Unfavorite | `DELETE /properties/{id}/favorite` | |
 
 All require `Authorization: Bearer <jwt>`.
@@ -141,7 +141,7 @@ All require `Authorization: Bearer <jwt>`.
 | `requirement_matches` | Read (match count) |
 | `leads` | Read — **only rows belonging to this customer** |
 | `properties`, `property_media` | Read (cards) |
-| *notifications* | **Table does not exist — Gap G1** |
+| `notifications` | Read (`03-database-schema.md` §3.20). Scoped by `user_id`, not just `tenant_id` |
 
 ---
 
@@ -177,7 +177,7 @@ All require `Authorization: Bearer <jwt>`.
 
 ## 11. Open Questions
 
-- [ ] **Gap G1/G2:** notifications have no table and preferences have no storage (see [11-portal-notifications.md](11-portal-notifications.md)).
-- [ ] **Blocking:** `leads` has no `user_id` — the inquiry history in FR7.1 cannot be built correctly without it.
+- [x] ~~**Gap G1/G2:** notifications have no table and preferences have no storage.~~ **Both closed** — `notifications` (§3.20) and `notification_preferences` (§3.21). See `GAPS.md` §5.
+- [x] ~~**Blocking:** `leads` has no `user_id` — the inquiry history in FR7.1 cannot be built correctly without it.~~ **Closed** — `leads.user_id` added in schema v1.1 §3.8 (with `session_id`, re-keyed on registration). `GAPS.md` §5.
 - [ ] **Gap G4:** "Saved Searches" appears in Raj's persona flow (`13-ui-ux-flows.md` §2.2) and would naturally live on this dashboard, but it exists in no module, table, or endpoint. Either scope it into the PRD or remove it from the persona flow.
 - [ ] Whether a `GET /portal/summary` aggregate endpoint is worth adding (4 calls → 1). Defer until measured.
