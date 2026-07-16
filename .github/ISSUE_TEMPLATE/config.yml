@@ -1,0 +1,26 @@
+name: PropVista CRM
+description_template: |
+  <!--
+  Thanks for contributing to PropVista CRM!
+
+  BEFORE SUBMITTING AN ISSUE, PLEASE REVIEW THE FOLLOWING:
+
+  1. Check if the issue has already been reported by searching in the
+     [issue tracker](https://github.com/zuber-surya/ai-property/issues).
+
+  2. Make sure you are working from the latest version of the code and documentation.
+
+  3. Remember that documentation is the source of truth - if you're implementing
+     a feature, check the relevant spec sections first.
+  -->
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/zuber-surya/ai-property/blob/main/docs/00-project-overview.md
+    about: Read the project overview to understand the vision
+  - name: Development Plan
+    url: https://github.com/zuber-surya/ai-property/blob/main/docs/15-development-plan.md
+    about: Review the sprint-by-sprint plan
+  - name: Coding Standards
+    url: https://github.com/zuber-surya/ai-property/blob/main/docs/09-coding-standards.md
+    about: Review the coding standards and best practices
