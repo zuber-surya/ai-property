@@ -195,7 +195,7 @@ API Calls
 
 - POST /leads (message) – body {customer_name, customer_phone, customer_email, message, source:"contact_form"}
 - POST /leads/callback-request – same + requested time slot
-- (No endpoint for tenant contact info – gap G1 in this doc)
+- (No endpoint for tenant contact info — this shortfall is **unregistered**. Gap IDs are owned by `GAPS.md` alone (`devos.md` §1); this doc previously numbered it with its own local ID, which collided with the register's. Register it in `GAPS.md` or drop the claim.)
 Permissions / Tenancy – Anonymous. Created lead inherits tenant from request domain (RLS + app filter).
 Notes / Open Questions
 - Tenant contact info has no home in tenants table → need address/phone/email/hours columns or drop the panel.
@@ -256,7 +256,7 @@ Interaction Flow
   - GET /portal/favorites (first page only)
   - GET /portal/requirements
   - GET /portal/inquiries (first page only)
-  - GET /portal/notifications (unread only) – currently missing/notifications table (gap G1)
+  - GET /portal/notifications (unread only) – backed by `notifications` (03-database-schema.md §3.20)
 
 2. Each section renders as its data arrives; a slow section never blocks others.
 3. Click actions:
@@ -272,13 +272,13 @@ API Calls
 - GET /portal/favorites
 - GET /portal/requirements
 - GET /portal/inquiries
-- GET /portal/notifications – gap G1 (no notifications table)
+- GET /portal/notifications – backed by `notifications` (03-database-schema.md §3.20)
 - DELETE /properties/{id}/favorite (from card)
 All require Authorization: Bearer <jwt>.
 Permissions / Tenancy – Two mandatory filters: tenant_id from the authenticated user's record AND user_id = current user. Tenant alone is insufficient – must also scope by user to avoid seeing another customer’s data in the same tenant.
 Notes / Open Questions
-- Gap G1: notifications table and preferences missing (see 11-portal-notifications.md).
-- Blocking: leads has no user_id → inquiry history cannot be built correctly (see 10-portal-inquiries.md §11).
+- ~~Gap G1: notifications table and preferences missing.~~ **Both closed** — `notifications` (§3.20) and `notification_preferences` (§3.21). See GAPS.md §5.
+- ~~Blocking: leads has no user_id → inquiry history cannot be built correctly.~~ **Closed** — `leads.user_id` + `session_id` added in schema v1.1 §3.8.
 - Gap G4: “Saved Searches” appears in persona flow but no module/table/endpoint – either scope into PRD or remove from persona flow.
 - Consider adding a GET /portal/summary endpoint (4 calls → 1) if latency becomes an issue – add to spec first.
 
@@ -393,7 +393,7 @@ Interaction Flow
 4. Open settings → toggle switches → PATCH /portal/notification-preferences (save per‑user prefs).
 5. Pull‑to‑refresh (if using infinite scroll) → refetch first page.
 States – Loading (skeleton items), Empty (“You’re all caught up.”), Error (inline retry, keep previous data if any), Success (toast “Marked as read”, “Deleted”).
-API Calls - Currently missing endpoints/notifications table (gap G1):
+API Calls — `notifications` exists (03-database-schema.md §3.20). The mark-read endpoint is still missing (Gap G8):
   - GET /portal/notifications
   - PATCH /portal/notifications/{id}/read
   - DELETE /portal/notifications/{id}

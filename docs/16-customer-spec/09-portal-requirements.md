@@ -62,7 +62,7 @@ The saved output of the [Requirement Wizard](04-requirement-wizard.md), plus its
 |---|---|
 | Profile summary | The saved answers in plain language — **not** raw enum values (`self_use` → "To live in") |
 | Edit / Delete | Edit reopens the wizard pre-filled; Delete removes the profile and its alerts (FR7.3) |
-| Alerts toggle | Per-profile notification switch (FR3.4) — **currently has nowhere to be stored** (Gap G2) |
+| Alerts toggle | Per-profile notification switch (FR3.4) — stored in `requirement_profiles.alerts_enabled` (`03-database-schema.md` §3.11) |
 | Matches | The ranked shortlist, with the same ✓/✗ reason lines as the wizard results. New-since-last-visit matches get a **NEW** flag |
 | Updated timestamp | When the matches were last regenerated — honest about staleness |
 
@@ -99,7 +99,8 @@ Profile + matches render
    ├─→ Clicks Delete → confirm dialog → profile + its alerts removed
    │        │           ⚠ no DELETE endpoint exists yet — Gap G6
    │
-   └─→ Toggles alerts → notification preference updated (Gap G2)
+   └─→ Toggles alerts → `requirement_profiles.alerts_enabled` (§3.11)
+   │        ⚠ no endpoint writes it yet — Gap G8
 
 Background (not on this page — triggered by the admin publishing a property):
    New property published → matched against every saved requirement_profile
@@ -119,7 +120,7 @@ Background (not on this page — triggered by the admin publishing a property):
 | Profile saved, **zero matches** | Never a bare empty state (FR3.2). "Nothing matches exactly right now. We'll alert you the moment something does." + the closest-match list + a nudge to widen budget/location, with the *specific* constraint that's blocking most listings called out if it can be computed |
 | Matches stale | "Updated 2 days ago" is shown honestly. Optionally offer a "Refresh matches" action (re-runs `PUT`) |
 | Multiple profiles | The schema allows several per user. Render them as stacked cards, each with its own matches. Do **not** silently show only the first |
-| Alerts unavailable | If notification storage doesn't exist yet (Gap G1/G2), hide the toggle rather than shipping a switch that does nothing |
+| Alerts unavailable | Storage exists (`alerts_enabled`, §3.11) but **no endpoint writes it — Gap G8.** Until that lands, hide the toggle rather than shipping a switch that does nothing |
 
 ---
 
@@ -131,7 +132,7 @@ Background (not on this page — triggered by the admin publishing a property):
 | Mount / expand | `GET /ai/recommend/{requirement_profile_id}` | Profile + latest matches. `04-api-spec.md` §3.3 |
 | Edit → resubmit | `PUT /ai/recommend/{requirement_profile_id}` | Updates the profile and regenerates matches |
 | Delete | *(none)* | **Gap G6** — FR7.3 requires delete; no endpoint exists. Add to `04-api-spec.md` first |
-| Alerts toggle | `PUT /portal/notifications/preferences` | **Gap G2** — no storage exists for this |
+| Alerts toggle | *(none)* | **Gap G8** — `PUT /portal/notifications/preferences` is per-**event-type** (`04-api-spec.md` §6), not per-profile. Writing `requirement_profiles.alerts_enabled` needs its own endpoint; add it to `04-api-spec.md` first |
 
 ---
 
@@ -180,6 +181,6 @@ Background (not on this page — triggered by the admin publishing a property):
 ## 11. Open Questions
 
 - [ ] **Gap G6:** no delete endpoint for a requirement profile, despite FR7.3 requiring it.
-- [ ] **Gap G2:** the per-profile alerts toggle has no storage. `notification_rules` is the *admin's* rule table, not a customer preference store.
+- [x] ~~**Gap G2:** the per-profile alerts toggle has no storage.~~ **Closed** — the store is `requirement_profiles.alerts_enabled` (§3.11), and always was. `notification_preferences` (§3.21) is per-event-type; `notification_rules` (§3.22) is the *admin's* rule table. What is still missing is the **endpoint** → **Gap G8**.
 - [ ] Should a customer be allowed **multiple** requirement profiles (the schema permits it) or exactly one (which the singular UI copy in FR7.1/FR7.3 implies)? This changes the UI materially. **Recommend: allow multiple** — "a 3BHK to live in" and "a plot to invest in" are genuinely different searches — but the PRD should say so explicitly.
-- [ ] How "NEW since last visit" is computed — needs a `last_viewed_at` per profile, which doesn't exist.
+- [x] ~~How "NEW since last visit" is computed — needs a `last_viewed_at` per profile, which doesn't exist.~~ **It exists:** `requirement_profiles.last_viewed_at` (§3.11), added for exactly this flag.
