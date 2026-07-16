@@ -2,9 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Current State: Specs Only, No Code Yet
+## Current State: Sprint 0 shipped, building the first feature
 
-This repo currently contains **only planning documentation** (`docs/00`–`docs/15`). There is no `backend/`, `public-site/`, or `admin-portal/` yet, no build tooling, and no git repo. The task is to build **PropVista CRM** — an AI-first, multi-tenant real estate CRM SaaS — from these specs.
+The full spec set (`docs/00`–`docs/22`) plus the DevOS (`OWNERSHIP.md`, `GAPS.md`, `scripts/check_drift.py`) are in place. **Sprint 0 is built:** `backend/` (FastAPI, async, `/health`), `frontend/` (one route-based React app — `/` public, `/admin/*` CRM, ADR-0020), the token pipeline (`scripts/gen_tokens.py`), and browser verification (`.claude/skills/verify/` + `e2e/`). The build is under way; the target is **PropVista CRM** — an AI-first, multi-tenant real estate CRM SaaS — to pilot-ready.
 
 **The docs are the source of truth, not the code.** If a requirement changes mid-build, update the relevant doc *first*, then implement. Do not invent endpoints, tables, or behavior that isn't in the specs — add it to the spec first (see `docs/09-coding-standards.md` §1).
 
@@ -30,14 +30,20 @@ Read the relevant doc before working on a feature; point tasks at specific doc s
 
 **Before building any screen, open its file in `docs/16-customer-spec/` or `docs/17-admin-spec/`.** Each one gives the layout, the click-by-click workflow, every API call it makes, the tables it touches, the role/tenant rules, the edge cases, and the `TC-*` cases it must pass — and ends with an **Open Questions** section you must not silently guess your way past.
 
-⚠️ **Schema gaps are closed (`docs/03-database-schema.md` v1.1 — see its §8 changelog), but several requirements still cannot be built** because other docs don't support them: no job scheduler (`02-architecture.md`), no email/SMS provider (`10-deployment-devops.md`), lead auto-assignment undecided (`01-prd.md`), no public CMS read endpoint or agent-chat-reply endpoint (`04-api-spec.md`). The consolidated list is in `docs/00-project-overview.md` §9.1, with per-doc detail in each spec set's `README.md` §5. **Fix the owning doc first, then implement** — do not work around a gap in code.
+⚠️ **`docs/GAPS.md` is the ONLY place a gap's state is recorded.** Do not trust a gap list summarised anywhere else — including the one that used to live in this paragraph.
+
+> **This paragraph was itself the bug.** It claimed "no job scheduler" and "no email/SMS provider" long after `02-architecture.md` had decided both (§4.4 — `pg_cron` + a jobs worker; §3 — SendGrid + Twilio, **2026-07-13**). That stale summary was copied into `16-customer-spec/README.md` §5, and from there into six more documents, and an agent then reported a *mandatory* PRD requirement (FR10.2b) as unbuildable when it had been buildable for a day. Three levels of paraphrase, all confidently wrong.
+>
+> **The rule this produced:** cite `GAPS.md` by gap ID, or read the owning doc. **Never restate a gap list.** (`OWNERSHIP.md` §3, `.claude/rules/devos.md` §1.)
+
+Run `python scripts/check_drift.py` — it fails on a stale gap citation.
 
 Two docs are now **stale against the schema** and must be corrected: `01-prd.md` FR10.1 still promises configurable pipeline stages (the schema fixes the enum for MVP), and `04-api-spec.md` §14 still implies a persisted report with an ID (reports are stateless).
 
 ## Intended Stack (per docs)
 
 - **Backend:** Python + FastAPI (async), SQLAlchemy + Alembic, in `backend/`.
-- **Frontends:** Two separate React (Vite + TypeScript) apps — `public-site/` (public + customer portal) and `admin-portal/` (agent/admin CRM).
+- **Frontend:** One React (Vite + TypeScript) app in `frontend/`, route-based — `/` + customer routes are the public surface; `/admin/*` is the agent/admin CRM (lazy-loaded as a separate chunk). One build, one deploy. Superseded the earlier two-app split on 2026-07-15 — see ADR-0020.
 - **Data:** Supabase Postgres + `pgvector`. SQLAlchemy talks directly to the Postgres connection string; Supabase's own client is used **only** for Auth and Storage, never for data access.
 - **LLM:** Anthropic Claude models via Amazon Bedrock (`boto3` bedrock-runtime). Embeddings: Amazon Titan Text Embeddings V2, 1024 dims.
 - **Architecture:** Modular monolith (single FastAPI backend). AI features are internal modules with clean interfaces.
@@ -78,7 +84,7 @@ When starting a module, open its `modules/*.md` playbook first, then follow the 
 No build tooling exists yet — establish it during Sprint 0 (`docs/15` §4). Once scaffolded, the intended commands are:
 
 - **Backend:** `uvicorn app.main:app --reload` (run), `pytest` (test), `ruff check .` / `black .` (lint/format), `alembic upgrade head` / `alembic revision --autogenerate` (migrations).
-- **Frontends** (in `public-site/` or `admin-portal/`): `npm run dev` (Vite), `npm run build`, `npm run test` (Vitest), `npm run lint`.
+- **Frontend** (in `frontend/`): `npm run dev` (Vite), `npm run build`, `npm run test` (Vitest), `npm run lint`.
 
 Verify actual scripts against each app's `package.json` / backend tooling once created, and update this section with the real commands.
 

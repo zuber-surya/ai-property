@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bulk Upload | PropVista Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bento-container {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+        }
+        .step-number {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 700;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#571ac0",
+                        "on-secondary-fixed": "#1b1a29",
+                        "on-tertiary-fixed": "#23005c",
+                        "on-tertiary-container": "#c3aaff",
+                        "surface-tint": "#4d44e3",
+                        "tertiary-fixed-dim": "#d0bcff",
+                        "outline": "#777587",
+                        "on-secondary-container": "#646374",
+                        "primary-fixed": "#e2dfff",
+                        "inverse-surface": "#302f39",
+                        "surface-container": "#e5eeff",
+                        "tertiary-fixed": "#e9ddff",
+                        "on-secondary-fixed-variant": "#464555",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#3525cd",
+                        "on-surface-variant": "#464555",
+                        "inverse-on-surface": "#eaf1ff",
+                        "error": "#ba1a1a",
+                        "on-warning-container": "#2c1700",
+                        "error-container": "#ffdad6",
+                        "surface-dim": "#dcd8e5",
+                        "surface-variant": "#e4e1ee",
+                        "success-container": "#c3f0da",
+                        "on-error": "#ffffff",
+                        "primary-container": "#e2dfff",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "primary": "#1e00a9",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "surface-container-high": "#eae6f4",
+                        "warning-container": "#ffddb0",
+                        "outline-variant": "#c7c4d8",
+                        "surface-bright": "#fcf8ff",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#1b1b24",
+                        "tertiary": "#3e0095",
+                        "inverse-primary": "#c3c0ff",
+                        "on-secondary": "#ffffff",
+                        "surface": "#ffffff",
+                        "on-tertiary-fixed-variant": "#5516be",
+                        "surface-container-low": "#eff4ff",
+                        "on-success-container": "#00522f",
+                        "background": "#f8f9ff",
+                        "on-background": "#1b1b24",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#c7c4d8",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#0f0069",
+                        "surface-container-highest": "#e4e1ee",
+                        "secondary": "#5e5d6e",
+                        "secondary-container": "#e3e0f5",
+                        "secondary-fixed": "#e3e0f5"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-[240px] bg-surface dark:bg-surface-container-low flex flex-col py-6 px-4 gap-2 z-50">
+<div class="mb-8 px-2 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-fixed-dim rounded-xl flex items-center justify-center text-primary-fixed">
+<span class="material-symbols-outlined" data-icon="domain">domain</span>
+</div>
+<div>
+<h1 class="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed leading-tight">PropVista</h1>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Admin Portal</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<!-- Active Navigation logic: "Properties" active for bulk upload -->
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-on-secondary-fixed-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-label-md font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 bg-primary-container dark:bg-primary text-primary dark:text-on-primary font-bold rounded-xl px-4 py-3 active:scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="domain">domain</span>
+<span class="text-label-md font-label-md">Properties</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-on-secondary-fixed-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="person_search">person_search</span>
+<span class="text-label-md font-label-md">Leads</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-on-secondary-fixed-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="text-label-md font-label-md">Clients</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-on-secondary-fixed-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="person_outline">person_outline</span>
+<span class="text-label-md font-label-md">Users</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-on-secondary-fixed-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+<span class="text-label-md font-label-md">AI Config</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-on-secondary-fixed-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="text-label-md font-label-md">Reports</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-on-secondary-fixed-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-outline-variant pt-4">
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="text-label-md font-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<main class="ml-[240px] min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center h-16 px-gutter bg-background">
+<div class="flex items-center gap-4">
+<nav class="flex items-center gap-2 text-label-md font-label-md text-on-surface-variant">
+<a class="hover:text-primary" href="#">Properties</a>
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+<span class="text-primary font-bold">Bulk Upload</span>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant" data-icon="search">search</span>
+<input class="bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 text-label-md focus:ring-2 focus:ring-primary w-64" placeholder="Search data..." type="text"/>
+</div>
+<button class="hover:bg-surface-container-highest rounded-full p-2 transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="notifications">notifications</span>
+</button>
+<button class="hover:bg-surface-container-highest rounded-full p-2 transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="help_outline">help_outline</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-primary-container overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a female property administrator in a corporate setting. She is wearing a modern blazer and has a friendly, competent expression. The background is a blurred high-end office interior with soft blue and white lighting, maintaining a clean and professional corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDv0ujnyEx2lSeO_rbe8zkm6BFUqVrF9LXFZZTrhTurAK7JYvzcmshgbzK0SKhElxjReYPo8rRNgjZHpigsESfKUOlDf0h5IYgDClqDXNO_aWTkspQWPvYX2XL1GEowCNg112_BW4j5YZuGMJ9VmeEFQm4b9JGrtSvA5ZF1mKw0SEnBsnR9SL2tAtGonvtSAZfshM20hxviCAHJUryZfKv_Q8tSfSQxc2PpRa6O2gvZdI8CFeULJKJIxw"/>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="flex-1 px-margin-page py-gutter max-w-7xl mx-auto w-full">
+<header class="mb-8">
+<h2 class="text-display-lg font-display-lg text-on-surface mb-2">Import Properties</h2>
+<p class="text-body-lg text-on-surface-variant">Upload your real estate portfolio in bulk using our standardized CSV or Excel templates.</p>
+</header>
+<div class="space-y-8">
+<!-- STEP 1: Download Template -->
+<section>
+<div class="flex items-center gap-3 mb-4">
+<span class="step-number bg-primary text-on-primary">1</span>
+<h3 class="text-headline-md font-headline-md text-on-surface">Prepare Your File</h3>
+</div>
+<div class="bg-surface rounded-[24px] p-6 flex items-center justify-between group cursor-pointer hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-5">
+<div class="w-14 h-14 bg-secondary-container rounded-2xl flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined text-[32px]" data-icon="description">description</span>
+</div>
+<div>
+<h4 class="text-body-md font-bold text-on-surface">PropVista_Standard_Template.xlsx</h4>
+<p class="text-label-md text-on-surface-variant">Standardized format with 24 required fields and validation rules.</p>
+</div>
+</div>
+<button class="flex items-center gap-2 px-6 py-3 bg-primary-container text-on-primary-container font-bold rounded-xl hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+                            Download Template
+                        </button>
+</div>
+</section>
+<!-- STEP 2: Dropzone -->
+<section>
+<div class="flex items-center gap-3 mb-4">
+<span class="step-number bg-primary text-on-primary">2</span>
+<h3 class="text-headline-md font-headline-md text-on-surface">Upload Data</h3>
+</div>
+<div class="bg-surface-container-low border-2 border-dashed border-primary-container rounded-[24px] p-12 flex flex-col items-center justify-center text-center group cursor-pointer hover:border-primary transition-all">
+<div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-[40px]" data-icon="upload_file">upload_file</span>
+</div>
+<h4 class="text-headline-md font-headline-md text-on-surface mb-2">Drag &amp; drop your file here</h4>
+<p class="text-body-md text-on-surface-variant mb-6">Support for .xlsx, .csv, and .ods files up to 10MB</p>
+<button class="px-8 py-3 bg-white border border-outline-variant text-primary font-bold rounded-xl hover:bg-primary-container transition-colors">
+                            Browse Local Files
+                        </button>
+</div>
+</section>
+<!-- STEP 3: Review & Summary -->
+<section>
+<div class="flex items-center gap-3 mb-4">
+<span class="step-number bg-primary text-on-primary">3</span>
+<h3 class="text-headline-md font-headline-md text-on-surface">Review &amp; Validate</h3>
+</div>
+<!-- Summary Strip -->
+<div class="bg-surface-container-highest rounded-2xl p-4 flex items-center justify-between mb-6">
+<div class="flex items-center gap-6">
+<div class="flex flex-col">
+<span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Total Rows</span>
+<span class="text-headline-md font-bold text-on-surface">142 rows</span>
+</div>
+<div class="h-8 w-px bg-outline-variant"></div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-success-container border border-on-success-container"></span>
+<span class="text-body-md font-bold text-on-success-container">128 valid</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-warning-container border border-on-warning-container"></span>
+<span class="text-body-md font-bold text-on-warning-container">14 need attention</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 border border-outline text-on-surface font-bold rounded-lg hover:bg-surface transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="file_download">file_download</span>
+                                Download failed rows
+                            </button>
+<button class="px-6 py-2 bg-gradient-to-r from-primary to-[#0058be] text-white font-bold rounded-lg shadow-lg hover:shadow-primary-container/50 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="check_circle">check_circle</span>
+                                Import valid rows as drafts
+                            </button>
+</div>
+</div>
+<!-- Error Table -->
+<div class="bg-surface rounded-[24px] overflow-hidden border border-outline-variant/30">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant/30">
+<th class="px-6 py-4 text-label-md font-bold text-on-surface">Row #</th>
+<th class="px-6 py-4 text-label-md font-bold text-on-surface">Field</th>
+<th class="px-6 py-4 text-label-md font-bold text-on-surface">Value Found</th>
+<th class="px-6 py-4 text-label-md font-bold text-on-surface">Issue</th>
+<th class="px-6 py-4 text-label-md font-bold text-on-surface text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20">
+<tr>
+<td class="px-6 py-4 text-label-md font-bold text-on-surface">#04</td>
+<td class="px-6 py-4 text-label-md text-on-surface-variant font-mono">property_price</td>
+<td class="px-6 py-4 text-label-md text-error font-medium">"TBD"</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 text-error">
+<span class="material-symbols-outlined text-[16px]" data-icon="error">error</span>
+<span class="text-label-md">price is not a number</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-primary hover:underline text-label-md font-bold">Fix inline</button>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 text-label-md font-bold text-on-surface">#12</td>
+<td class="px-6 py-4 text-label-md text-on-surface-variant font-mono">zip_code</td>
+<td class="px-6 py-4 text-label-md text-error font-medium">"9021"</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 text-error">
+<span class="material-symbols-outlined text-[16px]" data-icon="error">error</span>
+<span class="text-label-md">postal code must be 5 digits</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-primary hover:underline text-label-md font-bold">Fix inline</button>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 text-label-md font-bold text-on-surface">#27</td>
+<td class="px-6 py-4 text-label-md text-on-surface-variant font-mono">sq_ft</td>
+<td class="px-6 py-4 text-label-md text-error font-medium">"-500"</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 text-error">
+<span class="material-symbols-outlined text-[16px]" data-icon="error">error</span>
+<span class="text-label-md">value cannot be negative</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-primary hover:underline text-label-md font-bold">Fix inline</button>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 text-label-md font-bold text-on-surface">#39</td>
+<td class="px-6 py-4 text-label-md text-on-surface-variant font-mono">contact_email</td>
+<td class="px-6 py-4 text-label-md text-error font-medium">"invalid.com"</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 text-error">
+<span class="material-symbols-outlined text-[16px]" data-icon="error">error</span>
+<span class="text-label-md">missing @ symbol</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-primary hover:underline text-label-md font-bold">Fix inline</button>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="p-4 bg-surface-container-low text-center">
+<button class="text-on-surface-variant text-label-md hover:text-primary transition-colors">Show 10 more issues</button>
+</div>
+</div>
+</section>
+</div>
+</div>
+<!-- Sticky Footer for Actions on Mobile/Small Screens -->
+<footer class="md:hidden fixed bottom-0 left-0 w-full bg-surface p-4 border-t border-outline-variant flex gap-2">
+<button class="flex-1 py-3 border border-outline text-on-surface font-bold rounded-xl">Download Errors</button>
+<button class="flex-1 py-3 bg-primary text-white font-bold rounded-xl">Import Valid</button>
+</footer>
+</main>
+<!-- Micro-interaction script -->
+<script>
+        // Handle drag and drop visual state
+        const dropzone = document.querySelector('.bg-surface-container-low.border-dashed');
+        if (dropzone) {
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropzone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    dropzone.classList.add('border-primary', 'bg-surface-container-highest');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropzone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    dropzone.classList.remove('border-primary', 'bg-surface-container-highest');
+                });
+            });
+        }
+    </script>
+</body></html>

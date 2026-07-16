@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>My Requirements | EstateSync</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "inverse-on-surface": "#f1efff",
+                  "on-primary": "#ffffff",
+                  "surface-dim": "#dad8eb",
+                  "secondary-container": "#5b94fd",
+                  "surface-container-low": "#f5f2ff",
+                  "surface-container-lowest": "#ffffff",
+                  "outline": "#777587",
+                  "surface-variant": "#e2e0f4",
+                  "on-tertiary-fixed-variant": "#5516be",
+                  "on-background": "#1a1a28",
+                  "surface-container-highest": "#e2e0f4",
+                  "primary": "#1e00a9",
+                  "secondary-fixed": "#d8e2ff",
+                  "tertiary": "#3e0095",
+                  "surface-container": "#eeecff",
+                  "secondary-fixed-dim": "#adc6ff",
+                  "surface-tint": "#4d44e3",
+                  "on-tertiary-container": "#c3aaff",
+                  "tertiary-fixed": "#e9ddff",
+                  "on-surface": "#1a1a28",
+                  "on-primary-fixed": "#0f0069",
+                  "inverse-surface": "#2f2f3e",
+                  "on-tertiary-fixed": "#23005c",
+                  "error-container": "#ffdad6",
+                  "success": "#026e4f",
+                  "warning": "#8a5300",
+                  "primary-container": "#3525cd",
+                  "on-secondary-fixed": "#001a42",
+                  "on-primary-container": "#b1afff",
+                  "on-error": "#ffffff",
+                  "inverse-primary": "#c3c0ff",
+                  "tertiary-container": "#571ac0",
+                  "outline-variant": "#c7c4d8",
+                  "on-surface-variant": "#464555",
+                  "primary-fixed-dim": "#c3c0ff",
+                  "background": "#fbf8ff",
+                  "on-secondary-fixed-variant": "#004395",
+                  "error": "#ba1a1a",
+                  "tertiary-fixed-dim": "#d0bcff",
+                  "primary-fixed": "#e2dfff",
+                  "on-primary-fixed-variant": "#3323cc",
+                  "on-secondary-container": "#002c66",
+                  "surface": "#f8f9ff",
+                  "secondary": "#085ac0",
+                  "on-error-container": "#93000a",
+                  "surface-bright": "#fbf8ff",
+                  "surface-container-high": "#e8e6fa",
+                  "on-tertiary": "#ffffff",
+                  "on-secondary": "#ffffff"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "1.5rem", /* Customized as per requirements (24px) */
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "stack-md": "24px",
+                  "stack-sm": "12px",
+                  "stack-lg": "48px",
+                  "gutter": "24px",
+                  "base": "8px",
+                  "container-max": "1440px",
+                  "margin-mobile": "20px",
+                  "margin-desktop": "40px"
+          },
+          "fontFamily": {
+                  "label-sm": ["Plus Jakarta Sans"],
+                  "headline-md": ["Plus Jakarta Sans"],
+                  "body-lg": ["Plus Jakarta Sans"],
+                  "display-lg-mobile": ["Plus Jakarta Sans"],
+                  "headline-lg": ["Plus Jakarta Sans"],
+                  "body-md": ["Plus Jakarta Sans"],
+                  "label-md": ["Plus Jakarta Sans"],
+                  "display-lg": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+                  "label-sm": ["12px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                  "headline-md": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                  "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                  "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                  "headline-lg": ["30px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                  "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                  "label-md": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                  "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #fbf8ff; /* background token */
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .glass-nav {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+    }
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 24px;
+    }
+    .requirement-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .requirement-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px -8px rgba(30, 0, 169, 0.08);
+    }
+  </style>
+</head>
+<body class="text-on-surface">
+<!-- TopNavBar -->
+<nav class="w-full top-0 sticky z-50 glass-nav border-b border-outline-variant shadow-sm h-20 flex items-center">
+<div class="flex justify-between items-center w-full px-10 max-w-container-max mx-auto">
+<div class="flex items-center gap-10">
+<span class="text-headline-md font-headline-md font-bold text-primary">EstateSync</span>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Dashboard</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Marketplace</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 transition-colors duration-200 cursor-pointer" href="#">My Requirements</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Messages</a>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-2 rounded-full border border-outline-variant bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none text-label-md w-64" placeholder="Search matches..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer active:opacity-80">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer active:opacity-80">settings</button>
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-full font-label-md hover:opacity-90 transition-all active:scale-95">Support</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant cursor-pointer">
+<img class="w-full h-full object-cover" data-alt="A professional business portrait of a real estate investor in a modern, sunlit office. The image has a clean, high-key lighting style with soft blue and white tones, reflecting a premium editorial aesthetic. The subject is smiling warmly, looking directly at the camera, conveying confidence and intelligence." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYWeGvqW8_wTzrOOZ3LrQqfg3Gesw9rVnTSIh3AtgytENOFq9EMZzHTa_-U4ssv1SRLI6gr2ieej6a2PFPtjo-JDGLdFl6A_iemY7mrL5Oxy_B8NK3dI0fY0QyLxRseCWH80Cd-QWrYfk3-kI_fIRjV6-o66UPOcEE9NnrAB-cePeoMDDG9z7Q640AaNWt4BgTw-X3qRT0MmcB17fZq8MuAJxhb3k_masWVlzYOvFwopsuDd3q1M83YA"/>
+</div>
+</div>
+</div>
+</div>
+</nav>
+<main class="max-w-container-max mx-auto px-10 py-12 min-h-screen">
+<!-- Header Section -->
+<header class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+<div class="space-y-2">
+<nav class="flex items-center gap-2 text-label-sm text-on-surface-variant">
+<span>Client Portal</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-bold">My Requirements</span>
+</nav>
+<h1 class="font-display-lg text-display-lg text-on-surface tracking-tight">My Requirements</h1>
+<p class="text-body-lg text-on-surface-variant max-w-2xl">Manage your active search profiles and monitor real-time AI-driven property matches across your portfolio.</p>
+</div>
+<button class="group flex items-center gap-2 bg-primary text-on-primary px-8 py-4 rounded-full font-label-md shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+        New Requirement
+      </button>
+</header>
+<!-- Bento Box Layout for Content -->
+<div class="flex flex-col gap-8">
+<!-- RequirementSummaryCard 1 -->
+<div class="requirement-card bg-surface-container-lowest border border-outline-variant rounded-xl p-8 flex flex-col md:flex-row gap-8 items-start">
+<div class="w-full md:w-48 h-32 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A luxurious modern apartment building in Austin, Texas, captured during the golden hour. The architecture features clean lines, expansive glass balconies, and warm wooden accents. The sky is a soft lavender and blue, complementing the building's warm interior lighting. The overall feel is serene, sophisticated, and premium." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPH-Kql7w0Vc5rDFHhPw8Bf7pH8uIGXTvYVx8E9xo1QsKPsPwRsy4CM7_hOESFlafadw9raNOgBh_Nxf8M-ekVrwYTwHER8ibJiGqFqXZ7vkGUbfdCOujcHO6tzPYVd7nkLioNa6TCgCUStxf_tBmfqBeYZmV_FA0Vjq6-9JkLJ_a_giCKI7wOVGBo6TWTHvZnhXQAo84VOCzt3QZcGcfuILDyF0VbGo2shmUqmJ9IVNAshXKIzXCQYw"/>
+</div>
+<div class="flex-grow space-y-4">
+<div class="flex flex-wrap justify-between items-start gap-4">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">3BHK apartment • $500k-$800k • Austin, TX</h3>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-surface-container-high text-on-surface-variant rounded-full text-label-sm">Family Home</span>
+<span class="px-3 py-1 bg-primary-fixed text-on-primary-fixed-variant rounded-full text-label-sm font-bold">Immediate</span>
+</div>
+</div>
+<div class="bg-tertiary-fixed text-on-tertiary-fixed px-6 py-3 rounded-2xl flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<div class="flex flex-col">
+<span class="text-label-md font-bold leading-tight">12 current matches</span>
+<span class="text-[11px] opacity-70">AI Verified Matches</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 pt-4">
+<button class="bg-secondary text-on-secondary px-6 py-2.5 rounded-full font-label-md hover:bg-secondary/90 transition-all">View Matches</button>
+<button class="px-6 py-2.5 rounded-full font-label-md border border-outline-variant text-on-surface hover:bg-surface-container-low transition-all">Edit</button>
+<button class="p-2.5 rounded-full border border-outline-variant text-error hover:bg-error-container/20 transition-all">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- RequirementSummaryCard 2 -->
+<div class="requirement-card bg-surface-container-lowest border border-outline-variant rounded-xl p-8 flex flex-col md:flex-row gap-8 items-start">
+<div class="w-full md:w-48 h-32 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A sleek, high-end studio apartment interior in a vibrant downtown setting. Large floor-to-ceiling windows show a blurred cityscape at dusk. The interior is minimalist with designer furniture, neutral tones, and accent lighting. The mood is calm, professional, and intelligently curated." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3ks780hXG9LFRWWhpB7bW_JeYU6uUH83wFVYNCO9Jcbuew_M9mCiVk_AFQwnTbpq93czxxbAYk7JZR5wvCko7PRmjPZtm68v7YMNn7qz59uCJl-rBve38WrCoMT5I6GwL4u3ur9fwrWTYE3F7Iirp1ZCEpCjLobqhZQ4jErpog2VF3sXB4V7h7G7WDjMCn473aoX_LckTMuVRBBJhMHnshNdicvfXStZHA9tG38h48A2U83yHmFdVnw"/>
+</div>
+<div class="flex-grow space-y-4">
+<div class="flex flex-wrap justify-between items-start gap-4">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Modern Studio • Under $2.5k/mo • Downtown</h3>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-surface-container-high text-on-surface-variant rounded-full text-label-sm">Rental</span>
+<span class="px-3 py-1 bg-surface-container-high text-on-surface-variant rounded-full text-label-sm">Next 3 Months</span>
+</div>
+</div>
+<div class="bg-tertiary-fixed text-on-tertiary-fixed px-6 py-3 rounded-2xl flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<div class="flex flex-col">
+<span class="text-label-md font-bold leading-tight">8 current matches</span>
+<span class="text-[11px] opacity-70">AI Verified Matches</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 pt-4">
+<button class="bg-secondary text-on-secondary px-6 py-2.5 rounded-full font-label-md hover:bg-secondary/90 transition-all">View Matches</button>
+<button class="px-6 py-2.5 rounded-full font-label-md border border-outline-variant text-on-surface hover:bg-surface-container-low transition-all">Edit</button>
+<button class="p-2.5 rounded-full border border-outline-variant text-error hover:bg-error-container/20 transition-all">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- RequirementSummaryCard 3 -->
+<div class="requirement-card bg-surface-container-lowest border border-outline-variant rounded-xl p-8 flex flex-col md:flex-row gap-8 items-start">
+<div class="w-full md:w-48 h-32 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A sprawling, ultra-modern luxury villa in Westlake with white stone walls and a massive infinity pool. The property is surrounded by lush green landscapes under a clear morning sky. The visual style is crisp, bright, and editorial, showcasing premium real estate at its finest." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7e87a7K3IyeZVgQl0gglOlrCorLgZW2LGc-XDYADReBRhi5A9ccyTb0WIMHl26twQLVVG-_eAs_3HWg-iYpgxY4lpFz-jBWMXvuk5aSBTpT01_SbevwHuAVYCC69LIIPMG_Yc-E8TY57nn4S-e5oKxiXcQhCgAAA6eOdlENUOB9Zv6bMVYZLqjRXYQ0OoXt5EkL120Z4M0KYZU5cCodgfEXsIdVISvYWjlfsmC4QJ0WzwzLVnpmLcxQ"/>
+</div>
+<div class="flex-grow space-y-4">
+<div class="flex flex-wrap justify-between items-start gap-4">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Luxury Villa • $2M+ • Westlake</h3>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-surface-container-high text-on-surface-variant rounded-full text-label-sm">Investment</span>
+<span class="px-3 py-1 bg-surface-container-high text-on-surface-variant rounded-full text-label-sm">Flexible</span>
+</div>
+</div>
+<div class="bg-tertiary-fixed text-on-tertiary-fixed px-6 py-3 rounded-2xl flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<div class="flex flex-col">
+<span class="text-label-md font-bold leading-tight">5 current matches</span>
+<span class="text-[11px] opacity-70">AI Verified Matches</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 pt-4">
+<button class="bg-secondary text-on-secondary px-6 py-2.5 rounded-full font-label-md hover:bg-secondary/90 transition-all">View Matches</button>
+<button class="px-6 py-2.5 rounded-full font-label-md border border-outline-variant text-on-surface hover:bg-surface-container-low transition-all">Edit</button>
+<button class="p-2.5 rounded-full border border-outline-variant text-error hover:bg-error-container/20 transition-all">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- AI Insights Section (Supplemental Bento Piece) -->
+<section class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="md:col-span-2 bg-primary-container text-on-primary-container p-8 rounded-xl flex items-center justify-between overflow-hidden relative group">
+<div class="relative z-10 space-y-2">
+<h4 class="font-headline-md text-headline-md">Market Intelligence Active</h4>
+<p class="font-body-md opacity-80 max-w-md">Our AI is currently monitoring 4,200+ new listings across Austin and Westlake to match your criteria.</p>
+<button class="mt-4 flex items-center gap-2 text-label-md font-bold hover:underline">
+            View Analytics Report
+            <span class="material-symbols-outlined text-[18px]">trending_up</span>
+</button>
+</div>
+<div class="absolute right-0 top-0 h-full w-1/3 opacity-20 pointer-events-none group-hover:opacity-30 transition-opacity">
+<span class="material-symbols-outlined text-[200px] -rotate-12 translate-x-12 translate-y-4">query_stats</span>
+</div>
+</div>
+<div class="bg-tertiary-container text-on-tertiary-container p-8 rounded-xl flex flex-col justify-center gap-4">
+<span class="material-symbols-outlined text-tertiary-fixed text-[32px]">tips_and_updates</span>
+<div>
+<h4 class="font-label-md font-bold">Optimization Tip</h4>
+<p class="text-label-sm opacity-80">Reducing your Westlake search radius by 2 miles could increase matching accuracy by 15% based on current supply.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-8 mt-auto bg-surface-container-lowest border-t border-outline-variant">
+<div class="flex flex-col md:flex-row justify-between items-center px-10 max-w-container-max mx-auto gap-4">
+<p class="font-label-sm text-label-sm text-on-surface-variant">© 2024 EstateSync CRM. All rights reserved.</p>
+<div class="flex items-center gap-8">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary transition-opacity duration-300" href="#">Privacy Policy</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary transition-opacity duration-300" href="#">Terms of Service</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary transition-opacity duration-300" href="#">Cookie Settings</a>
+</div>
+</div>
+</footer>
+<script>
+    // Micro-interactions
+    document.querySelectorAll('.requirement-card').forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        // Optional JS interactions
+      });
+    });
+  </script>
+</body></html>

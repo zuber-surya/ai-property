@@ -252,6 +252,80 @@ Leads are **not auto-assigned**. `POST /leads` creates them with `assigned_agent
 
 ---
 
+## 12A. Admin — Live Chat Handoff *(closes gap G7)*
+
+**The problem these close:** `POST /ai/chat/escalate` (§6) let the bot hand a conversation to a human — and **nothing let that human reply.** FR1.7 promises human handoff and its acceptance criterion requires escalations be *"visible to an agent in real time or near-real time"*. Without these four endpoints the bot promises an agent who cannot answer, and the escalation is a dead end.
+
+**No migration is needed.** `chat_messages.sender` already accepts `agent` (§3.14) and `chat_conversations` already carries `status`, `escalated_at` and `assigned_agent_id` (§3.13). The schema was built for this.
+
+| Method | Path | Purpose | Auth |
+|---|---|---|---|
+| GET | `/admin/chat/queue` | Escalated conversations — unclaimed, plus those assigned to me. **Sorted by wait time, longest first.** | Bearer (agent/admin) |
+| POST | `/admin/chat/{conversation_id}/claim` | Claim an escalated conversation. **Atomic** — see below. | Bearer (agent/admin) |
+| POST | `/admin/chat/{conversation_id}/reply` | Post a message as the human agent. Writes `chat_messages` with `sender = 'agent'`. | Bearer (agent/admin) |
+| POST | `/admin/chat/{conversation_id}/close` | End the conversation. `status → closed`. | Bearer (agent/admin) |
+
+### 12A.1 The claim must be atomic
+
+Two agents clicking "Take this chat" at the same instant must result in **exactly one owner** — the loser gets `409 Conflict`, not a silently shared conversation.
+
+This is the **same constraint as the lead claim** (FR10.2a, `03-database-schema.md` §3.8.1). **Reuse that pattern.** Do not invent a second concurrency mechanism for the same problem.
+
+```
+UPDATE chat_conversations
+   SET assigned_agent_id = :agent_id
+ WHERE id = :conversation_id
+   AND status = 'escalated'
+   AND assigned_agent_id IS NULL   -- the whole race is decided here
+```
+Zero rows updated → someone else won → `409`.
+
+### 12A.2 ⚠️ Once escalated, the bot goes silent
+
+**This is a rule on an existing endpoint, and it is the most important line in this section.**
+
+`POST /ai/chat/message` (§6) on a conversation whose `status = 'escalated'` must:
+
+- **persist the visitor's message** (`sender = 'user'`), and
+- **return without invoking Bedrock.**
+
+If the bot keeps answering after handoff, the visitor gets **two voices** — a human and a machine talking over each other — which is worse than no handoff at all. It also stops paying Bedrock for every message in an escalated conversation.
+
+### 12A.3 Delivery back to the visitor — polling, not a realtime channel
+
+The agent's reply reaches the open chat widget by **polling the existing `GET /ai/chat/history/{conversation_id}`** (§6) roughly every 4 seconds while `status = 'escalated'`. **No new customer-facing endpoint.**
+
+Supabase Realtime would be nicer, and it is already in the stack — but **ADR-0005** restricts the Supabase client to Auth and Storage, never data access. A human agent types with 10–30 seconds of natural latency; 4-second polling is invisible against that. See **ADR-0017**.
+
+### 12A.4 Response shapes
+
+`GET /admin/chat/queue`
+```json
+{
+  "items": [
+    {
+      "conversation_id": "…",
+      "escalated_at": "2026-07-14T09:12:00Z",
+      "waiting_seconds": 840,
+      "assigned_agent_id": null,
+      "visitor": { "name": "Priya S.", "phone": "+91…", "is_registered": true },
+      "last_message_preview": "I want to speak to someone about Sunview",
+      "message_count": 7,
+      "property_id": "…"
+    }
+  ]
+}
+```
+`waiting_seconds` is computed, not stored. **It is the most important field on the screen** — an escalated chat is the only genuinely real-time obligation in the CRM.
+
+`POST /admin/chat/{id}/reply` → `201` with the created message. `POST …/claim` → `200`, or **`409`** if already claimed.
+
+### 12A.5 Tenancy
+
+All four are tenant-scoped like every other admin endpoint. An agent may only see and reply to conversations **in their own tenant**. `conversation_id` is a UUID from the path — **verify it belongs to the caller's tenant before acting on it**, or this becomes a cross-tenant read of a customer's chat transcript (`19-security-and-privacy.md` T1).
+
+---
+
 ## 13. CMS
 
 ### 13.1 Public (no auth) — **the module is inert without these**

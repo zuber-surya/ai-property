@@ -62,7 +62,7 @@ The inventory table. Unlike the public [Property Listing](../16-customer-spec/02
 | Search | Title / location, debounced |
 | Filters | Status, type, agent. **Status is the one that matters** — "show me everything pending approval" is the daily query |
 | Table | Thumbnail, title + specs, price, status badge, assigned agent, row menu |
-| Status badge | Colors per `13-ui-ux-flows.md` §4.5 — Draft `slate`, Pending `amber`, Published `teal`, Sold `ink`, Archived muted |
+| Status badge | Colors per `DESIGN.md` → **Semantic Status Colors** — Draft `neutral-container`, Pending Approval `warning-container`, Published `success-container`, Sold `inverse-surface`, Rejected `error-container`, Archived muted |
 | Bulk bar | Appears on selection (FR9.1, FR9.4) — see §9 on confirmation |
 | Row menu (⋯) | Edit · View live · Duplicate · Change status · Archive |
 

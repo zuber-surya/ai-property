@@ -133,7 +133,7 @@ Reasonable set (**needs adding to `01-prd.md`**):
 |---|---|
 | **Empty (new tenant)** | **The most dangerous empty state in the product.** No rules means leads arrive and nobody is told. **Seed a default rule on tenant creation** — "new lead → email → assigned agent" — rather than leaving it to a tenant who doesn't know they need it |
 | Rule with no valid recipients | Flag it. A rule pointing at a deactivated user silently notifies nobody |
-| Channel unavailable | If no email/SMS provider is configured, **disable those channels with a reason** rather than letting an admin build a rule that quietly does nothing |
+| Channel unavailable | SendGrid and Twilio are the chosen providers (`02-architecture.md` §3). If a tenant's credentials are missing **or DLT registration is incomplete**, disable that channel **with the reason shown** — never let an admin build a rule that quietly does nothing |
 | Rule disabled | `is_active = false`. Keep it — disabling is safer than deleting |
 
 ---
@@ -197,7 +197,8 @@ Admin-only, tenant-scoped. **Recipients must be validated against the tenant's o
 
 ## 11. Open Questions
 
-- [ ] **No email/SMS provider is chosen anywhere** (`10-deployment-devops.md` doesn't name one). Without it, only the in-app channel can work — and in-app needs the `notifications` table that doesn't exist either (customer Gap G1). **As specified, this entire module currently notifies nobody through any channel.** That is the single biggest functional hole in the admin portal: leads get captured and nobody is told.
+- [x] ~~**No email/SMS provider is chosen anywhere.**~~ ✅ **FALSE — both are chosen.** `02-architecture.md` **§3**: **SendGrid** (email), **Twilio** (SMS), decided **2026-07-13**. The `notifications` table exists (schema v1.1 §3.20) and the scheduler exists (§4.4, `pg_cron` + jobs worker). **This module notifies through all three channels and is fully buildable.** The claim that it "notifies nobody" came from a stale summary, not the owning doc — see `GAPS.md` §5A.
+- [ ] ⚠️ **Indian SMS requires DLT registration** of entity, sender IDs and templates (`02-architecture.md` §3 notes this). That is a regulatory process with **calendar lead time, not engineering time**. Start it now or the Twilio integration will be finished and unusable.
 - [ ] **The event catalogue is undefined** (§4.1) — add it to `01-prd.md`.
 - [ ] **`listing_expiring` is named in FR15.2, but `properties` has no expiry date.** Either add one or drop the example.
 - [ ] **Scheduled/time-based events** (`lead_stale`, `follow_up_due`, `listing_expiring`) need a **job scheduler**. Nothing in `02-architecture.md` or `10-deployment-devops.md` provides one. This also blocks follow-up reminders ([08](08-lead-detail.md)) — a feature agents will assume works.

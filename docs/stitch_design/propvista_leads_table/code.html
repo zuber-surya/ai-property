@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PropVista Admin | Leads Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#571ac0",
+                        "on-secondary-fixed": "#1b1a29",
+                        "on-tertiary-fixed": "#23005c",
+                        "on-tertiary-container": "#c3aaff",
+                        "surface-tint": "#4d44e3",
+                        "tertiary-fixed-dim": "#d0bcff",
+                        "outline": "#777587",
+                        "on-secondary-container": "#646374",
+                        "primary-fixed": "#e2dfff",
+                        "inverse-surface": "#302f39",
+                        "surface-container": "#e5eeff",
+                        "tertiary-fixed": "#e9ddff",
+                        "on-secondary-fixed-variant": "#464555",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#3525cd",
+                        "on-surface-variant": "#464555",
+                        "inverse-on-surface": "#eaf1ff",
+                        "error": "#ba1a1a",
+                        "on-warning-container": "#2c1700",
+                        "error-container": "#ffdad6",
+                        "surface-dim": "#dcd8e5",
+                        "surface-variant": "#e4e1ee",
+                        "success-container": "#c3f0da",
+                        "on-error": "#ffffff",
+                        "primary-container": "#e2dfff",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "primary": "#1e00a9",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "surface-container-high": "#eae6f4",
+                        "warning-container": "#ffddb0",
+                        "outline-variant": "#c7c4d8",
+                        "surface-bright": "#fcf8ff",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#1b1b24",
+                        "tertiary": "#3e0095",
+                        "inverse-primary": "#c3c0ff",
+                        "on-secondary": "#ffffff",
+                        "surface": "#ffffff",
+                        "on-tertiary-fixed-variant": "#5516be",
+                        "surface-container-low": "#eff4ff",
+                        "on-success-container": "#00522f",
+                        "background": "#f8f9ff",
+                        "on-background": "#1b1b24",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#c7c4d8",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#0f0069",
+                        "surface-container-highest": "#e4e1ee",
+                        "secondary": "#5e5d6e",
+                        "secondary-container": "#e3e0f5",
+                        "secondary-fixed": "#e3e0f5"
+                    },
+                    "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                    "spacing": { "margin-page": "2rem", "gutter": "1.5rem", "sidebar-width": "240px", "component-gap": "1rem" }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- Fixed SideNavBar (The Rail) -->
+<aside class="fixed left-0 top-0 h-full w-[240px] bg-surface flex flex-col py-6 px-4 gap-2 z-50 overflow-y-auto">
+<div class="mb-8 flex items-center gap-3 px-2">
+<div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="domain">domain</span>
+</div>
+<div>
+<h1 class="text-headline-md font-headline-md font-bold text-primary leading-tight">PropVista Admin</h1>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Tenant Business</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low px-4 py-3 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-label-md font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low px-4 py-3 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="domain">domain</span>
+<span class="text-label-md font-label-md">Properties</span>
+</a>
+<a class="flex items-center gap-3 bg-primary-container text-primary font-bold px-4 py-3 rounded-xl transition-transform duration-150 scale-[0.98]" href="#">
+<span class="material-symbols-outlined" data-icon="person_search" style="font-variation-settings: 'FILL' 1;">person_search</span>
+<span class="text-label-md font-label-md">Leads</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low px-4 py-3 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="text-label-md font-label-md">Clients</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low px-4 py-3 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="person_outline">person_outline</span>
+<span class="text-label-md font-label-md">Users</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low px-4 py-3 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+<span class="text-label-md font-label-md">AI Config</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low px-4 py-3 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="text-label-md font-label-md">Reports</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low px-4 py-3 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-surface-container">
+<button class="w-full h-12 bg-primary text-white font-bold rounded-xl flex items-center justify-center gap-2 mb-4 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+<span class="text-label-md">New Property</span>
+</button>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low px-4 py-3 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="text-label-md font-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Shell -->
+<main class="ml-[240px] min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center h-16 px-gutter bg-background">
+<div class="flex items-center gap-4">
+<h2 class="text-headline-md font-headline-md text-on-surface font-bold">Leads Management</h2>
+<div class="flex bg-surface-container-low rounded-xl p-1 shadow-sm">
+<button class="px-4 py-1.5 text-label-md font-bold rounded-lg text-on-surface-variant hover:bg-surface transition-all">Kanban</button>
+<button class="px-4 py-1.5 text-label-md font-bold rounded-lg bg-surface text-primary shadow-sm">Table</button>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative flex items-center bg-surface-container-low px-4 py-2 rounded-full w-64">
+<span class="material-symbols-outlined text-outline text-[20px]" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-label-md w-full placeholder:text-outline ml-2" placeholder="Search leads..." type="text"/>
+</div>
+<div class="flex items-center gap-2">
+<button class="hover:bg-surface-container-highest rounded-full p-2 transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="notifications">notifications</span>
+</button>
+<button class="hover:bg-surface-container-highest rounded-full p-2 transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="help_outline">help_outline</span>
+</button>
+<div class="ml-2 w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container cursor-pointer">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a female property administrator in a clean, modern studio setting. She is wearing a dark navy blazer and has a confident, welcoming expression. The lighting is bright and airy with a soft bokeh background typical of corporate profile photography. The overall aesthetic is professional and high-end." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqZxdoD6mJj4PhgYaw0_eShuOLnoqyq7m9gtMhvLCsyujDrlgxWrtxa1bAjRDCX3KrByQdjsEVPHI2fxRxBTbHhHyJWIVWNm9Y0M9eEI_tU8qV0ZwT7zvf6B8ImMAqzcNLNyxr4qZK_C-RSBqd-LX-6J2HkGL_kMBNjdqdovV2UF3kKwEe5nL04nLDSqN4iRaw7pCLMFUsV4vq-bY6lAMHg876QsS3vaLSfOuF_S5Gvlfl_gpsPL0dBg"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Table Container Area -->
+<section class="flex-1 p-gutter pt-2">
+<div class="bg-surface rounded-[24px] shadow-sm border border-surface-container overflow-hidden flex flex-col h-full relative">
+<!-- Bulk Action Bar (Hidden by default, triggered by JS) -->
+<div class="absolute top-0 inset-x-0 h-16 bg-primary z-20 flex items-center justify-between px-6 transform -translate-y-full transition-transform duration-300" id="bulkBar">
+<div class="flex items-center gap-4">
+<span class="text-white font-bold text-label-md"><span id="selectedCount">0</span> Leads Selected</span>
+<div class="h-6 w-px bg-white/20"></div>
+<button class="text-white/80 hover:text-white text-label-md font-bold transition-colors">Select All</button>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-white/90 text-label-md">Assign to:</span>
+<div class="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg border border-white/20 cursor-pointer transition-colors">
+<div class="w-6 h-6 rounded-full overflow-hidden border border-white/40">
+<img class="w-full h-full object-cover" data-alt="A close up avatar photo of a real estate agent named Meera, with a warm and friendly appearance, wearing professional business casual attire. Light mode background with a clean and minimal corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLfrBHhJk3Tz3pTsdMB-V6Neqswxjw4jD3XpMYgiQ8bR-D4S5VsLBGmBsVx8ZBb02Tmrjh0uAwVZ2Q-hC40sDJm0N8IhV92rt1qn9GaN5fM6PfEkXXsoP_hlKCPmC8VS0c8r7nRiNwwCZJrG_tHlXLZ-XwFXwBbz-mnuY1OTC3KbWD4Z74IcDoLKWchFwgMoEleV_-pvxyMGI2PTHHdqI0TXl3UB1vyK2AWVdKBx0uFb94oDqFD7wkEg"/>
+</div>
+<span class="text-white text-label-md font-bold">Meera</span>
+</div>
+<button class="bg-white text-primary px-6 py-1.5 rounded-lg text-label-md font-extrabold hover:bg-primary-container transition-colors">Apply</button>
+<button class="ml-4 p-1 hover:bg-white/10 rounded-full text-white" id="closeBulk">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+</div>
+<!-- Table Content -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-surface-container text-on-surface-variant uppercase tracking-wider">
+<th class="p-4 w-12">
+<input class="rounded border-outline-variant text-primary focus:ring-primary h-4 w-4" id="selectAll" type="checkbox"/>
+</th>
+<th class="p-4 text-label-sm font-bold">Name</th>
+<th class="p-4 text-label-sm font-bold">Source</th>
+<th class="p-4 text-label-sm font-bold">Property</th>
+<th class="p-4 text-label-sm font-bold">Stage</th>
+<th class="p-4 text-label-sm font-bold">Owner</th>
+<th class="p-4 text-label-sm font-bold">Age</th>
+<th class="p-4 w-12"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<!-- Lead Row 1 (Fresh) -->
+<tr class="group hover:bg-surface-container-low transition-colors">
+<td class="p-4"><input class="lead-check rounded border-outline-variant text-primary focus:ring-primary h-4 w-4" type="checkbox"/></td>
+<td class="p-4">
+<div class="flex flex-col">
+<span class="text-body-md text-on-surface">Alexander Wright</span>
+<span class="text-label-sm text-outline">alex.w@gmail.com</span>
+</div>
+</td>
+<td class="p-4">
+<span class="px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-fixed-variant text-label-sm font-bold">Zillow Premium</span>
+</td>
+<td class="p-4 text-body-md text-on-surface-variant">The Pinnacle Heights, Unit 402</td>
+<td class="p-4">
+<span class="px-2.5 py-1 rounded-full bg-success-container text-on-success-container text-label-sm font-bold">Viewing Scheduled</span>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="Small round headshot of a male property consultant, looking professional with short groomed hair and a dark suit. Modern corporate lighting and a neutral blue-tinted background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrbRlmHLntGWgDx8MnpM58GFVvjiDGgGcbjHv1aptdDCnCC8ykl6uHfDB07unKKtUNsoXG2m8qbe-PX8MKTB6w2EyUyGhq-T_MHuv-k0UrDk8Y5PbT2MQ6SYEwbBBsGNdgxtlx0dI8l2ywuB4gMC4FhD9LNRdzUF9IQgMZ4G8c2BSVkv4UWwf_47ge0ZbYko_t8__X9Uu3SzIM3Br1c-FvQrIs-pbqLR2QMSAlq2KynN8nvDbzmm9Gvg"/>
+</div>
+<span class="text-label-md">James T.</span>
+</div>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<span class="text-body-md font-bold text-on-surface">2 Days</span>
+<span class="w-2 h-2 rounded-full bg-success-container"></span>
+</div>
+</td>
+<td class="p-4 text-right">
+<button class="p-1 hover:bg-surface-container-highest rounded-full transition-colors opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Lead Row 2 (Stale) -->
+<tr class="group hover:bg-surface-container-low transition-colors">
+<td class="p-4"><input class="lead-check rounded border-outline-variant text-primary focus:ring-primary h-4 w-4" type="checkbox"/></td>
+<td class="p-4">
+<div class="flex flex-col">
+<span class="text-body-md text-on-surface">Mariana Sanchez</span>
+<span class="text-label-sm text-outline">m.sanchez@outlook.com</span>
+</div>
+</td>
+<td class="p-4">
+<span class="px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-label-sm font-bold">Google Ads</span>
+</td>
+<td class="p-4 text-body-md text-on-surface-variant">Azure Bay Residences</td>
+<td class="p-4">
+<span class="px-2.5 py-1 rounded-full bg-warning-container text-on-warning-container text-label-sm font-bold">Initial Contact</span>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="Avatar photo of Meera, a female real estate manager with a warm smile. Professional studio lighting with a clean white and soft blue color palette to match the UI style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnxEwcI8-gFcShM0_e3XQoC4PJASLgKlQyuk0jjOdE3EC2hW3tSD50eqw-cFG-tWhIdhHBI6Mdt-fTOywCt090ZFaRda5glh7M3kXiWSlOruqaR3qr7b8d7bxpViI4tGqZ2ZVgDJmqGa9xhZvSYmyPJPv1raa8CdbQ5Bfmw4ujR6VQEVtCpqFNm7nIPu0Tr3B2WqX_5j1ubb-3g6niYnzquFTnTJDHi__kpBdu_P6RDeFFZfbHheC8Mg"/>
+</div>
+<span class="text-label-md">Meera K.</span>
+</div>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<span class="text-body-md font-bold text-error">14 Days</span>
+<span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>
+</div>
+</td>
+<td class="p-4 text-right">
+<button class="p-1 hover:bg-surface-container-highest rounded-full transition-colors opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Lead Row 3 (AI Scored) -->
+<tr class="group hover:bg-tertiary-container/5 transition-colors border-l-4 border-tertiary">
+<td class="p-4"><input class="lead-check rounded border-outline-variant text-primary focus:ring-primary h-4 w-4" type="checkbox"/></td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="flex flex-col">
+<span class="text-body-md text-on-surface">Robert Chen</span>
+<span class="text-label-sm text-outline">r.chen@techcorp.com</span>
+</div>
+<span class="material-symbols-outlined text-tertiary text-[18px]" data-icon="psychology" style="font-variation-settings: 'FILL' 1;">psychology</span>
+</div>
+</td>
+<td class="p-4">
+<span class="px-2.5 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant text-label-sm font-bold">Direct Referral</span>
+</td>
+<td class="p-4 text-body-md text-on-surface-variant">The Modernist Tower</td>
+<td class="p-4">
+<span class="px-2.5 py-1 rounded-full bg-primary-container text-on-primary-container text-label-sm font-bold">Negotiation</span>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<span class="px-2 h-6 flex items-center justify-center bg-surface-container-high rounded text-label-sm font-bold text-outline">Unassigned</span>
+</div>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<span class="text-body-md font-bold text-on-surface">4 Days</span>
+<span class="w-2 h-2 rounded-full bg-success-container"></span>
+</div>
+</td>
+<td class="p-4 text-right">
+<button class="p-1 hover:bg-surface-container-highest rounded-full transition-colors opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Lead Row 4 -->
+<tr class="group hover:bg-surface-container-low transition-colors">
+<td class="p-4"><input class="lead-check rounded border-outline-variant text-primary focus:ring-primary h-4 w-4" type="checkbox"/></td>
+<td class="p-4">
+<div class="flex flex-col">
+<span class="text-body-md text-on-surface">Sarah Jenkins</span>
+<span class="text-label-sm text-outline">sarah.j@outlook.com</span>
+</div>
+</td>
+<td class="p-4">
+<span class="px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-label-sm font-bold">Realtor.com</span>
+</td>
+<td class="p-4 text-body-md text-on-surface-variant">Oakwood Lofts, Unit 12</td>
+<td class="p-4">
+<span class="px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-fixed-variant text-label-sm font-bold">Nurturing</span>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="Avatar photo of Meera, a female real estate manager with a professional and friendly look. The photo is styled for a high-end property application with soft lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJolIQXl4wVENpg63FHIYFT20YzuVGB8ao4GEH6ztuUKKYGCBiuVqZTotyCAofOEg-vrmH16kvg1pSOAJ4XG4Ay2ieCgFpOvO-vCOj41hbj9SqkypVwEo1Na64TPRjWUmpGHECK9H9oG-Pf5GwH1chr9DALmbcPXo_JcrnWjcGqSBAhiHNi9CjIbt5CMC9qZTeZmNmvs971FQLoZqJrW2P5Ka5ZU9GwMXC8js1xb2iuK7CInsw-7Wf6w"/>
+</div>
+<span class="text-label-md">Meera K.</span>
+</div>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<span class="text-body-md font-bold text-error">21 Days</span>
+<span class="w-2 h-2 rounded-full bg-error"></span>
+</div>
+</td>
+<td class="p-4 text-right">
+<button class="p-1 hover:bg-surface-container-highest rounded-full transition-colors opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Lead Row 5 -->
+<tr class="group hover:bg-surface-container-low transition-colors">
+<td class="p-4"><input class="lead-check rounded border-outline-variant text-primary focus:ring-primary h-4 w-4" type="checkbox"/></td>
+<td class="p-4">
+<div class="flex flex-col">
+<span class="text-body-md text-on-surface">Kevin O'Connell</span>
+<span class="text-label-sm text-outline">kevin_oc@live.com</span>
+</div>
+</td>
+<td class="p-4">
+<span class="px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-fixed-variant text-label-sm font-bold">Facebook Lead Form</span>
+</td>
+<td class="p-4 text-body-md text-on-surface-variant">Harbor Point Estate</td>
+<td class="p-4">
+<span class="px-2.5 py-1 rounded-full bg-success-container text-on-success-container text-label-sm font-bold">Offer Accepted</span>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="Headshot of a middle-aged male real estate professional with glasses, looking sharp and experienced. Clean minimalist lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1uECvFZ2p2CUKa4f9fr__8GxpphcEEPouHdTN9y5xJFHuW3jydQ-kYWxRQPAPYj87_oh68kCPkz_bgvBvU05e52ZmDBUjZlytD3Hl7autn_9ti8GQuniXaIrMD-7wK7q14RH9p9VE4tNRNIfWzmkpvoKO2Tg_XrS4uevxC6FjYVDmSfl6fo_INqXsEhqW2MH0w1D_e6WP1crKxqurokOE-aYfl-Y714wbGI33zwylmSs-P1PZX2M3Jg"/>
+</div>
+<span class="text-label-md">James T.</span>
+</div>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<span class="text-body-md font-bold text-on-surface">1 Day</span>
+<span class="w-2 h-2 rounded-full bg-success-container"></span>
+</div>
+</td>
+<td class="p-4 text-right">
+<button class="p-1 hover:bg-surface-container-highest rounded-full transition-colors opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination / Footer -->
+<div class="mt-auto border-t border-surface-container bg-surface-container-lowest p-4 flex items-center justify-between">
+<div class="text-label-sm text-on-surface-variant">
+                        Showing <span class="font-bold">1 - 5</span> of <span class="font-bold">128</span> leads
+                    </div>
+<div class="flex items-center gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-surface-container hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-white font-bold text-label-sm">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-surface-container hover:bg-surface-container-low text-label-sm">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-surface-container hover:bg-surface-container-low text-label-sm">3</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-surface-container hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- AI Insights Bento Sidebar (Floating Style) -->
+<div class="fixed right-6 bottom-6 flex flex-col gap-4 w-80 z-40">
+<div class="bg-tertiary text-white p-5 rounded-[24px] shadow-2xl relative overflow-hidden group cursor-pointer transition-transform hover:scale-[1.02]">
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-[20px]" data-icon="psychology" style="font-variation-settings: 'FILL' 1;">psychology</span>
+<span class="text-label-md font-bold uppercase tracking-wider opacity-80">AI Lead Pulse</span>
+</div>
+<h3 class="text-headline-sm font-bold mb-2">3 Stale Leads need re-engagement</h3>
+<p class="text-label-md opacity-90 leading-relaxed">Based on your successful conversions, the AI recommends contacting Robert Chen immediately.</p>
+<div class="mt-4 flex gap-2">
+<button class="bg-white/20 hover:bg-white/30 backdrop-blur-md px-4 py-2 rounded-xl text-label-sm font-bold transition-all">Review Suggestions</button>
+</div>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined text-[120px]" data-icon="auto_awesome">auto_awesome</span>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Micro-interactions for Table Selection & Bulk Bar
+        const selectAll = document.getElementById('selectAll');
+        const leadChecks = document.querySelectorAll('.lead-check');
+        const bulkBar = document.getElementById('bulkBar');
+        const selectedCountLabel = document.getElementById('selectedCount');
+        const closeBulk = document.getElementById('closeBulk');
+
+        function updateBulkBar() {
+            const checkedCount = Array.from(leadChecks).filter(cb => cb.checked).length;
+            if (checkedCount > 0) {
+                bulkBar.classList.remove('-translate-y-full');
+                selectedCountLabel.textContent = checkedCount;
+            } else {
+                bulkBar.classList.add('-translate-y-full');
+            }
+        }
+
+        selectAll.addEventListener('change', (e) => {
+            leadChecks.forEach(cb => {
+                cb.checked = e.target.checked;
+                const row = cb.closest('tr');
+                if (cb.checked) row.classList.add('bg-primary-container/20');
+                else row.classList.remove('bg-primary-container/20');
+            });
+            updateBulkBar();
+        });
+
+        leadChecks.forEach(cb => {
+            cb.addEventListener('change', () => {
+                const row = cb.closest('tr');
+                if (cb.checked) row.classList.add('bg-primary-container/20');
+                else row.classList.remove('bg-primary-container/20');
+                
+                // Update Select All state
+                const allChecked = Array.from(leadChecks).every(c => c.checked);
+                selectAll.checked = allChecked;
+                selectAll.indeterminate = !allChecked && Array.from(leadChecks).some(c => c.checked);
+                
+                updateBulkBar();
+            });
+        });
+
+        closeBulk.addEventListener('click', () => {
+            leadChecks.forEach(cb => {
+                cb.checked = false;
+                cb.closest('tr').classList.remove('bg-primary-container/20');
+            });
+            selectAll.checked = false;
+            selectAll.indeterminate = false;
+            updateBulkBar();
+        });
+    </script>
+</body></html>

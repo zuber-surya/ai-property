@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PropVista | Effortless Intelligence in Real Estate</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#5b94fd",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#b1afff",
+                        "surface": "#f8f9ff",
+                        "outline-variant": "#c7c4d8",
+                        "inverse-surface": "#2f2f3e",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#0f0069",
+                        "tertiary": "#3e0095",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#e9ddff",
+                        "primary-fixed": "#e2dfff",
+                        "on-surface": "#1a1a28",
+                        "background": "#fbf8ff",
+                        "inverse-on-surface": "#f1efff",
+                        "secondary": "#085ac0",
+                        "on-background": "#1a1a28",
+                        "surface-tint": "#4d44e3",
+                        "primary-container": "#3525cd",
+                        "on-secondary-fixed": "#001a42",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#dad8eb",
+                        "primary": "#1e00a9",
+                        "inverse-primary": "#c3c0ff",
+                        "surface-container-high": "#e8e6fa",
+                        "tertiary-container": "#571ac0",
+                        "warning": "#8a5300",
+                        "surface-container": "#eeecff",
+                        "on-surface-variant": "#464555",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "success": "#026e4f",
+                        "secondary-fixed": "#d8e2ff",
+                        "surface-container-low": "#f5f2ff",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-tertiary-container": "#c3aaff",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#e2e0f4",
+                        "surface-bright": "#fbf8ff",
+                        "surface-variant": "#e2e0f4",
+                        "on-secondary-fixed-variant": "#004395",
+                        "on-primary": "#ffffff",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "outline": "#777587",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#d0bcff",
+                        "on-tertiary-fixed": "#23005c",
+                        "on-tertiary-fixed-variant": "#5516be",
+                        "on-secondary-container": "#002c66",
+                        "error": "#ba1a1a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "12px",
+                        "margin-mobile": "20px",
+                        "container-max": "1440px",
+                        "base": "8px",
+                        "margin-desktop": "40px",
+                        "gutter": "24px",
+                        "stack-md": "24px",
+                        "stack-lg": "48px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "display-lg-mobile": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                        "label-md": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "headline-lg": ["30px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-effect {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .tertiary-glow {
+            box-shadow: 0 0 40px -10px rgba(87, 26, 192, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md overflow-x-hidden">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-surface-container-lowest/80 backdrop-blur-xl border-b border-outline-variant shadow-sm h-20">
+<div class="max-w-container-max mx-auto px-margin-desktop flex justify-between items-center h-full">
+<div class="flex items-center gap-stack-lg">
+<span class="font-headline-md text-headline-md font-bold text-primary">PropVista</span>
+<nav class="hidden md:flex items-center gap-stack-md">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:opacity-70" href="#">Dashboard</a>
+<a class="font-body-md text-body-md text-primary font-bold border-b-2 border-primary transition-colors cursor-pointer active:opacity-70" href="#">Properties</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:opacity-70" href="#">Clients</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:opacity-70" href="#">Leads</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:opacity-70" href="#">Insights</a>
+</nav>
+</div>
+<div class="flex items-center gap-stack-md">
+<button class="font-body-md text-body-md text-primary hover:text-primary/80 transition-colors px-4 py-2">Login</button>
+<button class="bg-primary text-on-primary font-label-md px-6 py-2.5 rounded-full hover:bg-primary-container transition-all shadow-sm">Add Listing</button>
+</div>
+</div>
+</header>
+<main class="pt-20">
+<!-- Hero Section -->
+<section class="relative min-h-[600px] flex flex-col items-center justify-center text-center px-margin-mobile md:px-margin-desktop py-stack-lg overflow-hidden">
+
+<div class="max-w-4xl mx-auto z-10">
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-stack-md animate-fade-in">
+                    Find your next home with <span class="text-primary">effortless intelligence.</span>
+</h1>
+<!-- Natural Language Search Bar -->
+<div class="relative w-full max-w-2xl mx-auto mb-stack-md">
+<div class="bg-surface-container-lowest/80 glass-effect border border-outline-variant p-2 pl-6 rounded-full flex items-center shadow-lg group focus-within:ring-2 focus-within:ring-primary/20 transition-all"><span class="material-symbols-outlined text-outline mr-3">search</span><input class="bg-transparent border-none focus:ring-0 w-full text-body-md placeholder:text-on-surface-variant/50" placeholder="Describe the home you’re looking for..." type="text"/><div class="flex items-center gap-2 pr-2"><button class="p-2 hover:bg-surface-container-high rounded-full transition-colors text-on-surface-variant hidden" id="clear-search"><span class="material-symbols-outlined">close</span></button><button class="p-2 hover:bg-surface-container-high rounded-full transition-colors text-on-surface-variant"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">mic</span></button><button class="bg-primary text-on-primary font-label-md px-8 py-3 rounded-full hover:bg-primary-container transition-all active:scale-95">Search</button></div></div>
+</div>
+<!-- Quick Filter Chips -->
+<div class="flex flex-wrap justify-center gap-2">
+<button class="px-4 py-1.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm border border-primary/10 hover:bg-primary-fixed-dim transition-colors">Buy</button>
+<button class="px-4 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm hover:bg-surface-container-highest transition-colors">Rent</button>
+<button class="px-4 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm hover:bg-surface-container-highest transition-colors">Apartment</button>
+<button class="px-4 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm hover:bg-surface-container-highest transition-colors">House</button>
+<button class="px-4 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm hover:bg-surface-container-highest transition-colors">Under $1M</button>
+</div>
+</div>
+</section>
+<!-- Featured Properties -->
+<section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg">
+<div class="flex justify-between items-end mb-stack-lg">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Curated Collections</h2>
+<p class="font-body-md text-on-surface-variant mt-2">Intelligence-led property matches based on market trends.</p>
+</div>
+<button class="text-primary font-label-md flex items-center gap-2 hover:underline">
+                    View all listings <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Property Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all group">
+<div class="relative aspect-video">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A modern architectural masterpiece home featuring floor-to-ceiling glass walls, sleek concrete lines, and a warm wooden deck. The setting is a lush, sun-drenched coastal hillside at golden hour, creating a premium editorial feel. Soft blue-tinted neutral tones dominate the landscape, with vibrant greenery providing a fresh contrast. High-end lifestyle photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmV5G9tANqHyPvXCe5uZ0aPlIIvwMCa-vqbzFObHK-rX5E5MPZhrMZ09ocQeRsCN0BWFI-B0QY39bwPfFRZcK6RO0OI450ejasl7RqqsVmuycCd-dxzQoa8GxbkG77T6K7gIC9ZqJZP3efU41YP2EjjXPKbMXp_IcLsA7ElKXJ163J66N103ynifh4YnJpMdiCFeMQbV_r9a15UNmxV-9vlfWXMJCJ1lwVjqgnwq1UHyuO2uqGKs9lLQ"/>
+<div class="absolute top-4 left-4 bg-success text-on-error font-label-sm px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">auto_awesome</span> Just Listed
+                        </div>
+<button class="absolute top-4 right-4 bg-surface-container-lowest/80 backdrop-blur-md p-2 rounded-full hover:bg-white transition-colors text-on-surface-variant active:text-error">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+</div>
+<div class="p-stack-md">
+<h3 class="font-headline-md text-headline-md text-primary mb-1">$2,450,000</h3>
+<p class="font-body-md text-on-surface mb-stack-sm">1248 Skyline Drive, Los Angeles, CA</p>
+<div class="flex items-center gap-4 text-on-surface-variant border-t border-outline-variant/30 pt-4">
+<span class="flex items-center gap-1 font-label-md"><span class="material-symbols-outlined text-[18px]">bed</span> 4</span>
+<span class="flex items-center gap-1 font-label-md"><span class="material-symbols-outlined text-[18px]">bathtub</span> 3.5</span>
+<span class="flex items-center gap-1 font-label-md"><span class="material-symbols-outlined text-[18px]">square_foot</span> 3,200 sqft</span>
+</div>
+</div>
+</div>
+<!-- Property Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all group">
+<div class="relative aspect-video">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A luxury penthouse interior with minimalist Nordic design. Large windows reveal a city skyline during a soft pink sunset. The room features high-quality materials like marble, oak, and brushed steel. The lighting is ethereal and diffused, emphasizing a calm and spacious atmosphere. Professional interior design photography with high-key lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMBabR0K0MFIf6XEPZhf78YWAEgU0KCS8tqOIvwowMkABo9yw16658UVZkz04V6vUdQxkKUavXCn07scZ_4ICsbggllGaICY2bffRpHppoJfe__6q6fUMKxhFiLR242HbzxhLsu-NyiNUdRoAh5Lr0dPmZcTaRSW5RfuWW4oGOxrISeEvJ1sIj7qht5O4z6EzbuSHy-zrA2iMvP9l-K3s0gJPkDQorY8Dte8MxUdOpOsRpM4npi6Lbfg"/>
+<button class="absolute top-4 right-4 bg-surface-container-lowest/80 backdrop-blur-md p-2 rounded-full hover:bg-white transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+</div>
+<div class="p-stack-md">
+<h3 class="font-headline-md text-headline-md text-primary mb-1">$1,150,000</h3>
+<p class="font-body-md text-on-surface mb-stack-sm">The Beacon, Penthouse 402, Seattle, WA</p>
+<div class="flex items-center gap-4 text-on-surface-variant border-t border-outline-variant/30 pt-4">
+<span class="flex items-center gap-1 font-label-md"><span class="material-symbols-outlined text-[18px]">bed</span> 2</span>
+<span class="flex items-center gap-1 font-label-md"><span class="material-symbols-outlined text-[18px]">bathtub</span> 2</span>
+<span class="flex items-center gap-1 font-label-md"><span class="material-symbols-outlined text-[18px]">square_foot</span> 1,850 sqft</span>
+</div>
+</div>
+</div>
+<!-- Property Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all group">
+<div class="relative aspect-video">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A charming, renovated mid-century modern cottage surrounded by blooming desert gardens. The home features a bright white exterior with warm wood accents and large geometric windows. Clear blue sky with soft, late afternoon shadows. The aesthetic is clean, inviting, and technically sophisticated. High-end architectural visualization." src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg"/>
+<div class="absolute top-4 left-4 bg-success text-on-error font-label-sm px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">auto_awesome</span> Just Listed
+                        </div>
+<button class="absolute top-4 right-4 bg-surface-container-lowest/80 backdrop-blur-md p-2 rounded-full hover:bg-white transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+</div>
+<div class="p-stack-md">
+<h3 class="font-headline-md text-headline-md text-primary mb-1">$890,000</h3>
+<p class="font-body-md text-on-surface mb-stack-sm">45 Sagebrush Trail, Phoenix, AZ</p>
+<div class="flex items-center gap-4 text-on-surface-variant border-t border-outline-variant/30 pt-4">
+<span class="flex items-center gap-1 font-label-md"><span class="material-symbols-outlined text-[18px]">bed</span> 3</span>
+<span class="flex items-center gap-1 font-label-md"><span class="material-symbols-outlined text-[18px]">bathtub</span> 2.5</span>
+<span class="flex items-center gap-1 font-label-md"><span class="material-symbols-outlined text-[18px]">square_foot</span> 2,100 sqft</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Requirement CTA Band -->
+<section class="w-full bg-tertiary text-on-tertiary relative overflow-hidden py-24 tertiary-glow">
+<div class="absolute inset-0 opacity-20 pointer-events-none">
+
+</div>
+<div class="max-w-container-max mx-auto px-margin-desktop relative z-10 flex flex-col md:flex-row items-center justify-between gap-stack-lg text-center md:text-left">
+<div class="max-w-2xl">
+<div class="inline-flex items-center gap-2 bg-tertiary-container/30 px-4 py-1.5 rounded-full mb-6 border border-on-tertiary/20">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-label-md">PropVista AI Engine</span>
+</div>
+<h2 class="font-headline-lg text-display-lg-mobile md:text-headline-lg mb-4">Not sure where to start? Let our AI Requirement Wizard curate the perfect list for you.</h2>
+<p class="font-body-lg text-on-tertiary-container/80">Our advanced algorithms analyze thousands of data points to find properties that truly match your lifestyle, not just your filters.</p>
+</div>
+<button class="bg-surface-container-lowest text-tertiary font-headline-md px-10 py-5 rounded-full hover:bg-tertiary-fixed transition-all shadow-xl hover:scale-105 active:scale-95 flex items-center gap-3">
+                    Launch Wizard <span class="material-symbols-outlined">rocket_launch</span>
+</button>
+</div>
+</section>
+<!-- Insights Bento Grid Preview -->
+<section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg">
+<h2 class="font-headline-lg text-on-surface mb-stack-lg">Market Intelligence</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="md:col-span-2 bg-surface-container-low p-8 rounded-xl border border-outline-variant/50 relative overflow-hidden">
+<div class="relative z-10">
+<span class="text-tertiary font-label-md mb-2 block uppercase tracking-wider">Market Trend</span>
+<h3 class="font-headline-md mb-4">Price Appreciation Forecast</h3>
+<p class="text-on-surface-variant max-w-md mb-6">Home values in your preferred area are expected to rise by 4.2% over the next 12 months based on inventory scarcity.</p>
+<div class="h-32 w-full bg-white/50 rounded-lg flex items-end gap-1 p-4">
+<!-- Simple JS placeholder graph bars -->
+<div class="bg-secondary-container w-full" style="height: 40%"></div>
+<div class="bg-secondary-container w-full" style="height: 55%"></div>
+<div class="bg-secondary-container w-full" style="height: 45%"></div>
+<div class="bg-secondary-container w-full" style="height: 70%"></div>
+<div class="bg-secondary-container w-full" style="height: 85%"></div>
+<div class="bg-primary w-full" style="height: 95%"></div>
+</div>
+</div>
+</div>
+<div class="bg-tertiary-fixed p-8 rounded-xl border border-tertiary/10 flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-tertiary text-4xl mb-4">analytics</span>
+<h3 class="font-headline-md text-on-tertiary-fixed mb-2">Smart Score</h3>
+<p class="text-on-tertiary-fixed-variant">Unlock hidden deals with our AI scoring that identifies undervalued properties in emerging neighborhoods.</p>
+</div>
+<button class="mt-6 font-label-md text-tertiary flex items-center gap-2">Learn more <span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</div>
+</section>
+</main>
+
+<!-- Floating AI Chatbot Widget -->
+<div class="fixed bottom-8 right-8 z-[100] flex flex-col items-end">
+    <!-- Chat Pane -->
+    <div class="mb-4 w-[380px] h-[550px] bg-surface-container-lowest/95 backdrop-blur-2xl border border-outline-variant shadow-2xl rounded-xl flex flex-col overflow-hidden transition-all duration-300 transform scale-100 opacity-100" id="ai-chat-pane">
+        <!-- Header -->
+        <div class="bg-tertiary text-on-tertiary px-4 py-3.5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <button class="hover:bg-on-tertiary/10 p-1 rounded-full transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                </button>
+                <div>
+                    <h4 class="font-headline-sm text-sm font-bold leading-none">PropVista Assistant</h4>
+                    <span class="text-[10px] text-on-tertiary/70 flex items-center gap-1 mt-1">
+                        <span class="w-1.5 h-1.5 bg-success rounded-full"></span> Online
+                    </span>
+                </div>
+            </div>
+            <button class="hover:bg-on-tertiary/10 p-1 rounded-full transition-colors">
+                <span class="material-symbols-outlined">more_vert</span>
+            </button>
+        </div>
+
+        <!-- Message List -->
+        <div class="flex-1 overflow-y-auto p-4 space-y-4 bg-surface-container-low/30">
+            <!-- Bot Greeting -->
+            <div class="flex flex-col gap-1 max-w-[85%]">
+                <div class="bg-tertiary-fixed text-on-tertiary-fixed p-3 rounded-2xl rounded-tl-none text-sm shadow-sm">
+                    Hello! I'm your PropVista assistant. How can I help you find your dream home today?
+                </div>
+                <span class="text-[10px] text-on-surface-variant ml-1">10:24 AM</span>
+            </div>
+
+            <!-- User Message -->
+            <div class="flex flex-col gap-1 max-w-[85%] ml-auto items-end">
+                <div class="bg-surface-container text-on-surface p-3 rounded-2xl rounded-tr-none text-sm shadow-sm border border-outline-variant/30">
+                    Show me modern 3-bedroom houses in Austin under $1M.
+                </div>
+                <span class="text-[10px] text-on-surface-variant mr-1">10:25 AM</span>
+            </div>
+
+            <!-- Bot Response with Card -->
+            <div class="flex flex-col gap-3 max-w-[90%]">
+                <div class="bg-tertiary-fixed text-on-tertiary-fixed p-3 rounded-2xl rounded-tl-none text-sm shadow-sm">
+                    I found a perfect match! This modern residence in Austin fits all your criteria.
+                </div>
+                
+                <!-- Mini Property Card -->
+                <div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden shadow-md group max-w-[280px]">
+                    <div class="relative aspect-video">
+                        <img alt="Zen Oasis Austin" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmV5G9tANqHyPvXCe5uZ0aPlIIvwMCa-vqbzFObHK-rX5E5MPZhrMZ09ocQeRsCN0BWFI-B0QY39bwPfFRZcK6RO0OI450ejasl7RqqsVmuycCd-dxzQoa8GxbkG77T6K7gIC9ZqJZP3efU41YP2EjjXPKbMXp_IcLsA7ElKXJ163J66N103ynifh4YnJpMdiCFeMQbV_r9a15UNmxV-9vlfWXMJCJ1lwVjqgnwq1UHyuO2uqGKs9lLQ"/>
+                        <div class="absolute top-2 left-2 bg-primary text-on-primary text-[10px] font-bold px-2 py-0.5 rounded-full">AI PICK</div>
+                    </div>
+                    <div class="p-3">
+                        <h5 class="font-bold text-primary text-sm">$925,000</h5>
+                        <p class="text-[11px] text-on-surface truncate">The Zen Oasis, Austin, TX</p>
+                        <div class="flex gap-2 mt-2 pt-2 border-t border-outline-variant/20 text-[10px] text-on-surface-variant">
+                            <span>3 Bed</span><span>•</span><span>2.5 Bath</span><span>•</span><span>2,400 sqft</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-3 bg-surface-container-lowest border-t border-outline-variant/50">
+            <div class="bg-surface-container-high rounded-full px-4 py-2 flex items-center gap-2 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+                <button class="text-on-surface-variant hover:text-primary transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">attach_file</span>
+                </button>
+                <input class="bg-transparent border-none focus:ring-0 w-full text-sm placeholder:text-on-surface-variant/50" placeholder="Ask anything..." type="text"/>
+                <button class="bg-primary text-on-primary p-1.5 rounded-full hover:bg-primary-container transition-all active:scale-90 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[18px]">send</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Bubble Launcher -->
+    <button class="w-14 h-14 bg-tertiary/90 text-on-tertiary rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all glass-effect border border-on-tertiary/20 group relative overflow-hidden" id="ai-chat-bubble">
+        <!-- Shine effect -->
+        <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+        <span class="material-symbols-outlined text-[28px] group-hover:rotate-12 transition-transform" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+        <div class="absolute top-0 right-0 w-3.5 h-3.5 bg-error rounded-full border-2 border-surface animate-pulse"></div>
+    </button>
+</div>
+
+<!-- Footer -->
+<footer class="bg-surface-container-low border-t border-outline-variant w-full mt-stack-lg">
+<div class="max-w-container-max mx-auto px-margin-desktop py-stack-lg flex flex-col md:flex-row justify-between items-center gap-stack-md">
+<div>
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface">PropVista</span>
+<p class="font-label-sm text-on-surface-variant mt-2 text-center md:text-left">© 2024 PropVista AI. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="font-label-sm text-on-surface-variant hover:text-secondary transition-colors" href="#">Privacy Policy</a>
+<a class="font-label-sm text-on-surface-variant hover:text-secondary transition-colors" href="#">Terms of Service</a>
+<a class="font-label-sm text-on-surface-variant hover:text-secondary transition-colors" href="#">Support</a>
+<a class="font-label-sm text-on-surface-variant hover:text-secondary transition-colors" href="#">Contact Us</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined">share</span></button>
+<button class="p-2 text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined">language</span></button>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interaction for search bar focus
+        const searchInput = document.querySelector('main input[type="text"]');
+        if (searchInput) {
+            const searchContainer = searchInput.parentElement;
+            searchInput.addEventListener('focus', () => {
+                searchContainer.classList.add('shadow-2xl', 'scale-[1.02]');
+            });
+
+            searchInput.addEventListener('blur', () => {
+                searchContainer.classList.remove('shadow-2xl', 'scale-[1.02]');
+            });
+        }
+
+        // Chat Toggle Logic
+        const chatBubble = document.getElementById('ai-chat-bubble');
+        const chatPane = document.getElementById('ai-chat-pane');
+        let isChatOpen = true; // Started open as per request
+
+        chatBubble.addEventListener('click', () => {
+            isChatOpen = !isChatOpen;
+            if (isChatOpen) {
+                chatPane.classList.remove('scale-95', 'opacity-0', 'pointer-events-none', 'translate-y-4');
+                chatPane.classList.add('scale-100', 'opacity-100', 'translate-y-0');
+            } else {
+                chatPane.classList.add('scale-95', 'opacity-0', 'pointer-events-none', 'translate-y-4');
+                chatPane.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
+            }
+        });
+
+        // Simple property heart toggle
+        document.querySelectorAll('button .material-symbols-outlined').forEach(icon => {
+            if (icon.textContent === 'favorite') {
+                icon.parentElement.addEventListener('click', (e) => {
+                    const isFilled = icon.style.fontVariationSettings && icon.style.fontVariationSettings.includes("'FILL' 1");
+                    icon.style.fontVariationSettings = isFilled ? "'FILL' 0" : "'FILL' 1";
+                    icon.style.color = isFilled ? '' : '#ba1a1a';
+                });
+            }
+        });
+    </script>
+
+
+</body></html>

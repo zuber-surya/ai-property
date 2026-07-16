@@ -78,7 +78,7 @@ The owner's morning glance: *is the business healthy, and what needs me today?* 
 | KPI cards | Value + trend vs. the previous period + a **secondary actionable line** ("3 pending approval") — the number tells you the state, the second line tells you what to *do* |
 | Lead sources | Bar/donut of `leads.source` (FR8.2) |
 | Property views | **Cannot be built — Gap A8** |
-| Activity feed | Newest first. Escalations are visually flagged (`color-coral`) — they're the only genuinely time-sensitive item |
+| Activity feed | Newest first. Escalations are visually flagged with the `error` family (`DESIGN.md` → Semantic Status Colors) — they're the only genuinely time-sensitive item |
 
 ---
 

@@ -43,8 +43,7 @@ Rationale:
 
 | Component | Technology | Responsibility |
 |---|---|---|
-| Public Site (React) | React (Vite) | Customer-facing site: search, chat, listings, details, contact, portal |
-| Admin Portal (React) | React (Vite) | Admin/agent CRM back office |
+| Frontend (React) | React (Vite), one app | Route-based (ADR-0020): `/` + customer routes = public site + portal (search, chat, listings, contact); `/admin/*` = the CRM (lazy-loaded chunk) |
 | API Backend | FastAPI (Python) | All business logic, auth verification, AI orchestration |
 | Database | Supabase Postgres | Relational data, row-level security, tenant isolation |
 | Vector Store | Supabase `pgvector` | Property embeddings for AI Search & Recommendation |
@@ -228,66 +227,61 @@ FastAPI ──────►│   jobs   │◄──── poll: FOR UPDATE SK
 
 ### 5.1 App Structure Decision
 
-**Two separate React apps** (not one app with route-based role switching):
-- `public-site/` — public site + customer portal (shared auth context, since customer portal is just an authenticated view of the public site).
-- `admin-portal/` — admin/agent/super-admin CRM interface.
+**One React app, route-based** (decided 2026-07-15, superseding the earlier two-app split — see **ADR-0020**):
+- `/` and the customer routes — public site + customer portal (anonymous-first; the portal is an authenticated view of the same surface).
+- `/admin/*` — admin/agent/super-admin CRM.
 
-Rationale: different audiences, different design systems/branding needs (public site is tenant-branded; admin portal is not), and independent deploy cadences.
+One `frontend/` project, one build, one deploy. The public and admin surfaces share the design system, the API client, and the tooling, and differ by route.
 
-### 5.2 Folder Structure (applies to both apps, same shape)
+> ⚠️ **Accepted risk (ADR-0020): admin code can reach a public visitor's browser.** A single bundle means admin JavaScript ships to anonymous visitors unless it is code-split. **Mitigation, mandatory:** the entire `/admin/*` route tree is **lazy-loaded** (`React.lazy` + `Suspense`), so it builds as a separate chunk that a public visitor never downloads. This is a *performance and exposure* mitigation, **not** a security boundary — the security boundary is server-side (`require_role`, RLS). The frontend showing or hiding admin UI was never a control (`08-auth-roles-spec.md` §5).
+
+> **Branding — MVP scope (decided 2026-07-13).** Not tenant-branded in the MVP. The app ships the single fixed palette in `docs/DESIGN.md`; there is no theming layer. Per-tenant branding is **post-MVP** (PRD FR16.2). When it lands, only the public routes take a tenant's `primary`; `tertiary` (the AI layer) stays platform-owned.
+
+### 5.2 Folder Structure
 
 ```
-public-site/
+frontend/
 ├── src/
 │   ├── main.tsx
-│   ├── App.tsx
+│   ├── App.tsx                     # router root: public routes + lazy /admin
 │   ├── routes/
-│   ├── pages/
-│   │   ├── Home/
-│   │   ├── Search/
-│   │   ├── PropertyDetails/
-│   │   ├── RequirementAnalysis/
-│   │   ├── Contact/
-│   │   └── CustomerPortal/
+│   │   ├── public/                 # eager — the customer surface
+│   │   │   ├── Home/
+│   │   │   ├── Search/
+│   │   │   ├── PropertyDetails/
+│   │   │   ├── RequirementAnalysis/
+│   │   │   ├── Contact/
+│   │   │   └── CustomerPortal/
+│   │   └── admin/                  # LAZY-LOADED — a separate chunk (ADR-0020)
+│   │       ├── Dashboard/
+│   │       ├── Properties/
+│   │       ├── Leads/              # Kanban + table pipeline views
+│   │       ├── ChatConsole/        # live agent handoff (§12A)
+│   │       ├── Users/
+│   │       ├── Agents/
+│   │       ├── AIConfig/
+│   │       ├── CMS/
+│   │       ├── Reports/
+│   │       └── TenantSettings/
 │   ├── components/
-│   │   ├── chat/                   # Chatbot widget component
-│   │   ├── search/                 # Search bar, filters, results grid
-│   │   ├── property/               # Property card, gallery, etc.
+│   │   ├── chat/                   # chatbot widget
+│   │   ├── search/                 # search bar, filters, results grid
+│   │   ├── property/               # property card, gallery
 │   │   └── shared/
 │   ├── hooks/
-│   ├── api/                        # API client functions calling FastAPI
-│   ├── context/                    # Auth/tenant context providers
-│   ├── styles/
-│   └── utils/
+│   ├── api/                        # API client, grouped by domain
+│   ├── context/                    # auth/tenant context providers
+│   └── styles/
+│       └── tokens.css              # GENERATED from docs/DESIGN.md (do not edit)
+├── tailwind.tokens.cjs             # GENERATED from docs/DESIGN.md
+├── tailwind.config.cjs
 ├── package.json
 └── vite.config.ts
-
-admin-portal/
-├── src/
-│   ├── pages/
-│   │   ├── Dashboard/
-│   │   ├── Properties/
-│   │   ├── Leads/                  # Kanban + table pipeline views
-│   │   ├── Users/
-│   │   ├── Agents/
-│   │   ├── AIConfig/
-│   │   ├── CMS/
-│   │   ├── Reports/
-│   │   └── TenantSettings/
-│   ├── components/
-│   ├── hooks/
-│   ├── api/
-│   ├── context/
-│   └── ...
 ```
 
 ### 5.3 Shared Code
 
-A `packages/shared-ui/` or `packages/shared-types/` (if using a monorepo tool like Turborepo/pnpm workspaces) can hold:
-- Shared TypeScript types generated from the FastAPI OpenAPI schema (keeps frontend/backend contracts in sync).
-- Shared design tokens if any visual elements are common between public site and admin portal.
-
-This is a recommendation, not a hard requirement — can start as two independent apps and introduce a monorepo only if duplication becomes painful.
+Because it is one app, "shared code" is just the app's own `components/`, `api/` and `context/` — no monorepo, no cross-package publishing. Shared TypeScript types are generated from the FastAPI OpenAPI schema into `src/api/` to keep the frontend/backend contract in sync (`rules/frontend.md`). Design tokens are generated from `docs/DESIGN.md` by `scripts/gen_tokens.py`.
 
 ---
 
@@ -296,7 +290,7 @@ This is a recommendation, not a hard requirement — can start as two independen
 ### 6.1 AI Search Flow
 
 ```
-User types query → public-site/search
+User types query → public `/search` route
    → POST /api/v1/ai/search {query, tenant_id, filters}
       → search_service.py:
           1. Parse query via Bedrock (extract structured constraints: type, budget, bedrooms, location)
@@ -309,7 +303,7 @@ User types query → public-site/search
 ### 6.2 AI Chatbot Flow
 
 ```
-User sends message → public-site/chat widget
+User sends message → public chat widget
    → POST /api/v1/ai/chat {message, session_id, tenant_id}
       → chat_service.py:
           1. Load conversation history (session or user-scoped)
@@ -322,7 +316,7 @@ User sends message → public-site/chat widget
 ### 6.3 AI Recommendation Flow
 
 ```
-User submits requirement form → public-site/RequirementAnalysis
+User submits requirement form → public `/requirement-analysis` route
    → POST /api/v1/ai/recommend {requirements, tenant_id}
       → recommend_service.py:
           1. Generate embedding from structured requirements
@@ -335,7 +329,7 @@ User submits requirement form → public-site/RequirementAnalysis
 ### 6.4 Property Publish → Embedding Index Flow
 
 ```
-Admin publishes property → admin-portal/Properties
+Admin publishes property → `/admin/properties`
    → POST/PUT /api/v1/properties/{id}
       → property_service.py saves property
       → triggers workers/embed_property.py (background task)
@@ -395,7 +389,7 @@ Full CI/CD and hosting detail in `10-deployment-devops.md`.
 
 - [x] ORM choice for FastAPI → **SQLAlchemy + Alembic** for migrations, used alongside the Supabase-hosted Postgres instance (Supabase Auth/Storage still used as-is; Supabase's own client is not used for data access — SQLAlchemy talks directly to the Postgres connection string).
 - [ ] Monorepo (Turborepo/pnpm workspaces) vs. two fully independent React repos — recommendation given, not yet confirmed.
-- [ ] Whether background jobs start with FastAPI `BackgroundTasks` (simplest) or Celery/RQ from day one.
+- [x] ~~Whether background jobs start with FastAPI `BackgroundTasks` or Celery/RQ.~~ **DECIDED 2026-07-13 — see §4.4: `pg_cron` + a Python jobs worker.** This line sat here contradicting §4.4 for a day, and it is a large part of why a *mandatory* requirement (FR10.2b) was reported as unbuildable. **An open question that has been answered is not harmless — it is a lie with a checkbox.**
 - [ ] Maps and SMS/WhatsApp provider selection.
 
 ---

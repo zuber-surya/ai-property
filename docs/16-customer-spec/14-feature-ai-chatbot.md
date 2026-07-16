@@ -219,7 +219,11 @@ Rate-limited per session/IP — this is the most expensive endpoint in the produ
 ## 10. Open Questions
 
 - [ ] **Exact Claude model ID** — open in `05-ai-chatbot-spec.md` §13. Do not hardcode one without checking current Bedrock availability in the target region (and read `/claude-api` for current model IDs).
-- [ ] **Post-escalation agent replies have no delivery path.** The agent takes over — but how does their reply reach the visitor's open chat window? There's no realtime channel specified (Supabase Realtime? polling?), and no admin-side endpoint for an agent to *send* a chat message (`04-api-spec.md` §12 offers only read/flag of chat logs). **The escalation loop is currently open-ended.** Resolve in `05-ai-chatbot-spec.md` + `04-api-spec.md`.
+- [x] ~~**Post-escalation agent replies have no delivery path.**~~ ✅ **RESOLVED 2026-07-14 (gap G7).** The escalation loop is closed.
+  - The agent replies via `POST /admin/chat/{id}/reply` — one of four new endpoints in `04-api-spec.md` **§12A** (queue · claim · reply · close). The handoff state machine is `05-ai-chatbot-spec.md` **§10A**; the agent's screen is `17-admin-spec/22-agent-chat-console.md`.
+  - **Delivery to this widget = polling.** While `status = 'escalated'`, poll the **existing** `GET /ai/chat/history/{conversation_id}` roughly every **4 seconds**. Stop polling otherwise. **No new customer-facing endpoint.** Supabase Realtime was rejected because ADR-0005 restricts the Supabase client to Auth and Storage — see **ADR-0017**.
+  - ⚠️ **While escalated, the bot goes silent.** `POST /ai/chat/message` persists the visitor's message and **does not call Bedrock** (`05-ai-chatbot-spec.md` §10A.1). Otherwise the visitor is talking to a human and a machine at once.
+  - The widget must show the handoff plainly: *"Waiting for an agent…"* (**no fake typing indicator — nobody is typing**), then *"Anjali has joined the conversation."*
 - [ ] **Streaming responses.** FastAPI was chosen partly for streaming (`00-project-overview.md` §5), and Bedrock Converse supports it — but the API spec's `/ai/chat/message` returns a single JSON reply. A tool-calling turn can take several seconds; without streaming it's a long silent wait. Decide and spec it.
 - [ ] Whether the visitor can be handed a **transcript** afterwards (email it, or view it in the portal). Nothing currently exposes `chat_messages` to the customer after the session.
 - [ ] Business-hours escalation routing — needs agent-availability data that isn't modeled (`05-ai-chatbot-spec.md` §13).

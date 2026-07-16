@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PropVista | Agent Chat Console</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e4e1ee; border-radius: 10px; }
+        
+        /* Micro-interactions */
+        .chat-bubble { transition: transform 0.2s ease-out; }
+        .chat-bubble:hover { transform: translateY(-1px); }
+        .active-ring { outline: 2px solid #3525cd; outline-offset: 2px; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#571ac0",
+                        "on-secondary-fixed": "#1b1a29",
+                        "on-tertiary-fixed": "#23005c",
+                        "on-tertiary-container": "#c3aaff",
+                        "surface-tint": "#4d44e3",
+                        "tertiary-fixed-dim": "#d0bcff",
+                        "outline": "#777587",
+                        "on-secondary-container": "#646374",
+                        "primary-fixed": "#e2dfff",
+                        "inverse-surface": "#302f39",
+                        "surface-container": "#e5eeff",
+                        "tertiary-fixed": "#e9ddff",
+                        "on-secondary-fixed-variant": "#464555",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#3525cd",
+                        "on-surface-variant": "#464555",
+                        "inverse-on-surface": "#eaf1ff",
+                        "error": "#ba1a1a",
+                        "on-warning-container": "#2c1700",
+                        "error-container": "#ffdad6",
+                        "surface-dim": "#dcd8e5",
+                        "surface-variant": "#e4e1ee",
+                        "success-container": "#c3f0da",
+                        "on-error": "#ffffff",
+                        "primary-container": "#e2dfff",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "primary": "#1e00a9",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "surface-container-high": "#eae6f4",
+                        "warning-container": "#ffddb0",
+                        "outline-variant": "#c7c4d8",
+                        "surface-bright": "#fcf8ff",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#1b1b24",
+                        "tertiary": "#3e0095",
+                        "inverse-primary": "#c3c0ff",
+                        "on-secondary": "#ffffff",
+                        "surface": "#ffffff",
+                        "on-tertiary-fixed-variant": "#5516be",
+                        "surface-container-low": "#eff4ff",
+                        "on-success-container": "#00522f",
+                        "background": "#f8f9ff",
+                        "on-background": "#1b1b24",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#c7c4d8",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#0f0069",
+                        "surface-container-highest": "#e4e1ee",
+                        "secondary": "#5e5d6e",
+                        "secondary-container": "#e3e0f5",
+                        "secondary-fixed": "#e3e0f5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-page": "2rem",
+                        "gutter": "1.5rem",
+                        "sidebar-width": "240px",
+                        "component-gap": "1rem"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "label-md": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                        "display-lg": ["30px", {"lineHeight": "38px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background overflow-hidden">
+<!-- Global Layout Shell -->
+<div class="flex h-screen w-full">
+<!-- SIDEBAR (Rail) -->
+<!-- Rule: SideNavBar from JSON mapped with exact classes -->
+<aside class="fixed left-0 top-0 h-full w-[240px] bg-surface flex flex-col py-6 px-4 gap-2 z-50">
+<div class="flex flex-col gap-1 mb-8 px-2">
+<span class="text-headline-md font-headline-md font-bold text-primary">PropVista Admin</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Tenant Business</span>
+</div>
+<nav class="flex-1 flex flex-col gap-2">
+<!-- Dashboard -->
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl group" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-label-md font-label-md">Dashboard</span>
+</a>
+<!-- Properties -->
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl group" href="#">
+<span class="material-symbols-outlined" data-icon="domain">domain</span>
+<span class="text-label-md font-label-md">Properties</span>
+</a>
+<!-- Leads -->
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl group" href="#">
+<span class="material-symbols-outlined" data-icon="person_search">person_search</span>
+<span class="text-label-md font-label-md">Leads</span>
+</a>
+<!-- Clients (Active State Logic: Chat is a client interaction) -->
+<a class="flex items-center gap-3 bg-primary-container text-primary font-bold rounded-xl px-4 py-3 active:scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="text-label-md font-label-md">Clients</span>
+</a>
+<!-- Users -->
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl group" href="#">
+<span class="material-symbols-outlined" data-icon="person_outline">person_outline</span>
+<span class="text-label-md font-label-md">Users</span>
+</a>
+<!-- AI Config -->
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl group" href="#">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+<span class="text-label-md font-label-md">AI Config</span>
+</a>
+<!-- Reports -->
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl group" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="text-label-md font-label-md">Reports</span>
+</a>
+<!-- Settings -->
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl group" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-outline-variant pt-4">
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="text-label-md font-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- MAIN CONTENT AREA (Offset by Sidebar) -->
+<main class="flex flex-col flex-1 ml-[240px]">
+<!-- TOP APP BAR -->
+<header class="flex justify-between items-center h-16 px-gutter w-full bg-background">
+<div class="flex items-center gap-4">
+<h1 class="text-headline-md font-headline-md text-primary">Chat Console</h1>
+<div class="bg-success-container text-on-success-container px-3 py-1 rounded-full text-label-sm font-label-md flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-on-success-container animate-pulse"></span>
+                        Agent Online
+                    </div>
+</div>
+<div class="flex items-center gap-4">
+<div class="bg-surface-container-low rounded-full px-4 py-2 flex items-center gap-2 w-64 border border-transparent focus-within:border-primary transition-all">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="search">search</span>
+<input class="bg-transparent border-none outline-none text-label-md w-full" placeholder="Search conversations..." type="text"/>
+</div>
+<div class="flex gap-2">
+<button class="hover:bg-surface-container-highest rounded-full p-2 transition-colors opacity-80 click:opacity-100">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="hover:bg-surface-container-highest rounded-full p-2 transition-colors opacity-80 click:opacity-100">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+</div>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-outline-variant bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a female software support agent with warm lighting, soft background of a modern office space, wearing a professional navy blazer. The image has a clean, high-end corporate aesthetic with a soft blue tone." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2DR1k3vHnn1CZEkrEYbblspbMSo9BlG13jmt1o_7dI71Di08HNHpSipF53phUFyGS9IPv4lFIriJrNfnkBfwgm5Bi8Msu8pGSl_6W_ioNcFpW5W70TW38yELGYAhwuTJiZg2XIXEZX0x5QfK1n6YQKzd_yadIqvMHhhYr0_lDhO3WZwzsjNwP-IGUEX8TOl_Qg2w8GoNcu66ksbo3XpqpvY-DZGjF9pPVDkYscHpUjv-6b_deJcNkrg"/>
+</div>
+</div>
+</header>
+<!-- CONSOLE INTERFACE: 2-Column Content Area (Queue & Conversation) -->
+<div class="flex flex-1 overflow-hidden p-gutter gap-gutter bg-surface-container">
+<!-- COLUMN 2: CHAT QUEUE (~320px) -->
+<section class="w-80 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<h2 class="text-label-md font-bold text-on-surface-variant uppercase tracking-wider">Queue</h2>
+<span class="bg-primary text-on-primary px-2.5 py-0.5 rounded-lg text-label-sm font-bold">3 waiting</span>
+</div>
+<div class="flex-1 flex flex-col gap-3 overflow-y-auto custom-scrollbar">
+<!-- Visitor Card 1 (Active/Selected) -->
+<div class="bg-surface p-4 rounded-3xl shadow-sm active-ring transition-all flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-body-md font-bold text-on-surface">Marcus Chen</h3>
+<span class="text-error font-bold text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="timer">timer</span>
+                                        04:12 Waiting
+                                    </span>
+</div>
+<span class="bg-surface-container-high text-on-surface-variant text-[10px] px-2 py-1 rounded-full uppercase font-bold">Property #402</span>
+</div>
+<p class="text-label-md text-on-surface-variant line-clamp-2">"Hi, I'm interested in the penthouse viewing. Is it still available for tomorrow at 2 PM?"</p>
+<button class="w-full bg-gradient-to-r from-primary to-surface-tint text-white h-10 rounded-xl font-bold text-label-md hover:brightness-110 transition-all">
+                                Take Conversation
+                            </button>
+</div>
+<!-- Visitor Card 2 -->
+<div class="bg-surface/60 p-4 rounded-3xl transition-all flex flex-col gap-3 group hover:bg-surface">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-body-md font-bold text-on-surface/80">Sarah Jenkins</h3>
+<span class="text-error font-bold text-label-sm flex items-center gap-1 opacity-70">
+<span class="material-symbols-outlined text-[14px]" data-icon="timer">timer</span>
+                                        02:45 Waiting
+                                    </span>
+</div>
+</div>
+<p class="text-label-md text-on-surface-variant/80 line-clamp-2 italic">"Checking on my application status for the loft..."</p>
+<button class="w-full bg-surface-container-high text-on-surface h-10 rounded-xl font-bold text-label-md opacity-0 group-hover:opacity-100 transition-all">
+                                Take
+                            </button>
+</div>
+<!-- Visitor Card 3 -->
+<div class="bg-surface/60 p-4 rounded-3xl transition-all flex flex-col gap-3 group hover:bg-surface">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="text-body-md font-bold text-on-surface/80">David Miller</h3>
+<span class="text-error font-bold text-label-sm flex items-center gap-1 opacity-70">
+<span class="material-symbols-outlined text-[14px]" data-icon="timer">timer</span>
+                                        00:58 Waiting
+                                    </span>
+</div>
+</div>
+<p class="text-label-md text-on-surface-variant/80 line-clamp-2">"Is parking included in the monthly rent?"</p>
+<button class="w-full bg-surface-container-high text-on-surface h-10 rounded-xl font-bold text-label-md opacity-0 group-hover:opacity-100 transition-all">
+                                Take
+                            </button>
+</div>
+<!-- Empty State Illustration Placeholder (Invisible until queue clear) -->
+<div class="hidden flex-1 flex-col items-center justify-center text-center p-8 opacity-60" id="empty-state">
+<span class="material-symbols-outlined text-6xl text-on-surface-variant mb-4" data-icon="check_circle">check_circle</span>
+<p class="text-body-lg font-bold text-on-surface">No one's waiting.</p>
+<p class="text-label-md text-on-surface-variant">You're all caught up.</p>
+</div>
+</div>
+</section>
+<!-- COLUMN 3: CONVERSATION PANE -->
+<section class="flex-1 bg-surface rounded-[24px] flex flex-col overflow-hidden shadow-lg border border-white">
+<!-- Conversation Header -->
+<div class="p-4 border-b border-surface-container flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-primary font-bold">MC</div>
+<div>
+<h2 class="text-body-md font-bold text-on-surface">Marcus Chen</h2>
+<p class="text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-success-container"></span>
+                                    San Francisco, CA • ID: #9902
+                                </p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-2 hover:bg-surface-container-low rounded-full transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="info">info</span>
+</button>
+<button class="p-2 hover:bg-surface-container-low rounded-full transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Transcript Area -->
+<div class="flex-1 overflow-y-auto p-6 flex flex-col gap-6 custom-scrollbar bg-white/50">
+<!-- VOICE 1: VISITOR -->
+<div class="flex flex-col gap-2 max-w-[70%]">
+<div class="flex items-center gap-2 ml-1">
+<span class="text-label-sm font-bold text-on-surface-variant">Marcus Chen</span>
+<span class="text-[10px] text-outline">10:42 AM</span>
+</div>
+<div class="bg-surface-container-low text-on-surface p-4 rounded-2xl rounded-tl-none chat-bubble">
+<p class="text-body-md">Hi, I'm interested in the penthouse viewing. Is it still available for tomorrow at 2 PM? I'd like to bring my partner along as well.</p>
+</div>
+</div>
+<!-- VOICE 2: BOT (AI LAYER) -->
+<div class="flex flex-col gap-2 max-w-[85%] self-center w-full">
+<div class="flex items-center gap-2 justify-center mb-1">
+<span class="h-px w-8 bg-tertiary-container/20"></span>
+<span class="text-label-sm font-bold text-tertiary-container flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="smart_toy">smart_toy</span>
+                                    PropVista AI
+                                </span>
+<span class="h-px w-8 bg-tertiary-container/20"></span>
+</div>
+<div class="bg-tertiary-container text-on-tertiary-container p-5 rounded-3xl border border-tertiary-fixed-dim/30 shadow-sm chat-bubble">
+<p class="text-body-md mb-4">Searching availability for Penthouse A... One slot remaining at 2:00 PM tomorrow. Would you like me to place a temporary 15-minute hold on this slot while you speak with an agent?</p>
+<!-- AI Tooling -->
+<div class="flex flex-wrap gap-2">
+<button class="bg-tertiary-fixed text-on-tertiary-fixed px-3 py-1.5 rounded-full text-label-md font-bold flex items-center gap-1 hover:brightness-105 transition-all">
+<span class="material-symbols-outlined text-[16px]" data-icon="calendar_today">calendar_today</span>
+                                        Hold Slot
+                                    </button>
+<div class="bg-black/10 text-on-tertiary-container px-3 py-1.5 rounded-full text-label-sm flex items-center gap-1 italic">
+                                        Source: Building Management API
+                                    </div>
+</div>
+</div>
+</div>
+<!-- DIVIDER: AGENT JOINED -->
+<div class="flex items-center gap-4 py-4">
+<div class="flex-1 h-px bg-outline-variant"></div>
+<span class="text-label-sm font-bold text-on-surface-variant uppercase tracking-[2px]">Agent joined conversation</span>
+<div class="flex-1 h-px bg-outline-variant"></div>
+</div>
+<!-- VOICE 3: AGENT (Anjali) -->
+<div class="flex flex-col gap-2 max-w-[70%] self-end">
+<div class="flex items-center gap-2 justify-end mr-1">
+<span class="text-[10px] text-outline">10:45 AM</span>
+<span class="text-label-sm font-bold text-primary">Anjali (You)</span>
+</div>
+<div class="flex items-end gap-3 justify-end">
+<div class="bg-primary-container text-on-primary-container p-4 rounded-2xl rounded-tr-none chat-bubble border border-primary/10">
+<p class="text-body-md">Hello Marcus! I'm Anjali. I can certainly help you with that penthouse viewing. I see the AI has found a slot at 2 PM. I'll go ahead and confirm that for you and your partner right now.</p>
+</div>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-primary-fixed shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Close up avatar of a professional female real estate agent with a friendly smile, professional attire, soft lighting, and a high-end corporate feel. The aesthetic matches a clean, modern property management software interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSGXwLI-L76HxfSmHmaX0v63qnMFPLfgQZrkAW0XJsoCrq5onhIkI04OHYKa01hx8qydHKcMJ3o3q3Q6ErMsUMWVpHAUdwGAbOjR3wZBsx-uHtM6VTVMgkIqTkb4T8Nng8osJmU5k5xkX3OtGtonsL96fxN-Sg2tBFjrne2MCZAXveEwXWvcrO7ueOhcF0XytR_s6eRhAtsIexF_l6C7NtVOPivF6_t_ud3oYYm-wEpMLPchO9EBISXA"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Composer (Disabled state) -->
+<div class="p-6 bg-surface-container-lowest border-t border-surface-container relative">
+<!-- Overlay for disabled state -->
+<div class="absolute inset-0 z-10 bg-surface/60 backdrop-blur-[2px] flex items-center justify-center">
+<button class="bg-primary text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg active:scale-95 transition-all">
+<span class="material-symbols-outlined" data-icon="lock_open">lock_open</span>
+                                Take control to reply
+                            </button>
+</div>
+<div class="flex flex-col gap-3 opacity-40">
+<div class="flex gap-2">
+<button class="p-2 rounded-lg bg-surface-container-low text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="attach_file">attach_file</span>
+</button>
+<button class="p-2 rounded-lg bg-surface-container-low text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="mood">mood</span>
+</button>
+<button class="p-2 rounded-lg bg-surface-container-low text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="image">image</span>
+</button>
+</div>
+<div class="flex items-center gap-3">
+<input class="flex-1 bg-surface-container-low border-none rounded-xl px-4 h-12 text-label-md" disabled="" placeholder="Type a message..." type="text"/>
+<button class="w-12 h-12 bg-primary text-white rounded-xl flex items-center justify-center" disabled="">
+<span class="material-symbols-outlined" data-icon="send">send</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- RIGHT-MOST PANEL (Contextual - AI Insights/Profile) -->
+<aside class="w-72 hidden xl:flex flex-col gap-4">
+<div class="bg-surface rounded-[24px] p-5 flex flex-col gap-6 shadow-sm">
+<h3 class="text-label-md font-bold text-on-surface-variant uppercase tracking-wider">AI Intelligence</h3>
+<div class="flex flex-col gap-4">
+<div class="p-4 bg-tertiary-fixed rounded-2xl">
+<div class="flex items-center gap-2 mb-2 text-on-tertiary-fixed">
+<span class="material-symbols-outlined text-[18px]" data-icon="trending_up">trending_up</span>
+<span class="text-label-sm font-bold">Intent: High Priority</span>
+</div>
+<p class="text-label-md text-on-tertiary-fixed-variant">User has viewed the "Lakeside Penthouse" 4 times in the last 48 hours. Likely to convert today.</p>
+</div>
+<div class="space-y-3">
+<h4 class="text-label-sm font-bold text-on-surface-variant">Suggested Actions</h4>
+<button class="w-full text-left p-3 rounded-xl border border-outline-variant hover:bg-surface-container-low transition-colors flex items-center justify-between group">
+<span class="text-label-md">Send Floor Plan</span>
+<span class="material-symbols-outlined text-[18px] opacity-0 group-hover:opacity-100" data-icon="chevron_right">chevron_right</span>
+</button>
+<button class="w-full text-left p-3 rounded-xl border border-outline-variant hover:bg-surface-container-low transition-colors flex items-center justify-between group">
+<span class="text-label-md">Offer Virtual Tour</span>
+<span class="material-symbols-outlined text-[18px] opacity-0 group-hover:opacity-100" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="pt-4 border-t border-surface-container">
+<h4 class="text-label-sm font-bold text-on-surface-variant mb-3">User Tags</h4>
+<div class="flex flex-wrap gap-2">
+<span class="bg-surface-container-high text-on-surface-variant px-3 py-1 rounded-full text-label-sm">High-Budget</span>
+<span class="bg-surface-container-high text-on-surface-variant px-3 py-1 rounded-full text-label-sm">San Francisco</span>
+<span class="bg-surface-container-high text-on-surface-variant px-3 py-1 rounded-full text-label-sm">Verified</span>
+</div>
+</div>
+</div>
+<div class="bg-gradient-to-br from-tertiary-container to-tertiary p-5 rounded-[24px] text-white flex flex-col gap-2 relative overflow-hidden">
+<div class="z-10">
+<h3 class="text-label-md font-bold uppercase opacity-80">Shift Summary</h3>
+<p class="text-display-lg">24</p>
+<p class="text-label-sm opacity-90">Conversations handled</p>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined text-[100px]" data-icon="bar_chart">bar_chart</span>
+</div>
+</div>
+</aside>
+</div>
+</main>
+</div>
+<!-- Micro-interaction Scripts -->
+<script>
+        // Simple logic to show/hide "empty state" for demonstration
+        const queueItems = document.querySelectorAll('.queue-item');
+        const emptyState = document.getElementById('empty-state');
+        
+        // This is a placeholder for actual interaction logic
+        function checkQueue() {
+            if (queueItems.length === 0) {
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+            }
+        }
+    </script>
+</body></html>

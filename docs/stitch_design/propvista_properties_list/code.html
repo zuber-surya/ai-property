@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8f9ff;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e4e1ee;
+            border-radius: 10px;
+        }
+        .bento-container {
+            transition: all 0.3s ease;
+        }
+        .property-row {
+            transition: transform 0.15s ease, background-color 0.15s ease;
+        }
+        .property-row:hover {
+            background-color: #eff4ff;
+        }
+        .bulk-toolbar {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#571ac0",
+                        "on-secondary-fixed": "#1b1a29",
+                        "on-tertiary-fixed": "#23005c",
+                        "on-tertiary-container": "#c3aaff",
+                        "surface-tint": "#4d44e3",
+                        "tertiary-fixed-dim": "#d0bcff",
+                        "outline": "#777587",
+                        "on-secondary-container": "#646374",
+                        "primary-fixed": "#e2dfff",
+                        "inverse-surface": "#302f39",
+                        "surface-container": "#e5eeff",
+                        "tertiary-fixed": "#e9ddff",
+                        "on-secondary-fixed-variant": "#464555",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#3525cd",
+                        "on-surface-variant": "#464555",
+                        "inverse-on-surface": "#eaf1ff",
+                        "error": "#ba1a1a",
+                        "on-warning-container": "#2c1700",
+                        "error-container": "#ffdad6",
+                        "surface-dim": "#dcd8e5",
+                        "surface-variant": "#e4e1ee",
+                        "success-container": "#c3f0da",
+                        "on-error": "#ffffff",
+                        "primary-container": "#e2dfff",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "primary": "#1e00a9",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "surface-container-high": "#eae6f4",
+                        "warning-container": "#ffddb0",
+                        "outline-variant": "#c7c4d8",
+                        "surface-bright": "#fcf8ff",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#1b1b24",
+                        "tertiary": "#3e0095",
+                        "inverse-primary": "#c3c0ff",
+                        "on-secondary": "#ffffff",
+                        "surface": "#ffffff",
+                        "on-tertiary-fixed-variant": "#5516be",
+                        "surface-container-low": "#eff4ff",
+                        "on-success-container": "#00522f",
+                        "background": "#f8f9ff",
+                        "on-background": "#1b1b24",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#c7c4d8",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#0f0069",
+                        "surface-container-highest": "#e4e1ee",
+                        "secondary": "#5e5d6e",
+                        "secondary-container": "#e3e0f5",
+                        "secondary-fixed": "#e3e0f5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-page": "2rem",
+                        "gutter": "1.5rem",
+                        "sidebar-width": "240px",
+                        "component-gap": "1rem"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "label-md": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                        "display-lg": ["30px", {"lineHeight": "38px", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background overflow-hidden">
+<!-- Sidebar Navigation Shell -->
+<aside class="fixed left-0 top-0 h-full w-[240px] bg-surface flex flex-col py-6 px-4 gap-2 z-50">
+<div class="flex items-center gap-3 px-2 mb-8">
+<div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">domain</span>
+</div>
+<div>
+<h1 class="text-headline-md font-headline-md font-bold text-primary">PropVista Admin</h1>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Tenant Business</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-label-md font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 bg-primary-container text-primary font-bold rounded-xl px-4 py-3 scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">domain</span>
+<span class="text-label-md font-label-md">Properties</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">person_search</span>
+<span class="text-label-md font-label-md">Leads</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-label-md font-label-md">Clients</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">person_outline</span>
+<span class="text-label-md font-label-md">Users</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="text-label-md font-label-md">AI Config</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-label-md font-label-md">Reports</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-surface-container pt-4">
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="text-label-md font-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Top App Bar Shell -->
+<header class="flex justify-between items-center h-16 px-gutter w-[calc(100%-240px)] ml-[240px] bg-background fixed top-0 z-40">
+<div>
+<h2 class="text-headline-md font-headline-md text-on-surface">Properties</h2>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<button class="hover:bg-surface-container-highest rounded-full p-2 text-on-surface-variant click:opacity-80 transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="hover:bg-surface-container-highest rounded-full p-2 text-on-surface-variant click:opacity-80 transition-all">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a corporate real estate admin user, high-quality studio lighting, soft neutral background, wearing professional business attire, sharp focus, modern corporate aesthetic consistent with the clean white and blue UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBBaMB0vA3U3gcypCimayTCxSF8cLZpuGdurU2vXSVJonYw3rrDmiDsaar5U3rwLna51YmbO1c4W9pDxi63LdFni_RZ-QZdG_Q82BVEivCzHcV85kaXyWMwgl-qITIfeSCmPoaQIQEA65AMuOnzvoIINdkR6SJ7cU17MgDDsJqitKxxyZkR0Ef90Hp0ToBX1dGdudkgJqOLOSWdWtZfLHnNi723Ob5HiVwYNY1aYZVZiZZbEcd635o2A"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[240px] mt-16 p-gutter h-[calc(100vh-64px)] overflow-hidden flex flex-col gap-6">
+<!-- Action Header & Filters -->
+<section class="flex flex-col gap-4">
+<div class="flex justify-between items-end gap-4">
+<div class="flex-1 max-w-2xl flex gap-3">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full h-12 pl-12 pr-4 bg-surface-container-low rounded-xl border-none focus:ring-2 focus:ring-primary text-body-md" placeholder="Search by name, agent, or location..." type="text"/>
+</div>
+<div class="relative w-48">
+<select class="w-full h-12 pl-4 pr-10 bg-surface-container-low rounded-xl border-none focus:ring-2 focus:ring-primary text-label-md appearance-none">
+<option>Property Type</option>
+<option>Residential</option>
+<option>Commercial</option>
+<option>Industrial</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
+</div>
+<div class="relative w-48">
+<select class="w-full h-12 pl-4 pr-10 bg-surface-container-low rounded-xl border-none focus:ring-2 focus:ring-primary text-label-md appearance-none">
+<option>Availability</option>
+<option>Available</option>
+<option>Under Contract</option>
+<option>Sold</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
+</div>
+</div>
+<button class="h-12 px-8 bg-gradient-to-r from-primary to-surface-tint text-on-primary font-bold rounded-xl hover:opacity-90 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined">add</span>
+                    New Property
+                </button>
+</div>
+</section>
+<!-- Data Table Bento Card -->
+<section class="flex-1 bg-surface rounded-[24px] overflow-hidden flex flex-col relative">
+<!-- Bulk Action Toolbar (Dynamic) -->
+<div class="bulk-toolbar absolute top-0 left-0 w-full bg-primary-container h-16 z-20 flex items-center px-8 justify-between -translate-y-full" id="bulkToolbar">
+<div class="flex items-center gap-4">
+<span class="text-primary font-bold" id="selectedCountText">3 Items Selected</span>
+<div class="h-6 w-[1px] bg-primary/20 mx-2"></div>
+<button class="flex items-center gap-2 text-primary font-bold text-label-md hover:bg-primary/5 px-3 py-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+                        Edit Bulk
+                    </button>
+<button class="flex items-center gap-2 text-primary font-bold text-label-md hover:bg-primary/5 px-3 py-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">assignment_turned_in</span>
+                        Update Status
+                    </button>
+<button class="flex items-center gap-2 text-error font-bold text-label-md hover:bg-error/5 px-3 py-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+                        Delete
+                    </button>
+</div>
+<button class="p-2 text-primary hover:bg-primary/5 rounded-full" onclick="toggleBulkToolbar(false)">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Table Header -->
+<div class="grid grid-cols-[48px_80px_1.5fr_1fr_1fr_120px_1fr_100px] gap-4 px-8 py-4 border-b border-surface-container-low text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider items-center">
+<div class="flex justify-center">
+<input class="rounded border-outline-variant text-primary focus:ring-primary h-5 w-5 cursor-pointer" id="selectAll" type="checkbox"/>
+</div>
+<div>Photo</div>
+<div>Title</div>
+<div>Type</div>
+<div class="text-right">Price</div>
+<div class="pl-4">Status</div>
+<div>Agent</div>
+<div class="text-right">Actions</div>
+</div>
+<!-- Scrollable Body -->
+<div class="flex-1 overflow-y-auto custom-scrollbar px-6 py-2">
+<div class="space-y-3">
+<!-- Row 1 -->
+<div class="property-row grid grid-cols-[48px_80px_1.5fr_1fr_1fr_120px_1fr_100px] gap-4 px-2 py-3 items-center bg-surface-container-lowest rounded-2xl hover:shadow-sm">
+<div class="flex justify-center">
+<input class="row-checkbox rounded border-outline-variant text-primary focus:ring-primary h-5 w-5 cursor-pointer" type="checkbox"/>
+</div>
+<div class="w-16 h-16 rounded-xl overflow-hidden bg-surface-container-high border border-surface-container">
+<img class="w-full h-full object-cover" data-alt="High-end luxury apartment exterior at sunset with warm amber lighting, floor to ceiling windows, sleek modern glass architecture, professional architectural photography style, clean minimal background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaZGGtuiTQ4mj1jNnNq5VrrVTD7QhlePb_5_PZp9nAKbWHv5RLK282bfQrhWsV7rqv4GGcD0gVPtd4PP7d_9-vrmgVDfbmMpI92jWf8TIvAPAZnjqYaNIXbWd44IDOeIq1EqmL5JJGGOS13CQX4wo79bfPuVXG7WqyRpOG4o-3_SjCy0Jwn0a5rlagXsWh3ogkOOb1KM6NqYQ3EJEp6lhIQ4BpKivs_Ao55pPFfiNeY8Yz2u42uqWF2g"/>
+</div>
+<div>
+<h4 class="text-body-md text-on-surface">The Skyline Penthouse</h4>
+<p class="text-label-sm text-on-surface-variant">Downtown Metro, East Tower</p>
+</div>
+<div>
+<span class="text-label-md px-3 py-1 bg-surface-container rounded-full text-on-surface-variant">Residential</span>
+</div>
+<div class="text-right">
+<p class="text-[24px] font-semibold text-primary">$4,250,000</p>
+</div>
+<div class="pl-4">
+<div class="bg-success-container text-on-success-container px-3 py-1 rounded-full text-label-md inline-flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-on-success-container"></span>
+                                Available
+                            </div>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-secondary-container"></div>
+<span class="text-label-md">Sarah Jenkins</span>
+</div>
+<div class="flex justify-end gap-1">
+<button class="p-2 hover:bg-surface-container-high rounded-full text-on-surface-variant transition-colors"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+<button class="p-2 hover:bg-surface-container-high rounded-full text-on-surface-variant transition-colors"><span class="material-symbols-outlined text-[20px]">more_vert</span></button>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="property-row grid grid-cols-[48px_80px_1.5fr_1fr_1fr_120px_1fr_100px] gap-4 px-2 py-3 items-center bg-surface-container-lowest rounded-2xl">
+<div class="flex justify-center">
+<input class="row-checkbox rounded border-outline-variant text-primary focus:ring-primary h-5 w-5 cursor-pointer" type="checkbox"/>
+</div>
+<div class="w-16 h-16 rounded-xl overflow-hidden bg-surface-container-high border border-surface-container">
+<img class="w-full h-full object-cover" data-alt="Modern commercial office building facade during a bright day, clean white paneling and large blue tinted windows, greenery at the entrance, crisp sharp focus, corporate minimalist style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrs66SuTW5vE8NLYB1nA6q2ENc5wJjPSS-QGZJEfArHrejAf1ldCJvh2o59d5g_4aE3n3qwyWew00YPyvBt49ZzHYRJv58guOSdldyt_0aHV4V2n-rytNsS_GZ7QX6Cufq85pUzRsEdA6jbKKUPpWHWBJt5LDcIcA9eBUqmUP_mK2Cw_pKdCJr6ARIpTYI8O3p4xtHtbh9dU8AbVhqxgsQMUH-h1djOlhVcWNNN5wwtPiSc_pCLqtI3A"/>
+</div>
+<div>
+<h4 class="text-body-md text-on-surface">Vertex Business Plaza</h4>
+<p class="text-label-sm text-on-surface-variant">Tech District, North 4th</p>
+</div>
+<div>
+<span class="text-label-md px-3 py-1 bg-surface-container rounded-full text-on-surface-variant">Commercial</span>
+</div>
+<div class="text-right">
+<p class="text-[24px] font-semibold text-primary">$8,900,000</p>
+</div>
+<div class="pl-4">
+<div class="bg-warning-container text-on-warning-container px-3 py-1 rounded-full text-label-md inline-flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-on-warning-container"></span>
+                                Under Contract
+                            </div>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-secondary-container"></div>
+<span class="text-label-md">David Chen</span>
+</div>
+<div class="flex justify-end gap-1">
+<button class="p-2 hover:bg-surface-container-high rounded-full text-on-surface-variant transition-colors"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+<button class="p-2 hover:bg-surface-container-high rounded-full text-on-surface-variant transition-colors"><span class="material-symbols-outlined text-[20px]">more_vert</span></button>
+</div>
+</div>
+<!-- Row 3 -->
+<div class="property-row grid grid-cols-[48px_80px_1.5fr_1fr_1fr_120px_1fr_100px] gap-4 px-2 py-3 items-center bg-surface-container-lowest rounded-2xl">
+<div class="flex justify-center">
+<input class="row-checkbox rounded border-outline-variant text-primary focus:ring-primary h-5 w-5 cursor-pointer" type="checkbox"/>
+</div>
+<div class="w-16 h-16 rounded-xl overflow-hidden bg-surface-container-high border border-surface-container">
+<img class="w-full h-full object-cover" data-alt="Contemporary suburban villa with white walls and dark wood accents, lush green lawn, bright blue sky, high-key lighting, professional real estate photography, clean and welcoming aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOYXLf5FOKCVnuNbFl44vfin5oIZyUEB4a0hK0sWYAUZ_911I7AnFHTX8wmnRWoT11lTSdq-5DP68t_WHuS8KafivoMofT8FzqXMfGFteBHFSoLQWDR2UNScSALkHv085mS0aCGr2-HLY_3BP4txs8W1_ZT_X0kuKv_JidmD7hCuGZVWSoeRwlHLmxVy_K1sdjr44t_iMbly4CwPcWAoJkShk0I7-duufaqHPsLrqzqmsD0uX6T_0EmA"/>
+</div>
+<div>
+<h4 class="text-body-md text-on-surface">Meadow View Estate</h4>
+<p class="text-label-sm text-on-surface-variant">Oakwood Suburb, Plot 42</p>
+</div>
+<div>
+<span class="text-label-md px-3 py-1 bg-surface-container rounded-full text-on-surface-variant">Residential</span>
+</div>
+<div class="text-right">
+<p class="text-[24px] font-semibold text-primary">$1,850,000</p>
+</div>
+<div class="pl-4">
+<div class="bg-success-container text-on-success-container px-3 py-1 rounded-full text-label-md inline-flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-on-success-container"></span>
+                                Available
+                            </div>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-secondary-container"></div>
+<span class="text-label-md">Sarah Jenkins</span>
+</div>
+<div class="flex justify-end gap-1">
+<button class="p-2 hover:bg-surface-container-high rounded-full text-on-surface-variant transition-colors"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+<button class="p-2 hover:bg-surface-container-high rounded-full text-on-surface-variant transition-colors"><span class="material-symbols-outlined text-[20px]">more_vert</span></button>
+</div>
+</div>
+<!-- Row 4 -->
+<div class="property-row grid grid-cols-[48px_80px_1.5fr_1fr_1fr_120px_1fr_100px] gap-4 px-2 py-3 items-center bg-surface-container-lowest rounded-2xl">
+<div class="flex justify-center">
+<input class="row-checkbox rounded border-outline-variant text-primary focus:ring-primary h-5 w-5 cursor-pointer" type="checkbox"/>
+</div>
+<div class="w-16 h-16 rounded-xl overflow-hidden bg-surface-container-high border border-surface-container">
+<img class="w-full h-full object-cover" data-alt="Modern logistics warehouse interior, high ceilings with metal rafters, polished concrete floors, bright artificial lighting, organized and clean industrial environment, professional photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWPreX1_cnzGOEAnCZ1CrCtyOFvuhNac5V2iOmT9248la0i0i6GxV9vWcSJi8IbS-iRZXz0I3OITpLsL-33LKuk_eJk23m1Wexaa2pIhlvXYKqgN05TrVrV7f4GTqerYiuqV9rJZrJnfaFlIIP0YWSNJYPNlicGa67dN14ZPox8eAnQgHudQm2h4_c72OP4HK-7sVgx69e7SOQMw-3iovkQfPBVXo8BqcosEyMSfBbsKhuJpnswbMErA"/>
+</div>
+<div>
+<h4 class="text-body-md text-on-surface">Nexus Logistics Hub</h4>
+<p class="text-label-sm text-on-surface-variant">Industrial Zone B, Portside</p>
+</div>
+<div>
+<span class="text-label-md px-3 py-1 bg-surface-container rounded-full text-on-surface-variant">Industrial</span>
+</div>
+<div class="text-right">
+<p class="text-[24px] font-semibold text-primary">$12,400,000</p>
+</div>
+<div class="pl-4">
+<div class="bg-surface-container-highest text-on-surface-variant px-3 py-1 rounded-full text-label-md inline-flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-on-surface-variant"></span>
+                                Sold
+                            </div>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-secondary-container"></div>
+<span class="text-label-md">Marcus Thorne</span>
+</div>
+<div class="flex justify-end gap-1">
+<button class="p-2 hover:bg-surface-container-high rounded-full text-on-surface-variant transition-colors"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+<button class="p-2 hover:bg-surface-container-high rounded-full text-on-surface-variant transition-colors"><span class="material-symbols-outlined text-[20px]">more_vert</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Pagination -->
+<div class="px-8 py-4 bg-background/50 border-t border-surface-container-low flex justify-between items-center">
+<p class="text-label-md text-on-surface-variant">Showing 4 of 128 properties</p>
+<div class="flex gap-2">
+<button class="p-2 rounded-lg hover:bg-surface-container-low text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 rounded-lg bg-primary text-on-primary font-bold">1</button>
+<button class="w-10 h-10 rounded-lg hover:bg-surface-container-low text-on-surface">2</button>
+<button class="w-10 h-10 rounded-lg hover:bg-surface-container-low text-on-surface">3</button>
+<button class="p-2 rounded-lg hover:bg-surface-container-low text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<script>
+        const selectAll = document.getElementById('selectAll');
+        const checkboxes = document.querySelectorAll('.row-checkbox');
+        const bulkToolbar = document.getElementById('bulkToolbar');
+        const selectedCountText = document.getElementById('selectedCountText');
+
+        function toggleBulkToolbar(show) {
+            if (show) {
+                bulkToolbar.classList.remove('-translate-y-full');
+            } else {
+                bulkToolbar.classList.add('-translate-y-full');
+                selectAll.checked = false;
+                checkboxes.forEach(cb => cb.checked = false);
+            }
+        }
+
+        function updateSelection() {
+            const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+            if (checkedCount > 0) {
+                selectedCountText.innerText = `${checkedCount} Item${checkedCount > 1 ? 's' : ''} Selected`;
+                toggleBulkToolbar(true);
+            } else {
+                toggleBulkToolbar(false);
+            }
+        }
+
+        selectAll.addEventListener('change', (e) => {
+            checkboxes.forEach(cb => {
+                cb.checked = e.target.checked;
+            });
+            updateSelection();
+        });
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', updateSelection);
+        });
+
+        // Search highlight micro-interaction
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('scale-[1.01]');
+            searchInput.parentElement.style.transition = 'all 0.2s ease';
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('scale-[1.01]');
+        });
+    </script>
+</body></html>

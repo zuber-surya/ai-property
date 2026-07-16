@@ -3,6 +3,14 @@
 > **Route:** `/admin/settings` · **PRD Module:** 16 · **App:** `admin-portal/` → `pages/TenantSettings/`
 > Part of [Doc 17 — Admin Spec](README.md). Read [`README.md` §4](README.md#4-cross-cutting-rules-for-every-admin-page) first.
 
+> # 🕓 POST-MVP — do not build this screen yet.
+>
+> **Decided 2026-07-13.** Per-tenant branding is deferred (PRD FR16.2). The MVP ships **one fixed palette** — [`docs/DESIGN.md`](../DESIGN.md) — to every tenant's public site. There is no theming layer, so there is nothing for this screen to configure.
+>
+> **Nothing here is cancelled.** The `tenants.branding_*` columns, `PUT /admin/tenant/branding`, and the custom-domain infrastructure all remain specced. This page is simply not in the MVP sprints, and the spec below is preserved for when it is.
+>
+> **The constraint for when it lands, already fixed:** a tenant may override **`primary`** and its derived ramp — and nothing else. **`tertiary` stays platform-owned.** It is PropVista's AI-intelligence signal, not the tenant's brand, and must read identically on every tenant's site. A tenant's brand color must never be able to land on the AI layer.
+
 ---
 
 ## 1. Purpose & Traceability
@@ -11,10 +19,10 @@ Where a tenant makes the public site **theirs** — logo, color, domain. This is
 
 | Requirement | Source |
 |---|---|
-| FR16.2 Tenant admin: configure branding (logo, colors, custom domain) with live preview | `01-prd.md` §17 |
+| FR16.2 Tenant admin: configure branding (logo, colors, custom domain) with live preview | `01-prd.md` §17 — **🕓 post-MVP** |
 | Acceptance: **branding changes apply immediately to that tenant's public site only; no leakage to other tenants** | `01-prd.md` §17 |
-| The public site is tenant-branded; the admin portal is not | `02-architecture.md` §5.1 |
-| The tenant is resolved from the request domain | `04-api-spec.md` §1 |
+| The public site is **not** tenant-branded in the MVP; a single fixed palette ships to all tenants | `02-architecture.md` §5.1, `DESIGN.md` → Scope |
+| The tenant is resolved from the request domain (scopes **data**, not appearance) | `04-api-spec.md` §1 |
 
 ---
 
@@ -42,7 +50,7 @@ Where a tenant makes the public site **theirs** — logo, color, domain. This is
 │          │  │  PNG/SVG, max 2MB      │  │ │  ┌────────────────┐  │ │  │
 │          │  │                        │  │ │  │              →│  │ │  │
 │          │  │  Primary color         │  │ │  └────────────────┘  │ │  │
-│          │  │  [ #C17F3C ] ███       │  │ │                      │ │  │
+│          │  │  [ tenant hex ] ███    │  │ │                      │ │  │
 │          │  │                        │  │ │  ┌────┐ ┌────┐       │ │  │
 │          │  │  ⚠ Contrast on white:  │  │ │  │card│ │card│       │ │  │
 │          │  │     3.1:1 — fails AA   │  │ │  └────┘ └────┘       │ │  │
@@ -198,7 +206,7 @@ Admin adds it at their DNS provider (GoDaddy, Cloudflare, …)
 - **Reserved domains:** the platform's own (`propvista.com`, `app.propvista.com`, the admin portal's) must be blocked.
 - **Removing a custom domain** must fall back cleanly to the subdomain, not leave the tenant with no reachable site.
 - **Logo:** type allowlist (PNG/SVG/JPG), size cap, dimension guidance. **An SVG is executable content** — an SVG with an embedded `<script>` served from your domain is a real XSS vector. Either sanitize SVGs properly or don't accept them.
-- **Color:** validate the hex. And note that a single `branding_primary_color` cannot express hover/active/disabled states — the frontend must **derive** those (as `13-ui-ux-flows.md` §4.4 does with `color-brass-hover`), or the tenant's buttons will have no hover state.
+- **Color:** validate the hex. And note that a single `branding_primary_color` cannot express hover/active/disabled states — the frontend must **derive** the ramp (`on-primary`, `primary-container`, `primary-fixed`) from it, or the tenant's buttons will have no hover state. It must **not** be allowed to derive or override `tertiary`, which is platform-owned (`DESIGN.md` → Scope).
 - **Contrast** (§3) — warn.
 
 ---

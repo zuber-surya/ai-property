@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Zen Oasis Residences | Aura Estate</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error-container": "#ffdad6",
+                    "on-primary-container": "#b1afff",
+                    "on-tertiary-container": "#c3aaff",
+                    "inverse-on-surface": "#f1efff",
+                    "tertiary-fixed": "#e9ddff",
+                    "on-primary-fixed-variant": "#3323cc",
+                    "on-secondary-container": "#002c66",
+                    "surface-container": "#eeecff",
+                    "outline-variant": "#c7c4d8",
+                    "primary-fixed-dim": "#c3c0ff",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "surface-bright": "#fbf8ff",
+                    "on-tertiary-fixed": "#23005c",
+                    "tertiary-container": "#571ac0",
+                    "on-secondary": "#ffffff",
+                    "success": "#026e4f",
+                    "on-secondary-fixed-variant": "#004395",
+                    "outline": "#777587",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "inverse-surface": "#2f2f3e",
+                    "tertiary-fixed-dim": "#d0bcff",
+                    "primary-container": "#3525cd",
+                    "error": "#ba1a1a",
+                    "on-secondary-fixed": "#001a42",
+                    "surface-container-highest": "#e2e0f4",
+                    "on-background": "#1a1a28",
+                    "primary-fixed": "#e2dfff",
+                    "surface": "#f8f9ff",
+                    "inverse-primary": "#c3c0ff",
+                    "on-surface": "#0b1c30",
+                    "on-error-container": "#93000a",
+                    "surface-container-low": "#f5f2ff",
+                    "surface-dim": "#dad8eb",
+                    "surface-variant": "#e2e0f4",
+                    "surface-container-high": "#e8e6fa",
+                    "secondary-fixed": "#d8e2ff",
+                    "warning": "#8a5300",
+                    "surface-tint": "#4d44e3",
+                    "tertiary": "#3e0095",
+                    "secondary": "#085ac0",
+                    "on-tertiary-fixed-variant": "#5516be",
+                    "on-surface-variant": "#464555",
+                    "primary": "#1e00a9",
+                    "on-error": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "background": "#fbf8ff",
+                    "secondary-container": "#5b94fd",
+                    "on-primary-fixed": "#0f0069"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-max": "1440px",
+                    "stack-md": "24px",
+                    "stack-lg": "48px",
+                    "base": "8px",
+                    "stack-sm": "12px",
+                    "margin-mobile": "20px",
+                    "gutter": "24px",
+                    "margin-desktop": "40px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "label-sm": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "label-md": ["Plus Jakarta Sans"],
+                    "display-lg-mobile": ["Plus Jakarta Sans"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c7c4d8;
+            border-radius: 10px;
+        }
+        .active-tab {
+            border-bottom: 2px solid #1e00a9;
+            color: #1e00a9;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 glass-nav border-b border-outline-variant shadow-sm h-20">
+<div class="flex justify-between items-center h-full px-margin-desktop max-w-container-max mx-auto">
+<div class="flex items-center gap-stack-md">
+<span class="text-headline-md font-headline-md text-primary tracking-tight">Aura Estate</span>
+<div class="hidden md:flex items-center gap-stack-md ml-stack-md">
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Dashboard</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-body-md text-body-md" href="#">Properties</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Clients</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Leads</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Insights</a>
+</div>
+</div>
+<div class="flex items-center gap-base">
+<button class="p-2 hover:bg-surface-container-low/50 rounded-full transition-all duration-200 active:scale-95">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+<button class="p-2 hover:bg-surface-container-low/50 rounded-full transition-all duration-200 active:scale-95">
+<span class="material-symbols-outlined text-on-surface-variant">settings</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant ml-base">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a luxury real estate professional, clean studio lighting, soft blue background tones, highly detailed facial features, business formal attire, professional and approachable expression." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAc8_GPyBGQgDoSsodr0IeHEryuwGjt5HdMwkki4dCWSmPp-k4ZNOlWWyKvAR2Mwque1fRn27jVkVKRoGdCG4-8_bh-uWcJ7pjwlmHvhcWTwPw3YFj2BUt_m6tx2gEdqhecvKuw_DT9C0PowN5V8y03DxnuEMk4ABvAGW5fhqeHzERN0TQ7P5jaie79LCJV4s99q6eDtNfVABSyHruv6bMrO2MYPH_ZMNHzFvbvm6FEMDpsQKYquhygeQ"/>
+</div>
+</div>
+</div>
+</nav>
+<main class="pt-24 pb-stack-lg max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<!-- Hero Section -->
+<section class="mb-stack-lg">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<div class="lg:col-span-8 relative group">
+<div class="aspect-[16/9] w-full rounded-xl overflow-hidden bg-surface-container-highest relative border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A stunning 16:9 aerial photography of a modern luxury villa in Austin, Texas at sunset. The residence features floor-to-ceiling glass walls, a glowing turquoise infinity pool, and lush manicured gardens. Warm interior lighting contrasts with the deep purple and orange dusk sky. Soft minimalist architecture with clean lines and premium stone finishes." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQ_WDmhGhLW0G3wodluwccCOYHnIP18SdOT4mTKbQ78-nf_JkudmtM3kS6acUkYsPflJv7ajtFhdJfFlU1ERh0R41ku-r9mJShvUz-Lx553wUdbaHNpTMMiWmixNGM-Qy1nHYZg20qukIqoBv72LRa156qnglcyygMhpYQX0PA7FjeKvUraGaGN6H9b0Kz7WOKS92LzRqCT2p7imrq8VsW5UQnR2h27zg3ozAJGLhdPxK-7_4a3YG79g"/>
+<button class="absolute top-6 right-6 p-4 bg-surface-container-lowest/80 backdrop-blur-md rounded-full shadow-md text-error hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+</div>
+<div class="flex gap-stack-sm mt-stack-sm overflow-x-auto pb-2 no-scrollbar">
+<div class="w-32 h-24 flex-shrink-0 rounded-lg overflow-hidden border-2 border-primary cursor-pointer">
+<img class="w-full h-full object-cover" data-alt="Close up detail of a modern living room with high ceilings, white marble floors, and a minimalist fireplace. Soft blue and neutral tones dominate the space, with large windows overlooking a green landscape." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsiSKrmfmm1qmwlyhggFzoXuCAmEuGg6YxDlCEuRp3nqxQa83Z-TU-RKeWKE2fHHHRHzFlGGbu33TI_vqUBFwTndcs0VGJmLJ3iEdhjQfX8WqOy1QedNtWRc2lmjeDQHii2S_LycxQOaIlnpwObwcj5cfiQnzwC3IGy75a7_MXjGndnMEYfx9uIoCuwfHyRbVOXCUKLOwIRK9L3VhOr4HGNL7UHZ40xVtKRHUggYHaZ0jH787Xnjk9Ww"/>
+</div>
+<div class="w-32 h-24 flex-shrink-0 rounded-lg overflow-hidden border border-outline-variant cursor-pointer opacity-70 hover:opacity-100 transition-opacity">
+<img class="w-full h-full object-cover" data-alt="Gourmet kitchen with state-of-the-art appliances, dark wood cabinetry, and a large white island with quartz countertops. Elegant pendant lighting hangs above the workspace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhDCVK1uMKVurKwnen4-suSRHNzroR7tpcOwcMZ2j5ezix2S4K0z6-h3HjTO7FpqjJkgVOtu8QWi4QZwPXN8YtsDk2-iVdT9XHn5gKPPip8NrOhxeZ1MnoDJ4C7zgtO7p2K4MNw2sPGBh8A_k7UwM04S9jbh7lQPyqARpBMU4tgXIkmeWUQtGQqnDjBPtr4hXl00mPp4e353ER_iK8iMoMQUBvzGkX8gkn3Hv8xi7-nzYDM1LWkqek0A"/>
+</div>
+<div class="w-32 h-24 flex-shrink-0 rounded-lg overflow-hidden border border-outline-variant cursor-pointer opacity-70 hover:opacity-100 transition-opacity">
+<img class="w-full h-full object-cover" data-alt="Master bedroom with expansive views through glass walls, featuring plush light gray carpeting, a king-sized bed with silk linens, and a private balcony access." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoI1W06puy69Il0YUwt69U17WBkO0yYyrrL4pPefqYS678J4Lu1bamRFtnPrF5K8A6gUzckmZIPnAK2LFkq9Nw9uTwgXrTXTOgLICn8RF3pLFwomiGijOTfc5ZIq6XmsLr2gOYNxvc8tvEQ2J_b8xqW94VQ1spKiYDIQjnx7uQtGI996xW3TJc9rf_w_ptEoZt3KK9yGCtqGpnwumgXo9IDjfM6NqlukRHEu9OyyvdSp0n4MDOW7w4hw"/>
+</div>
+<div class="w-32 h-24 flex-shrink-0 rounded-lg overflow-hidden border border-outline-variant cursor-pointer opacity-70 hover:opacity-100 transition-opacity">
+<img class="w-full h-full object-cover" data-alt="Luxury bathroom with a freestanding soaking tub, walk-in rain shower, and floor-to-ceiling sand-colored tiles. Soft natural light illuminates the space through a frosted window." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCadQyAn5w1lGKNO0wbR7SQErn3tQXFJjcR2xxxbLPbY8C8EH2qyCGc4IMqWRK-rKCwj7lt99rBnJU8u53lOpCyUAcM1qS64WiFpxRPaw0Ww5Z5tZwaqst8khRKhC8A_zWc38SaW7n4d3GZ21WsFArXhNOGhrGs51nVSpRRevN1mZR9YZ5fWWixZVvTkLucGEGPMiF_kLL8fQU1q8FcY4qqrgvvnWEWJ2X9A88ADMtbXmBUHh-XOWRfFg"/>
+</div>
+<div class="w-32 h-24 flex-shrink-0 rounded-lg overflow-hidden border border-outline-variant cursor-pointer relative group">
+<img class="w-full h-full object-cover" data-alt="Outdoor entertainment area at night with a fire pit, comfortable lounge seating, and subtle LED pathway lighting among desert-style landscaping." src="https://lh3.googleusercontent.com/aida-public/AB6AXuATCPzYZmLYxdMakmu33rZ8Gj_7J9v4Jf60iEhNkDOBk_BvnvLxfEStAv7fSFTtSlq0VhQdSlPnhL4fmIflwVOBk1sTja3xtIHKQjQHg7LZAv3-TY2kxegevhO8A23kP12SW_X1oZmO8CEIsY9a6ZMQZtat5ifO7TYK0NHbHFRI28GND44alf9KXlu97Fxm-K75LaQf7SVt41RmCmro9YGSYmuLJj2IOlO5FPLy1nvrlH95sMg88lFIew"/>
+<div class="absolute inset-0 bg-on-background/40 flex items-center justify-center text-on-primary font-bold">+12</div>
+</div>
+</div>
+</div>
+<!-- Sticky CTA Card Mobile (Top Row for Mobile, Hidden on Desktop) -->
+<div class="lg:hidden">
+<div class="p-stack-md bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm">
+<h2 class="text-headline-lg font-headline-lg text-on-surface mb-2">$945,000</h2>
+<p class="text-label-md font-label-md text-on-surface-variant mb-stack-md">$385/sqft • Estimated EMI: $5,240/mo</p>
+<div class="flex flex-col gap-base">
+<button class="w-full py-4 bg-primary text-on-primary rounded-full font-label-md text-label-md hover:opacity-90 transition-opacity">Schedule Visit</button>
+<button class="w-full py-4 border border-primary text-primary rounded-full font-label-md text-label-md hover:bg-surface-container-low transition-colors">Request Callback</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Main Content (70/30) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Left Column: Details -->
+<div class="lg:col-span-8 flex flex-col gap-stack-lg">
+<!-- Title Block -->
+<div class="flex flex-col md:flex-row md:items-start justify-between gap-stack-md">
+<div>
+<h1 class="text-display-lg-mobile md:text-display-lg font-display-lg text-primary mb-2">The Zen Oasis Residences</h1>
+<div class="flex items-center gap-base text-on-surface-variant">
+<span class="material-symbols-outlined text-primary">location_on</span>
+<span class="text-body-lg font-body-lg">1245 West Lynn St, Austin, TX 78703</span>
+</div>
+</div>
+<div class="flex gap-base self-start mt-2">
+<span class="px-4 py-1 bg-success/10 text-success rounded-full text-label-md font-label-md">Just Listed</span>
+<span class="px-4 py-1 bg-tertiary-fixed text-tertiary rounded-full text-label-md font-label-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">bolt</span>
+                            98% Match
+                        </span>
+</div>
+</div>
+<!-- Stats -->
+<div class="grid grid-cols-3 gap-gutter py-stack-md border-y border-outline-variant">
+<div class="flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-primary text-[32px]">bed</span>
+<span class="text-headline-md font-headline-md">3</span>
+<span class="text-label-sm font-label-sm text-outline uppercase tracking-wider">Bedrooms</span>
+</div>
+<div class="flex flex-col items-center gap-1 border-x border-outline-variant">
+<span class="material-symbols-outlined text-primary text-[32px]">bathtub</span>
+<span class="text-headline-md font-headline-md">2.5</span>
+<span class="text-label-sm font-label-sm text-outline uppercase tracking-wider">Bathrooms</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-primary text-[32px]">straighten</span>
+<span class="text-headline-md font-headline-md">2,450</span>
+<span class="text-label-sm font-label-sm text-outline uppercase tracking-wider">Sq Ft</span>
+</div>
+</div>
+<!-- Tabs -->
+<div>
+<div class="flex gap-stack-md border-b border-outline-variant overflow-x-auto no-scrollbar">
+<button class="pb-4 text-label-md font-label-md active-tab whitespace-nowrap">Overview</button>
+<button class="pb-4 text-label-md font-label-md text-on-surface-variant hover:text-primary whitespace-nowrap">Amenities</button>
+<button class="pb-4 text-label-md font-label-md text-on-surface-variant hover:text-primary whitespace-nowrap">Floor Plan</button>
+<button class="pb-4 text-label-md font-label-md text-on-surface-variant hover:text-primary whitespace-nowrap">Location</button>
+<button class="pb-4 text-label-md font-label-md text-on-surface-variant hover:text-primary whitespace-nowrap">EMI Calculator</button>
+</div>
+<div class="mt-stack-md flex flex-col gap-stack-md">
+<h3 class="text-headline-md font-headline-md text-on-surface">About this Home</h3>
+<p class="text-body-lg font-body-lg text-on-surface-variant leading-relaxed">
+                            Experience the pinnacle of tranquil living in this architectural masterpiece located in the heart of Austin's coveted Clarksville neighborhood. The Zen Oasis Residences seamlessly blends modern luxury with sustainable design, featuring solar-ready roofing, smart greywater systems, and locally sourced limestone.
+                        </p>
+<p class="text-body-lg font-body-lg text-on-surface-variant leading-relaxed">
+                            The open-concept interior boasts double-height ceilings and artisanal walnut cabinetry, creating an atmosphere of effortless intelligence and warmth. Large pivot doors lead to a curated Japanese-inspired garden, offering a serene escape from the urban pace.
+                        </p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md mt-base">
+<div class="flex flex-col gap-base">
+<h4 class="text-label-md font-label-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">eco</span>
+                                    Sustainability
+                                </h4>
+<ul class="flex flex-col gap-2">
+<li class="flex items-center gap-2 text-body-md font-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-success text-[20px]">check_circle</span> Smart Climate Control
+                                    </li>
+<li class="flex items-center gap-2 text-body-md font-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-success text-[20px]">check_circle</span> Low-E Argon Windows
+                                    </li>
+</ul>
+</div>
+<div class="flex flex-col gap-base">
+<h4 class="text-label-md font-label-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">pool</span>
+                                    Wellness
+                                </h4>
+<ul class="flex flex-col gap-2">
+<li class="flex items-center gap-2 text-body-md font-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-success text-[20px]">check_circle</span> Private Meditation Studio
+                                    </li>
+<li class="flex items-center gap-2 text-body-md font-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-success text-[20px]">check_circle</span> Oxygen-Purified Pool
+                                    </li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Map Placeholder -->
+<div class="mt-stack-lg">
+<h3 class="text-headline-md font-headline-md text-on-surface mb-stack-md">Location</h3>
+<div class="w-full h-80 bg-surface-container-high rounded-xl overflow-hidden border border-outline-variant relative">
+<img class="w-full h-full object-cover" data-location="Austin, Texas" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvkXLrrNZvtQPUgl_iV-3YmW-KSGFplferXnT2hM8b3vPUONcfOs8PLAbBkuwHs24MwINSc2gCoYDwMJsK5EUCLxuEu2bm4iOiuIZ69AUHEFodrNbF74YjiOIlFv-JepyWRQslNVwvyLa7rNLVEYrfYG-sW9MG2YA4vLPXUu3v2ZgD4797SEub4zLKU4KcoXyJC0pzxhWTEU5hXIj_83JThCr4UHMgTlR40uGVwnlX26DXiXarukbK2w"/>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="bg-primary/20 p-8 rounded-full animate-pulse">
+<span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+</div>
+<div class="absolute bottom-4 left-4 bg-surface-container-lowest/90 backdrop-blur-md p-4 rounded-lg shadow-md max-w-xs">
+<p class="text-label-md font-bold text-on-surface">Transit Score: 84</p>
+<p class="text-label-sm text-on-surface-variant">5 mins walk to Pease District Park</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Sticky Sidebar -->
+<div class="lg:col-span-4">
+<div class="sticky top-28 flex flex-col gap-gutter">
+<!-- CTA Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md shadow-md">
+<div class="mb-stack-md">
+<p class="text-label-sm font-label-sm text-outline uppercase tracking-wider mb-1">Listing Price</p>
+<h2 class="text-headline-lg font-headline-lg text-on-surface">$945,000</h2>
+<p class="text-body-md text-on-surface-variant mt-1">$385/sqft</p>
+</div>
+<div class="flex flex-col gap-stack-sm mb-stack-md">
+<button class="w-full py-4 bg-primary text-on-primary rounded-full font-label-md text-label-md hover:bg-primary/90 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">calendar_today</span>
+                                Schedule Visit
+                            </button>
+<button class="w-full py-4 border border-outline-variant text-on-surface rounded-full font-label-md text-label-md hover:bg-surface-container-low transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">call</span>
+                                Request Callback
+                            </button>
+</div>
+<div class="pt-stack-md border-t border-outline-variant">
+<div class="flex items-center gap-base">
+<div class="w-12 h-12 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="Portrait of Sarah Jenkins, a senior real estate consultant. She is a woman in her late 30s with professional attire, smiling warmly against a soft-focus modern office background. High-key lighting, bright and airy feel, professional headshot style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwiw-B-zNnkgP2l4D33g751QgO41SF6a3NI_JAx7k6MLTWKyEiVgipz5v_r4BuBGl6OOA0JcDWc2k3LshkzIT2ma24ulgmqmweM90LM2h_Ws29YTWVLsFPMIWZoPc0NglJvmSHcTeTB1LsfVtHc8EUPSdU1KJZC4NUPFrPZJKhXlES_2unfkG-ty2vHruBLE_BIgwBa01br0EYRCBL2K_eNj6xb-SYhCxBzXgOKklR4jXv7T-oeyfwuQ"/>
+</div>
+<div>
+<h4 class="text-label-md font-bold text-on-surface">Sarah Jenkins</h4>
+<p class="text-label-sm text-on-surface-variant">Senior Consultant</p>
+</div>
+<button class="ml-auto w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined">chat</span>
+</button>
+</div>
+</div>
+</div>
+<!-- AI Match Card -->
+<div class="bg-tertiary-fixed-dim/20 border border-tertiary-container/30 rounded-xl p-stack-md relative overflow-hidden">
+<div class="absolute top-0 right-0 w-24 h-24 bg-tertiary/5 rounded-full -mr-12 -mt-12"></div>
+<div class="relative z-10">
+<h4 class="text-label-md font-bold text-tertiary flex items-center gap-2 mb-stack-sm">
+<span class="material-symbols-outlined text-[20px]">auto_awesome</span>
+                                Aura Match Analysis
+                            </h4>
+<p class="text-body-md text-on-surface-variant mb-stack-sm">
+                                Based on your search for "modern quiet homes with garden", this property is a <span class="text-tertiary font-bold">98% match</span>.
+                            </p>
+<div class="flex gap-2">
+<span class="px-2 py-1 bg-surface-container-lowest text-[12px] rounded-lg border border-outline-variant">Peaceful Locality</span>
+<span class="px-2 py-1 bg-surface-container-lowest text-[12px] rounded-lg border border-outline-variant">Eco-Friendly</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Similar Properties -->
+<section class="mt-stack-lg pt-stack-lg border-t border-outline-variant">
+<div class="flex items-center justify-between mb-stack-md">
+<h2 class="text-headline-md font-headline-md text-on-surface">Similar Properties in Austin</h2>
+<div class="flex gap-base">
+<button class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Card 1 -->
+<div class="group bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300">
+<div class="h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A modern townhouse with sleek black trim and white stucco walls in a trendy Austin neighborhood. Large windows reveal a warm interior. Bright daylight, clear blue sky, minimal urban landscaping." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOan9W3YmHFngrnNCPr1egB78358F1PMm3-EMRKTm2GvPbT9NplWR_VWWPMI4wxZJxt5RVJ1QD-32LtLpxvUiMjd4cPS5cW85qVFMZN_tw9ZHCLE2Us70lY--WUXgDuxFmQXZigrTOwqS36yL8slUhygPvn8Z5sPLKiuivPCYsIT8eU1U7Rjb8-xcDVvdCIdLUPLPq5acx0CXj0tdehHzMwsmWwp2VpPgAyxg7x2c4plViy5xRkkaTBA"/>
+<div class="absolute top-3 left-3 px-3 py-1 bg-surface-container-lowest/90 backdrop-blur-sm rounded-full text-label-sm font-bold text-on-surface shadow-sm">
+                            $910,000
+                        </div>
+</div>
+<div class="p-stack-md">
+<h4 class="text-label-md font-bold text-on-surface mb-1">Skyline View Estates</h4>
+<p class="text-label-sm text-on-surface-variant mb-stack-sm">2210 Enfield Rd, Austin</p>
+<div class="flex items-center gap-stack-md text-label-sm text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">bed</span> 3</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">bathtub</span> 2</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">straighten</span> 2,100</span>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300">
+<div class="h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Contemporary luxury home with a unique cedar and glass facade, surrounded by live oak trees. Soft evening lighting illuminates a stone path leading to the entrance. Austin, Texas vibes." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNXmSrkaz3TkuxN_zAleGWlGgtXGRTFhKsjLzhMvClu7uRGKaPHeb8EbnUW_dsvkegXxH_nyOr2IYU5Y2PRP2KmH-_FAGt9UoDeAGdA5wmY_isEIx8jXeUCMuwgA_OyDOy0Z4ifjpDuJB9ykdJJjr1fgXD6Vfa9WI2Z0mUKluLg6PvJKV0BtMRpW5Gl75TaI45BnCFYx9cQSCNW6t4EcrsXvMWB-uXglXaCUJyWweOHAlaKiTugt41gg"/>
+<div class="absolute top-3 left-3 px-3 py-1 bg-surface-container-lowest/90 backdrop-blur-sm rounded-full text-label-sm font-bold text-on-surface shadow-sm">
+                            $1,050,000
+                        </div>
+</div>
+<div class="p-stack-md">
+<h4 class="text-label-md font-bold text-on-surface mb-1">Cedar Hollow Manor</h4>
+<p class="text-label-sm text-on-surface-variant mb-stack-sm">4502 Rollingwood Dr, Austin</p>
+<div class="flex items-center gap-stack-md text-label-sm text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">bed</span> 4</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">bathtub</span> 3</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">straighten</span> 2,800</span>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300">
+<div class="h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Minimalist cubist architecture home in Austin, featuring smooth white concrete and large glass panels. A small lap pool is visible in the foreground with modern loungers. Bright, airy, and high-end look." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTt4c3S37sWTiG5i7u8GFjP4AbVbtV7Q9sTeC4RE-GIvQjOKBrjH-o3OBxpsNu0My25_ouJ9OVnI8mG4pOPWd2cc15FWrTpb6CBj-7pr05P1DiswVP47wMFpCWuAgaW0JL1yDN8JYuUVVjcAucyme8NPFl9Y-lKyva2dEjW8EDuib-fvfxW0_6hg_jV3BPcq_rE0su7T64kd3rbXMkgfiHsX7EMob4toe8Z-dtrgX_YNJ23z5HojpZJA"/>
+<div class="absolute top-3 left-3 px-3 py-1 bg-surface-container-lowest/90 backdrop-blur-sm rounded-full text-label-sm font-bold text-on-surface shadow-sm">
+                            $985,000
+                        </div>
+</div>
+<div class="p-stack-md">
+<h4 class="text-label-md font-bold text-on-surface mb-1">The Urban Prism</h4>
+<p class="text-label-sm text-on-surface-variant mb-stack-sm">812 W 11th St, Austin</p>
+<div class="flex items-center gap-stack-md text-label-sm text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">bed</span> 3</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">bathtub</span> 2.5</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">straighten</span> 2,350</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full mt-stack-lg bg-surface-container-highest dark:bg-surface-dim border-t border-outline-variant">
+<div class="flex flex-col md:flex-row justify-between items-center py-stack-md px-margin-desktop max-w-container-max mx-auto gap-stack-md">
+<div class="flex flex-col gap-2 items-center md:items-start">
+<span class="font-headline-lg text-primary dark:text-primary-fixed-dim">Aura Estate</span>
+<p class="text-on-surface-variant text-body-md font-body-md">Effortless Intelligence in Real Estate.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-stack-md">
+<a class="text-on-surface-variant hover:text-primary transition-all hover:underline decoration-primary font-body-md text-body-md" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-primary transition-all hover:underline decoration-primary font-body-md text-body-md" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary transition-all hover:underline decoration-primary font-body-md text-body-md" href="#">Cookie Settings</a>
+<a class="text-on-surface-variant hover:text-primary transition-all hover:underline decoration-primary font-body-md text-body-md" href="#">Contact Us</a>
+<a class="text-on-surface-variant hover:text-primary transition-all hover:underline decoration-primary font-body-md text-body-md" href="#">Company News</a>
+</div>
+<div class="text-on-surface-variant text-body-md font-body-md opacity-80">
+                © 2024 Aura Estate CRM. All rights reserved.
+            </div>
+</div>
+</footer>
+<script>
+        // Simple Interaction logic for tabs
+        const tabs = document.querySelectorAll('button.whitespace-nowrap');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => {
+                    t.classList.remove('active-tab');
+                    t.classList.add('text-on-surface-variant');
+                });
+                tab.classList.add('active-tab');
+                tab.classList.remove('text-on-surface-variant');
+            });
+        });
+
+        // Add a nice scroll effect to the header
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 20) {
+                nav.classList.add('shadow-md');
+            } else {
+                nav.classList.remove('shadow-md');
+            }
+        });
+    </script>
+</body></html>

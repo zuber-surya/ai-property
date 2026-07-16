@@ -3,7 +3,7 @@
 > **Doc 17 of the PropVista CRM documentation set.** The full, page-by-page specification for the **admin portal** — the CRM used by agents, tenant admins, and the platform super admin. Implementation-level companion to `01-prd.md` (Modules 8–16).
 >
 > **Status:** Draft v1.0 · **Last updated:** July 2026
-> Implemented in: `admin-portal/` (see `02-architecture.md` §5.2)
+> Implemented in: `frontend/` — the admin routes (`src/routes/admin/`, lazy-loaded). See `02-architecture.md` §5.2, ADR-0020.
 > Depends on: `01-prd.md`, `03-database-schema.md`, `04-api-spec.md`, `08-auth-roles-spec.md`, `13-ui-ux-flows.md`, `14-screen-workflows.md`
 > Customer counterpart: `docs/16-customer-spec/`
 
@@ -66,6 +66,7 @@ One file per screen. Each follows the same 11-section template as the customer s
 | 14 | [`14-ai-config-recommendation.md`](14-ai-config-recommendation.md) | `/admin/ai-config/recommendation` |
 | 15 | [`15-ai-config-chat-logs.md`](15-ai-config-chat-logs.md) | `/admin/ai-config/chat-logs` |
 | 16 | [`16-ai-config-search-insights.md`](16-ai-config-search-insights.md) | `/admin/ai-config/search-insights` |
+| **22** | [**`22-agent-chat-console.md`**](22-agent-chat-console.md) | **`/admin/chat`** — live handoff. **The only real-time screen in the portal** (FR1.7; closed gap G7) |
 
 ### 2.5 Content, Reporting & Settings
 
@@ -123,8 +124,16 @@ Per FR11.3 / PRD Module 11: **all admin-portal write actions are logged** (actor
 ### 4.4 Soft delete, always
 Properties, leads, and users are **soft-deleted** (`deleted_at`), never hard-deleted (`.claude/rules/database.md`). CRM history has to survive. "Delete" in the UI means "archive" in the database — and the copy should be honest about that.
 
-### 4.5 Not tenant-branded
-The admin portal uses the design system directly (`13-ui-ux-flows.md` §4) — no tenant logo, no tenant colors. It's a tool, not a storefront. (The public site is the branded surface.)
+### 4.5 Design system — and no tenant branding
+The admin portal uses the design system directly: **[`docs/DESIGN.md`](../DESIGN.md)**. No tenant logo, no tenant colors. It's a tool, not a storefront.
+
+> ⚠️ `13-ui-ux-flows.md` §4.1–§4.5 used to hold a parallel system (brass/teal/Fraunces/IBM Plex Mono). **It is deleted.** Any page in this set still citing it for a color, font or badge is stale — go to `DESIGN.md`. Doc 13 §4.6–§4.8 (iconography, breakpoints, accessibility) is still live.
+
+Neither surface is tenant-branded in the MVP (decided 2026-07-13 — the public site isn't either, see PRD FR16.2). Every tenant gets the same tokens.
+
+Two `DESIGN.md` rules bite hardest in the admin portal:
+- **The `tertiary` family marks AI output and nothing else.** Legitimate uses: the AI-derived lead sources (Chatbot, AI Search), the AI-config screens' model output, chat-log transcripts. **Not** legitimate: focus rings (those are `primary`), nav highlights, or any chart series that isn't AI-derived.
+- **Status uses the semantic ramp**, never `primary`/`secondary` — see `DESIGN.md` → Semantic Status Colors. This is a denser, more table-heavy surface than the public site, and status legibility at chip size is the thing most likely to break.
 
 ### 4.6 Desktop-first, and that's a decision
 Agents and admins work at desks. `13-ui-ux-flows.md` §5 flags mobile parity as an open question; this doc set assumes **desktop-first with a usable read-only mobile view**, and calls it out where it matters (the Kanban board in particular is not a mobile experience).
@@ -160,7 +169,7 @@ Found while writing this set. **Fix the owning doc before building the affected 
 | A2 | **No agent-reply path for escalated chats.** A chat escalates to a human (FR1.7), but no endpoint lets an agent *send* a message into that conversation, and no delivery channel exists. The loop never closes. | [`08`](08-lead-detail.md), [`15`](15-ai-config-chat-logs.md) | `04-api-spec.md`, `05-ai-chatbot-spec.md` |
 | A3 | **Lead auto-assignment (FR10.2) is undecided** — round-robin, rules-based, or manual claim? Determines whether new leads have an owner, hence whether anyone works them. Recommend **round-robin**; the schema already models system-initiated assignment. | [`07`](07-leads-kanban.md), [`09`](09-leads-table-and-assignment.md) | `01-prd.md` |
 | A9 | **"Site visitors" KPI (FR8.1) has no data source** — no analytics/traffic tracking specified. Drop the card rather than shipping a fake number. | [`02`](02-dashboard.md) | `01-prd.md` / `10-deployment-devops.md` |
-| A11 | **No job scheduler.** The schema now supports follow-up reminders, stale-lead alerts, listing expiry, and abandoned-chat cleanup — **nothing runs them.** Largest remaining hole. | [`08`](08-lead-detail.md), [`19`](19-notification-rules.md) | `02-architecture.md` |
+| ~~A11~~ | ✅ **CLOSED — never real.** `02-architecture.md` **§4.4**: `pg_cron` + a `jobs` table + a Python worker, decided **2026-07-13**, with `mark_stale_leads()` listed by name. Follow-up reminders, stale-lead alerts, listing expiry and abandoned-chat cleanup are all buildable. This entry was a stale summary (`GAPS.md` §5A). | — | — |
 | A12 | **No email/SMS provider chosen.** In-app notifications now work; email/SMS remain dead toggles. | [`19`](19-notification-rules.md) | `10-deployment-devops.md` |
 | A13 | **What `tenants.status = suspended`/`trial` actually *do*** — three values, no defined behavior. | [`21`](21-superadmin-tenants.md) | `01-prd.md` |
 | A14 | **No public CMS read endpoint** — the module publishes into a void. Plus missing endpoints: property reject, bulk operations, chatbot/weights preview, resend/revoke invite, tenant-settings `GET`, domain verification, usage stats. | [`17`](17-cms.md), [`06`](06-property-approvals-status.md), [`13`](13-ai-config-chatbot.md), [`20`](20-tenant-branding.md) | `04-api-spec.md` |
