@@ -14,8 +14,14 @@ Covers PRD Module 11 (User & Role Management) and Module 16 (Tenant & Branding S
 - `require_role` / permission dependency enforces access **server-side** (403 on out-of-scope API calls).
 - `tenant_id` resolution: admin portal → user's tenant association; public site → request domain/subdomain (`app/core/tenancy.py`).
 - Anonymous session handling via `X-Session-Id`; data migrates to the account on register/login.
-- FR11.1 granular per-feature permissions; FR11.2 invite flow; FR11.3 audit log (actor, action, entity, timestamp).
-- FR16.1 super admin manages tenants; FR16.2 tenant branding (logo, colors, custom domain) applies to that tenant's public site only.
+- **FR11.1 — FOUR FIXED ROLES**: `customer` · `agent` · `admin` · `super_admin`. Granular per-feature sub-roles are **deferred past MVP** (decided 2026-07-13). The `roles_permissions` table exists but stays **unused** — a second permission system checked alongside the first is a permission model with holes.
+- FR11.2 invite flow — **no self-registration for admin-portal roles**; a tenant admin can never create a `super_admin`.
+- FR11.3 audit log (actor, action, entity, timestamp), including **denied** actions. Append-only, enforced by `REVOKE UPDATE, DELETE`.
+- FR11.4 one `users` row **per (auth identity, tenant)** — a person can be a customer on one tenant and staff on another. **Every lookup passes `tenant_id`**; `auth_user_id` alone returns an arbitrary row and the wrong role.
+- FR16.1 super admin manages tenants. **`suspended` keeps the public site serving and blocks admin login** (`03-database-schema.md` §3.1).
+- FR16.2 tenant branding — 🕓 **POST-MVP** (ADR-0010). MVP ships one fixed palette to every tenant; there is no theming layer. The columns and endpoint stay specced but unbuilt.
+
+> ⚠️ **Accepted risk: no 2FA at MVP** (`01-prd.md` §12). Password-only for every admin role. One phished admin password exposes that tenant's full customer database.
 
 ## Acceptance / test cases (from `docs/15`)
 - `TC-AUTH-01` valid JWT resolves the correct `users` row + role.

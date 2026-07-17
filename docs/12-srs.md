@@ -70,7 +70,7 @@ Per `02-architecture.md` Section 8: local, staging, and production environments,
 |---|---|
 | `NFR-SCALE-1` | The backend (FastAPI on App Runner/ECS) must scale horizontally with tenant/traffic growth without requiring architectural changes to the modular monolith (per `02-architecture.md` Section 1). |
 | `NFR-SCALE-2` | The `property_embeddings` table's `hnsw` vector index must remain performant as property count grows per tenant and across tenants — index strategy revisited if a single tenant's catalog grows beyond typical scale assumptions (no specific number fixed yet; flagged for load testing). |
-| `NFR-SCALE-3` | Background job processing (embedding generation, notifications) must be promotable from FastAPI `BackgroundTasks` to a queue-based worker (Celery/RQ) without changing the public API contract, per the upgrade path already noted in `02-architecture.md` Section 4.3. |
+| `NFR-SCALE-3` | Background job processing (embedding generation, notification dispatch, bulk import) runs in a **separate worker process polling the `jobs` table**, scheduled by **`pg_cron`** — per `02-architecture.md` §4.4. It must scale by **adding worker instances** without changing the public API contract; `FOR UPDATE SKIP LOCKED` is what makes concurrent workers safe. |
 
 ### 3.3 Availability & Reliability
 
@@ -112,14 +112,14 @@ Per `02-architecture.md` Section 8: local, staging, and production environments,
 | ID | Requirement |
 |---|---|
 | `NFR-COMP-1` | Customer PII (name, phone, email) collected via chatbot, contact forms, or requirement profiles is stored only as needed for CRM purposes and not exposed across tenant boundaries (ties to `NFR-SEC-1`). |
-| `NFR-COMP-2` | Retention policy for `chat_messages` and `lead_activities` is defined before production launch (flagged as open in `03-database-schema.md` Section 6) — this SRS requires a policy to exist, without prescribing the specific duration here. |
+| `NFR-COMP-2` | A retention policy exists and is enforced. **Defined 2026-07-13 in `03-database-schema.md` §8** (chat transcripts 24 months, audit log 7 years, raw telemetry 90 days → rollups), enforced by nightly `pg_cron` jobs. This SRS requires the policy to exist and be enforced; §8 owns the durations and this row must not restate them. |
 
 ### 3.8 Interoperability
 
 | ID | Requirement |
 |---|---|
 | `NFR-INTEROP-1` | The API is documented via FastAPI's OpenAPI schema (auto-generated) and kept accurate, enabling frontend type generation (per `04-api-spec.md` Section 17, `09-coding-standards.md` Section 3.4). |
-| `NFR-INTEROP-2` | Third-party integrations (maps, SMS/WhatsApp) are abstracted behind a service interface so the specific provider can change without touching calling code (providers still TBD per `02-architecture.md` Section 9). |
+| `NFR-INTEROP-2` | Third-party integrations are abstracted behind a service interface (`app/notifiers/`) so the provider can change without touching calling code. Email and SMS are **decided** (SendGrid / Twilio — `02-architecture.md` §3); the **maps** provider is still open (§9). |
 
 ---
 
@@ -197,9 +197,9 @@ Per `02-architecture.md` Section 8: local, staging, and production environments,
 | Supabase Auth | Bi-directional | User registration/login, JWT issuance; verified by FastAPI on each request |
 | Supabase Postgres (+ pgvector) | Bi-directional | Primary data store, RLS-enforced |
 | Supabase Storage | Bi-directional | Property media (photos, floor plans, documents) |
-| Maps provider (TBD) | Outbound | Property location display, map view (`02-architecture.md` Section 9) |
-| SMS/WhatsApp provider (TBD) | Outbound | Notification delivery, callback confirmations |
-| Email provider (TBD) | Outbound | Transactional email |
+| Maps provider (**TBD**) | Outbound | Property location display, map view (`02-architecture.md` §9). Genuinely undecided |
+| **Twilio** (SMS) | Outbound | Notification delivery, callback confirmations. Decided 2026-07-13 (`02-architecture.md` §3). Indian SMS needs DLT registration |
+| **SendGrid** (email) | Outbound | Transactional email. Decided 2026-07-13 (`02-architecture.md` §3) |
 
 ---
 

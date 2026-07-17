@@ -36,7 +36,7 @@ Client ──Authorization: Bearer <JWT>──► FastAPI ──verify──► 
 - Delegated to Supabase Auth's built-in flows (magic link / reset email) — no custom implementation needed at the FastAPI layer beyond redirect/callback handling.
 
 ### 2.4 Token Refresh & Expiry
-- Supabase-issued JWTs are short-lived with a refresh token pattern, handled client-side by the Supabase JS client in both React apps — FastAPI only ever validates the current access token per request, it does not manage refresh logic.
+- Supabase-issued JWTs are short-lived with a refresh token pattern, handled client-side by the Supabase JS client in the React app — FastAPI only ever validates the current access token per request, it does not manage refresh logic.
 
 ---
 

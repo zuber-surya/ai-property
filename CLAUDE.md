@@ -38,7 +38,9 @@ Read the relevant doc before working on a feature; point tasks at specific doc s
 
 Run `python scripts/check_drift.py` — it fails on a stale gap citation.
 
-Two docs are now **stale against the schema** and must be corrected: `01-prd.md` FR10.1 still promises configurable pipeline stages (the schema fixes the enum for MVP), and `04-api-spec.md` §14 still implies a persisted report with an ID (reports are stateless).
+> **This file did it again — and the paragraph above is the one that warned you.** Until 2026-07-16 this spot claimed *"two docs are stale against the schema: `01-prd.md` FR10.1 still promises configurable pipeline stages, and `04-api-spec.md` §14 still implies a persisted report with an ID."* **Both had been corrected days earlier.** FR10.1 reads *"Stages are a fixed set"*; §14 reads *"Reports are synchronous and stateless."* The claim was copied from `GAPS.md` P2/P3 — which were **themselves stale**, because the fixes landed in the owning docs and nobody swept the register.
+>
+> So an agent obeying the rules exactly — *read `CLAUDE.md` first, cite `GAPS.md` by ID* — would have "fixed" two docs that were already right. **Restating a gap list is wrong even when the list is `GAPS.md`'s.** Cite the ID; open the owning doc. See `GAPS.md` §5 (P1/P2/P3).
 
 ## Intended Stack (per docs)
 

@@ -1,0 +1,73 @@
+name: Task
+description: Create a new task for development work
+title: "[TASK] <brief description>"
+labels: ["task"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this task!
+  - type: input
+    id: contact
+    attributes:
+      label: Contact
+      description: Who should be assigned to this task?
+      placeholder: e.g. @username
+    validations:
+      required: false
+  - type: textarea
+    id: specification-reference
+    attributes:
+      label: Specification Reference
+      description: Which doc section does this task work from? (Required - docs are source of truth)
+      placeholder: e.g. 02-architecture.md §4.2, 03-database-schema.md §3.1
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria (TC-* cases)
+      description: List the test cases this task must satisfy (e.g. TC-PROP-01, TC-LEAD-02)
+      placeholder: TC-PROP-01, TC-PROP-02
+    validations:
+      required: true
+  - type: dropdown
+    id: sprint
+    attributes:
+      label: Sprint
+      description: Which sprint does this task belong to?
+      options:
+        - Sprint 0
+        - Sprint 1
+        - Sprint 2
+        - Sprint 3
+        - Sprint 4
+        - Sprint 5
+        - Sprint 6
+        - Sprint 7
+        - Sprint 8
+        - Sprint 9
+        - Sprint 10
+        - Sprint 11
+    validations:
+      required: true
+  - type: textarea
+    id: branch-name
+    attributes:
+      label: Suggested Branch Name
+      description: What should the branch be named? (e.g. feature/sprint2-property-tables)
+      placeholder: feature/sprint2-property-tables
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-work Checks
+      description: Confirm these before starting work
+      options:
+        - label: I have read the specification sections referenced above
+        - label: I understand this is one module or one sprint task per session
+        - label: I will write tests alongside the implementation
+        - label: I will run the drift check before considering work complete
+    validations:
+      required: true

@@ -4,7 +4,7 @@ An **AI-first, multi-tenant real estate CRM SaaS**. Each real estate business ge
 
 Three AI features are the product's reason to exist — a **conversational chatbot**, **natural-language property search**, and a **requirement-analysis recommendation engine**. Everything else is table stakes.
 
-> **Status: specs complete, no code yet.** The build starts at Sprint 0 (`docs/15-development-plan.md` §4).
+> **Status: Sprint 0 shipped; the first feature slice is in.** `backend/` (FastAPI, async, `/health`), `frontend/` (one route-based React app), the token pipeline, the drift gate and browser verification are all built. The property slice runs end to end — an admin publishes, a buyer sees it. Next up is the sprint sequencing in `docs/15-development-plan.md` §4.
 
 ---
 
@@ -28,7 +28,8 @@ Three AI features are the product's reason to exist — a **conversational chatb
 This is enforced, not merely requested:
 
 ```bash
-python scripts/check_drift.py     # six checks; each named after a failure that happened
+python scripts/check_drift.py     # nine checks; each named after a failure that happened
+python scripts/check_drift.py --selftest   # the checks' own fixtures — a gate nobody tests is a gate nobody has
 ```
 
 Every check exists because that exact thing went wrong here. Two design systems once coexisted for weeks, and 33 specs cited the dead one. A schema fix closed four gaps and three specs still call them blocking. The check is how we stop paying for that twice.
@@ -70,7 +71,17 @@ Full set: `CLAUDE.md` and `.claude/rules/`.
 
 ## Commands
 
-No build tooling exists yet — it's established in Sprint 0. Once scaffolded:
+The `Makefile` is the entry point — Sprint 0's DoD is "clone and run", and that must be a command, not a wiki page:
+
+```bash
+make setup    # backend venv + tokens + frontend + the git hook
+make dev      # how to run both processes
+make test     # pytest + vitest
+make check    # drift gate + tokens-current + lint + types — run before every commit
+make tokens   # regenerate design tokens FROM docs/DESIGN.md
+```
+
+Underneath:
 
 ```bash
 # backend/

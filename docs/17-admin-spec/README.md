@@ -149,8 +149,8 @@ Found while writing this set. **Fix the owning doc before building the affected 
 | # | Gap | Resolution |
 |---|---|---|
 | A1 | No `audit_log` table, despite FR11.3, `GET /admin/audit-log`, and `.claude/rules/security.md` all requiring one | `audit_log` added (§3.23), **append-only enforced by `REVOKE UPDATE, DELETE`**. Build it with the *first* write endpoint — a log added late has no history |
-| A4 | Configurable stages (FR10.1) vs. the fixed `leads.stage` enum | **Decided: fixed enum for MVP.** ⚠️ `01-prd.md` FR10.1 still promises configurability and must be updated to match |
-| A5 | No `reports` table, though `GET /admin/reports/{id}/export` implied one | **Decided: reports are stateless** — export re-runs the query with the same params. ⚠️ `04-api-spec.md` §14 needs updating to a parameterized export endpoint |
+| A4 | Configurable stages (FR10.1) vs. the fixed `leads.stage` enum | **Decided: fixed enum for MVP** (ADR-0013). ✅ `01-prd.md` FR10.1 now reads *"Stages are a fixed set"* — corrected; this row's "must be updated to match" warning was **stale from 2026-07-13 to 07-16** and is retracted |
+| A5 | No `reports` table, though `GET /admin/reports/{id}/export` implied one | **Decided: reports are stateless** — export re-runs the query with the same params. ✅ `04-api-spec.md` §14 now says so explicitly and the `{id}` shape is removed — corrected; this row's warning was **stale** and is retracted |
 | A6 | No `bulk_uploads` table, though FR9.2 requires per-row error reporting | `bulk_uploads` + `bulk_upload_rows` added (§3.25) |
 | A7 | `properties` had no `created_by`, so agent ownership-scoping was inexpressible | `created_by` added (§3.4) |
 | A8 | Property views weren't tracked (FR8.2) | `property_views` added (§3.7). **Cannot be backfilled** — must ship with the first published property |
@@ -166,14 +166,23 @@ Found while writing this set. **Fix the owning doc before building the affected 
 
 | # | Gap | Affects | Owning doc |
 |---|---|---|---|
-| A2 | **No agent-reply path for escalated chats.** A chat escalates to a human (FR1.7), but no endpoint lets an agent *send* a message into that conversation, and no delivery channel exists. The loop never closes. | [`08`](08-lead-detail.md), [`15`](15-ai-config-chat-logs.md) | `04-api-spec.md`, `05-ai-chatbot-spec.md` |
-| A3 | **Lead auto-assignment (FR10.2) is undecided** — round-robin, rules-based, or manual claim? Determines whether new leads have an owner, hence whether anyone works them. Recommend **round-robin**; the schema already models system-initiated assignment. | [`07`](07-leads-kanban.md), [`09`](09-leads-table-and-assignment.md) | `01-prd.md` |
-| A9 | **"Site visitors" KPI (FR8.1) has no data source** — no analytics/traffic tracking specified. Drop the card rather than shipping a fake number. | [`02`](02-dashboard.md) | `01-prd.md` / `10-deployment-devops.md` |
+| A14 | **No public CMS read endpoint** — the module publishes into a void (`GAPS.md` **G5**). ⚠️ *Partially stale:* **property reject and bulk operations now exist** — `04-api-spec.md` §8 has `POST /admin/properties/{id}/reject` and `POST /admin/properties/bulk-status`. Still missing: chatbot/weights preview, resend/revoke invite, tenant-settings `GET`, domain verification, usage stats | [`17`](17-cms.md), [`13`](13-ai-config-chatbot.md), [`20`](20-tenant-branding.md) | `04-api-spec.md` |
+| A15 | **No per-tenant SSL provisioning** for custom domains. Post-MVP with branding (ADR-0010), but it is infrastructure lead time | [`20`](20-tenant-branding.md) | `10-deployment-devops.md` |
+
+### ✅ Closed — kept, because this list was wrong for three days
+
+**Six of the eight rows below sat under "⛔ Still open" after they had been closed or decided.** One of them (A3) went further and *recommended* round-robin — a recommendation the PRD had already overruled with manual claim. An agent following `CLAUDE.md`'s instruction to *"open the spec's Open Questions and don't guess past them"* would have read a settled decision as an open one and re-litigated it.
+
+**The lesson is the same one this project keeps paying for:** closing a gap in the owning doc is half the job (`OWNERSHIP.md` §4). The other half is the sweep — *in the same commit*. `check_drift.py`'s `stale-gap` check now knows about G7/D1/P1/P2/P3, but it matches **gap IDs**, and these rows describe their gaps in **prose** — so nothing mechanical was ever going to catch them. Swept by hand 2026-07-16.
+
+| # | Gap | Resolution |
+|---|---|---|
+| ~~A2~~ | ✅ **CLOSED 2026-07-14 — this row was stale for two days.** The agent-reply path exists: `04-api-spec.md` §12A (queue / claim / reply / close, atomic claim → 409, and the bot-goes-silent rule) and `05-ai-chatbot-spec.md` §10A (the handoff state machine). Screen: [`22`](22-agent-chat-console.md). Delivery is **polling**, not Realtime (ADR-0017). **No migration was needed** — the schema already had `sender = 'agent'` and `assigned_agent_id`. Same gap as `GAPS.md` G7 | — | — |
+| ~~A3~~ | ✅ **DECIDED 2026-07-13 — this row was stale, and its recommendation was overruled.** It said *"Recommend round-robin"*; the decision went the other way: **manual claim from a shared queue, no auto-assignment** (`01-prd.md` FR10.2, ADR-0014, `03-database-schema.md` §10.1 #2 — *normative, do not re-litigate*). The safety net is the **mandatory** stale-lead alert (FR10.2b), which **is** buildable (`02-architecture.md` §4.4) | — | — |
+| ~~A9~~ | ✅ **CLOSED 2026-07-13 — this row was stale.** The KPI has a data source: a **self-hosted `site_sessions` counter** (`03-database-schema.md` §3.27), not third-party analytics — no vendor, no cookie banner. ⚠️ It counts **sessions, not people**, so FR8.1 requires the card be labelled **"Sessions"** — which is exactly this row's "don't ship a fake number" concern, honoured rather than dropped | — | — |
 | ~~A11~~ | ✅ **CLOSED — never real.** `02-architecture.md` **§4.4**: `pg_cron` + a `jobs` table + a Python worker, decided **2026-07-13**, with `mark_stale_leads()` listed by name. Follow-up reminders, stale-lead alerts, listing expiry and abandoned-chat cleanup are all buildable. This entry was a stale summary (`GAPS.md` §5A). | — | — |
-| A12 | **No email/SMS provider chosen.** In-app notifications now work; email/SMS remain dead toggles. | [`19`](19-notification-rules.md) | `10-deployment-devops.md` |
-| A13 | **What `tenants.status = suspended`/`trial` actually *do*** — three values, no defined behavior. | [`21`](21-superadmin-tenants.md) | `01-prd.md` |
-| A14 | **No public CMS read endpoint** — the module publishes into a void. Plus missing endpoints: property reject, bulk operations, chatbot/weights preview, resend/revoke invite, tenant-settings `GET`, domain verification, usage stats. | [`17`](17-cms.md), [`06`](06-property-approvals-status.md), [`13`](13-ai-config-chatbot.md), [`20`](20-tenant-branding.md) | `04-api-spec.md` |
-| A15 | **No per-tenant SSL provisioning** for custom domains. | [`20`](20-tenant-branding.md) | `10-deployment-devops.md` |
+| ~~A12~~ | ✅ **CLOSED 2026-07-13 — and the "no provider" version of this row was the false gap ~~G9b~~.** Email = **SendGrid**, SMS = **Twilio** (`02-architecture.md` §3; `03-database-schema.md` §3.21). All three channels ship at MVP. ⚠️ Indian SMS needs **DLT registration** — regulatory lead time, start it now | — | — |
+| ~~A13~~ | ✅ **CLOSED 2026-07-13 — this row was stale.** The three values have defined behaviour: `01-prd.md` FR16.1 and `03-database-schema.md` §3.1. **`suspended` keeps the public site serving and blocks admin login**; `trial` is a label, not a behaviour (billing is out of scope). The accepted trade-off — we keep paying Bedrock for a tenant who isn't paying us — is recorded there | — | — |
 
 ---
 

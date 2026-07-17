@@ -115,7 +115,7 @@ The bind: this is an **India-first** product (users want `ap-south-1`); **Supaba
 
 **When you'd find out:** whenever someone reads carefully — which, in a 40-document set, is rarely and late.
 
-**Mitigation:** the DevOS. `OWNERSHIP.md` (one owner per concept), `GAPS.md` (one gap register), `scripts/check_drift.py` (six mechanical checks, each named after a failure that actually happened), and the pre-commit gate.
+**Mitigation:** the DevOS. `OWNERSHIP.md` (one owner per concept), `GAPS.md` (one gap register), `scripts/check_drift.py` (nine mechanical checks, each named after a failure that actually happened, and each with its own fixtures), and the pre-commit gate.
 
 **Residual:** the check covers what has already gone wrong. It cannot catch the next *novel* kind of drift. **When an incident is caused by drift, add a check** (`20-operations-runbook.md` §6).
 

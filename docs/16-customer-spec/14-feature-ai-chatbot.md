@@ -1,6 +1,6 @@
 # Feature: AI Chatbot (USP 2 of 3)
 
-> **Appears on:** every public page (overlay, not a route) · **PRD Module:** 1 · **Component:** `public-site/src/components/chat/`
+> **Appears on:** every public page (overlay, not a route) · **PRD Module:** 1 · **Component:** `frontend/src/components/chat/`
 > Part of [Doc 16 — Customer Spec](README.md). **Full spec: `05-ai-chatbot-spec.md`** — conversation design, system prompt, tool definitions, escalation, and evaluation live there. This file covers the *customer-facing widget behavior*.
 
 ---

@@ -68,7 +68,7 @@
 - All list queries enforce `tenant_id` (RLS) + `user_id` (application layer) — prevents IDOR
 - Empty states designed, not defaulted
 - "AI match" chips on recommendation output only
-- No email/SMS channels yet (Gap G9); in-app only
+- All three notification channels are **decided and in scope**: in-app, email (SendGrid), SMS (Twilio) — `02-architecture.md` §3. *(This line used to say "No email/SMS channels yet (Gap G9)" — that was the false gap ~~G9b~~, `GAPS.md` §5A.)*
 - Data filtering: RLS at DB layer, app-layer user_id check on every by-ID fetch
 
 ---
@@ -132,7 +132,7 @@
 |---|---|---|---|---|
 | `/admin/cms` | CMS page editor + SEO | `17-cms.md` | admin | Post-MVP (Gap G5) |
 | `/admin/reports` | Report builder + exports | `18-reports.md` | admin | Post-MVP |
-| `/admin/settings/notifications` | Notification rule engine + templates | `19-notification-rules.md` | admin | MVP (partial; Gap G9) |
+| `/admin/settings/notifications` | Notification rule engine + templates | `19-notification-rules.md` | admin | MVP |
 | `/admin/settings` | Tenant branding (post-MVP, disabled in MVP) | `20-tenant-branding.md` | admin | Post-MVP (FR16.2) |
 
 ### 3.7 Platform-Level (Super-Admin Only)
@@ -329,7 +329,7 @@
 | GET | `/portal/favorites` | List saved properties | favorites |
 | GET | `/portal/requirements` | List saved requirement profiles | requirement_profiles |
 | DELETE | `/ai/recommend/{requirement_profile_id}` | Delete requirement profile (soft-delete + stop alerts) | requirement_profiles |
-| GET | `/portal/inquiries` | List inquiries + their status | inquiries, inquiry_timeline |
+| GET | `/portal/inquiries` | List inquiries + their status | `leads`, `lead_activities` (there are no `inquiries`/`inquiry_timeline` tables — an "inquiry" is a `lead` seen from the customer side). ⚠️ Never expose `lead_notes`, and never the raw `stage` enum |
 | GET | `/portal/notifications` | List notifications | notifications |
 | POST | `/portal/notifications/read` | Mark notification(s) read | notifications |
 | PUT | `/portal/notifications/preferences` | Update notification preferences (email/SMS/in-app per event type) | notification_preferences |
@@ -381,8 +381,8 @@
 | PUT | `/admin/cms/{id}` | Update CMS page | admin |
 | DELETE | `/admin/cms/{id}` | Delete CMS page | admin |
 | — | — | — | — |
-| GET | `/admin/reports` | List saved reports | admin |
-| POST | `/admin/reports` | Run report (builder) | admin |
+| POST | `/admin/reports/generate` | Run a report (leads/sales/inventory). **Synchronous, row-capped** | admin |
+| GET | `/admin/reports/export` | Re-run the same query, stream PDF/Excel. Same filter params + `format=pdf\|xlsx` | admin |
 | — | — | — | — |
 | GET | `/admin/settings/notifications` | Get notification rules | admin |
 | POST | `/admin/settings/notifications` | Create notification rule | admin |
@@ -497,9 +497,9 @@ Platform (super-admin only):
 
 ### 6.2 Customer Portal Routes
 
-- **Tenant resolved:** From authenticated user's `tenant_id` (in JWT claims)
-- **Identity:** `user_id` (in JWT)
-- **Data isolation:** RLS enforces `tenant_id` AND app-layer check enforces `user_id` on every by-ID fetch (IDOR prevention)
+- **Tenant resolved:** From the authenticated user's tenant association — looked up in the **`users` table, which is the source of truth for role and tenant, not the JWT** (`08-auth-roles-spec.md` §1). That is what makes a role change take effect immediately instead of at next token refresh. The lookup key is **`(auth_user_id, tenant_id)`**, never `auth_user_id` alone (`03-database-schema.md` §3.2).
+- **Identity:** `user_id`, resolved from the verified JWT's `auth_user_id`
+- **Data isolation:** RLS enforces `tenant_id` AND app-layer check enforces `user_id` on every by-ID fetch (IDOR prevention — RLS does **not** stop Customer A reading Customer B inside one tenant)
 - **Example:** `GET /portal/favorites` must return only `favorites` where `user_id = <caller>` **and** `property.tenant_id = <caller.tenant_id>` (RLS)
 
 ### 6.3 Admin Portal Routes
@@ -532,7 +532,7 @@ def get_favorite(favorite_id: str, user_id: str, tenant_id: str) -> Favorite:
 | Category | Routes | Status | Notes |
 |---|---|---|---|
 | **Public Site** | `/`, `/search`, `/property/:id`, `/requirement-analysis`, `/contact`, `/login`, `/register`, chat widget | ✅ MVP | Route `/:slug` (CMS) is Gap G5 |
-| **Portal** | `/portal`, `/portal/favorites`, `/portal/requirements`, `/portal/inquiries`, `/portal/notifications` | ✅ MVP | Email/SMS channels Gap G9 |
+| **Portal** | `/portal`, `/portal/favorites`, `/portal/requirements`, `/portal/inquiries`, `/portal/notifications` | ✅ MVP | All three notification channels in scope (SendGrid + Twilio decided) |
 | **Admin** | `/admin/*` (core CRM + AI config) except CMS | ✅ MVP | CMS is Gap G5 |
 | **API** | Auth, AI search/chat/recommend, properties, leads, portal | ✅ MVP | All endpoints above |
 
@@ -540,14 +540,16 @@ def get_favorite(favorite_id: str, user_id: str, tenant_id: str) -> Favorite:
 
 | Feature | Route | Blocker | Issue |
 |---|---|---|---|
-| CMS Pages | `/:slug`, `/admin/cms` | Gap G5 | No public read endpoint. *(The scheduler exists — `02-architecture.md` §4.4.)* |
-| Tenant Branding | `/admin/settings` | FR16.2 decision | Post-MVP; no themeeable UI in MVP |
+| CMS Pages | `/:slug`, `/admin/cms` | **G5** | No public read endpoint — the module is inert |
+| Tenant Branding | `/admin/settings` | FR16.2 / ADR-0010 | Post-MVP by decision, not a gap. One fixed palette in MVP |
 | Email/SMS Notifications | `/portal/notifications`, `/admin/settings/notifications` | ~~G9~~ ✅ | **Buildable.** SendGrid + Twilio (`02-architecture.md` §3); `pg_cron` + jobs worker (§4.4). See `GAPS.md` §5A |
-| Super-Admin Tenants | `/platform/tenants` | Gap G10 | No tenant creation flow in MVP |
-| Reports | `/admin/reports` | Gap G11 | No stateless report definition API |
-| Agent Chat Handoff | `/admin/chat` | Gap G7 (closed) | Now in MVP via new spec file `22-agent-chat-console.md` |
+| Super-Admin Tenants | `/platform/tenants` | *(no gap)* | Sequencing, not a blocker: `POST /platform/tenants` is specced (`04-api-spec.md` §15) and the provisioning transaction is defined (`03-database-schema.md` §9). Scheduled Phase 3 |
+| Reports | `/admin/reports` | *(no gap)* | Specced and buildable: **synchronous, stateless, row-capped** (`04-api-spec.md` §14). Scheduled Phase 3 |
+| Agent Chat Handoff | `/admin/chat` | ~~G7~~ ✅ closed | In MVP — `04-api-spec.md` §12A, spec file `22-agent-chat-console.md` |
 
-**Gaps:** See `docs/00-project-overview.md` §9.1 and respective spec files' `README.md` §5 for details.
+> ⚠️ **This table cited "Gap G10" and "Gap G11". Neither exists** — `GAPS.md` has no such IDs, and they were invented here. "Reports — no stateless report definition API" was the exact inversion of the truth: §14 defines precisely that. **`GAPS.md` is the only place a gap's state is recorded** (`OWNERSHIP.md` §3); a gap ID that isn't in it is not a gap, it is a rumour. Corrected 2026-07-16.
+
+**Gaps:** `docs/GAPS.md` — and nowhere else. This file is a convenience reference (see *Keeping This Doc Current*) and must cite, never restate.
 
 ---
 
@@ -576,11 +578,14 @@ def get_favorite(favorite_id: str, user_id: str, tenant_id: str) -> Favorite:
 
 ### By Implementation Folder
 
-| Folder | Routes | Files |
+**One frontend app, route-based** (ADR-0020 — superseding the earlier `public-site/` + `admin-portal/` split).
+
+| Folder | Routes | Notes |
 |---|---|---|
-| `public-site/` | `/`, `/search`, `/property/:id`, `/requirement-analysis`, `/contact`, `/login`, `/register`, `/:slug` | `pages/`, `components/`, `hooks/`, `api/` |
-| `admin-portal/` | `/admin/*`, `/platform/*` | `pages/`, `components/`, `hooks/`, `api/` |
-| `backend/` | `/api/v1/*` | `app/api/v1/`, `app/services/`, `app/repositories/`, `app/ai_clients/` |
+| `frontend/src/routes/public/` | `/`, `/search`, `/property/:id`, `/requirement-analysis`, `/contact`, `/login`, `/register`, `/:slug` | Eager — the customer surface |
+| `frontend/src/routes/admin/` | `/admin/*`, `/platform/*` | ⚠️ **LAZY-LOADED** via `React.lazy` + `Suspense` — a separate chunk a public visitor never downloads. Eager-importing an admin route silently removes that (ADR-0020) |
+| `frontend/src/` | — | Shared `components/`, `hooks/`, `api/`, `context/`, `styles/` |
+| `backend/` | `/api/v1/*` | `app/api/v1/`, `app/services/`, `app/repositories/`, `app/ai_clients/`, `app/workers/` |
 
 ---
 

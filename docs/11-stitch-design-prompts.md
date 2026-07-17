@@ -1738,11 +1738,10 @@ A rules table: When… · Send via · To… · On (toggle) · row menu. Example 
 Email + SMS / All agents", "A lead sits in 'New' for 48h / Email / Admins".
 Below, a NEW RULE form: a "When" dropdown, "Send" channel checkboxes, and a
 "To" radio group — the assigned agent · specific people (a tag input) · a role.
-⚠ CRITICAL: EMAIL AND SMS CANNOT BE DELIVERED — no provider is configured.
-Render every Email and SMS checkbox DISABLED at 40% opacity, with a warning
-strip above the table in warning #ffddb0 / #2c1700: "Email and SMS delivery
-isn't configured yet — only in-app notifications will be sent." Do not draw
-working switches for channels that would silently do nothing.
+✓ EMAIL AND SMS ARE CONFIGURED — SendGrid (email) and Twilio (SMS) per 02-architecture.md §3.
+Render every Email and SMS checkbox ENABLED at 100% opacity, with a confirmation
+strip above the table in success #c3f0da / #00522f: "Email and SMS delivery is configured — notifications will be sent via selected channels." Draw
+working switches for channels that will function as configured.
 
 SCREEN 20 — AGENT CHAT CONSOLE (/admin/chat)   ★ THE REAL-TIME ONE
 Where the chatbot's promise comes true — the bot says "I've looped in one of our

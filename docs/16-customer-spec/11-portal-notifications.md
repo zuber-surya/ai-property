@@ -66,7 +66,7 @@ The retention loop. A customer who saved a requirement profile and then never he
 |---|---|
 | Notification list | Newest first. Unread = a dot + bolder weight. Each row is a link |
 | Mark all as read | One click; no confirmation |
-| Preferences grid | Event type × channel (FR7.2). **Email/SMS require a delivery provider that is not yet chosen** — see §11 |
+| Preferences grid | Event type × channel (FR7.2). **Email/SMS delivery providers have been chosen** (SendGrid for email, Twilio for SMS per 02-architecture.md §3 and 03-database-schema.md §3.21) — see §11 |
 
 ### 3.1 Notification Types (proposed — needs PRD confirmation)
 
@@ -182,7 +182,7 @@ Background — how a notification gets created (FR3.4):
 - **Notification storms:** a tenant bulk-uploads 200 properties (FR9.2) and every one matches Priya's profile → 200 notifications. **Batch by profile per time window** ("12 new homes match your requirements") rather than one per property. This must be designed in, not patched later — the bulk-upload feature makes it inevitable.
 - **Duplicate notifications:** re-running a match must not re-notify about a property the customer was already told about. Dedupe on `(profile_id, property_id)`.
 - **Deleted requirement profile:** kill its pending notifications ([09-portal-requirements.md](09-portal-requirements.md) §9).
-- **Email deliverability:** a real transactional provider (SES, etc.) is required. Not chosen anywhere in `10-deployment-devops.md`.
+- **Email deliverability:** a real transactional provider (SendGrid) **has been chosen** (02-architecture.md §3 and 03-database-schema.md §3.21). Not missing from `10-deployment-devops.md`.
 - **Preference defaults:** new accounts default to in-app + email **on** for `new_match` (it's why they registered) and everything else off. Do not default-enable SMS — it costs money per send and it annoys people.
 
 ---

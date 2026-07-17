@@ -14,11 +14,14 @@
 | Component | Suggested AWS Service | Notes |
 |---|---|---|
 | FastAPI backend | AWS App Runner or ECS (Fargate) | App Runner for simplicity at MVP scale; ECS if more infra control is needed later |
-| React apps (public site + admin portal) | S3 + CloudFront (static build) | Both are client-rendered SPAs; served as static assets |
-| Background jobs | FastAPI `BackgroundTasks` initially → AWS SQS + a worker (ECS task or Lambda) if promoted to Celery/RQ (per `02-architecture.md` Section 4.3) | |
+| React app (one build: `/` public, `/admin/*` CRM) | S3 + CloudFront (static build) | One client-rendered SPA, route-based (ADR-0020, superseding the earlier two-app split). `/admin/*` is a lazy-loaded chunk — one build, one deploy |
+| Scheduled jobs | **Supabase `pg_cron`** (inside Postgres) | SQL-only time jobs: stale leads, listing expiry, abandoned chats, nightly rollups/purges, stuck-job reaping. Decided 2026-07-13 — `02-architecture.md` §4.4 |
+| Async jobs | **A second long-running process** running `python -m app.workers.runner` — a separate App Runner instance or ECS service | Polls the `jobs` table (`FOR UPDATE SKIP LOCKED`) for embedding generation, de-indexing, bulk CSV import, notification dispatch. **No SQS, no Celery, no Redis.** It is a *second deployable*, not a mode of the API — provision it as such |
 | Database | Supabase-hosted Postgres | Supabase is a managed service, not self-hosted on AWS — cross-provider by design, acceptable since DB traffic isn't the latency-sensitive leg (Bedrock calls are) |
 | File storage | Supabase Storage | Property images/docs — already covered by Supabase, no separate S3 bucket needed unless a specific need arises |
-| Secrets | AWS Secrets Manager (or SSM Parameter Store) | Supabase service key, Bedrock IAM credentials |
+| Email delivery | **SendGrid** | Transactional email (new lead, escalation, match alerts). Decided 2026-07-13 — the decision is owned by `02-architecture.md` §3; this row records what to *provision*, and must not restate it |
+| SMS delivery | **Twilio** | Opt-in, per-tenant capped. Decided 2026-07-13 (`02-architecture.md` §3). ⚠️ **Indian SMS requires DLT registration** — sender ID + pre-approved templates. That is a **regulatory lead time, not an engineering task**; start it before it blocks launch |
+| Secrets | AWS Secrets Manager (or SSM Parameter Store) | Supabase service key, Bedrock IAM credentials, SendGrid + Twilio credentials |
 | DNS / custom tenant domains | Route 53 (or existing DNS provider) + CloudFront | Needed for tenant custom-domain branding (PRD Module 16) |
 
 This is a starting recommendation, not a locked decision — confirm actual AWS account/region setup before provisioning.
@@ -29,7 +32,7 @@ This is a starting recommendation, not a locked decision — confirm actual AWS 
 
 | Environment | Purpose | Notes |
 |---|---|---|
-| **Local** | Individual development | Local FastAPI (`uvicorn --reload`) + local Vite dev servers for both React apps + a local or shared dev Supabase project |
+| **Local** | Individual development | Local FastAPI (`uvicorn --reload`) + one local Vite dev server + a local or shared dev Supabase project. `make dev` (see the root `Makefile`) |
 | **Staging** | Pre-production validation, tenant pilot onboarding | Mirrors production infra at smaller scale; separate Supabase project from production to avoid any risk to pilot-tenant data during testing |
 | **Production** | Live multi-tenant environment | |
 
@@ -46,7 +49,7 @@ On PR:
   → type checks (mypy or pyright optional, tsc for frontend)
 
 On merge to main:
-  → build (Docker image for backend, static builds for both React apps)
+  → build (Docker image for backend + jobs worker, one static frontend build)
   → run Alembic migrations against staging DB
   → deploy to staging
   → (manual approval gate)
@@ -62,8 +65,8 @@ On merge to main:
 
 ## 4. Containerization
 
-- Backend: single `Dockerfile` for the FastAPI app, based on a slim Python image.
-- Frontend: no runtime container needed — both React apps build to static assets served via S3/CloudFront (or equivalent static hosting), not a Node server in production.
+- Backend: single `Dockerfile` for the FastAPI app, based on a slim Python image. **The jobs worker (§1) ships from the same image** with a different entrypoint (`python -m app.workers.runner`) — same code, same deps, two processes.
+- Frontend: no runtime container needed — the one React app builds to static assets served via S3/CloudFront (or equivalent static hosting), not a Node server in production.
 
 ---
 

@@ -15,7 +15,7 @@ Project root/
     ├── rules/        # Cross-cutting engineering rules — read as-needed
     │   ├── workflow.md    docs-first process, git, scope, self-check
     │   ├── backend.md     FastAPI layering, style, async, errors
-    │   ├── frontend.md    React/TS, two-app split, state
+    │   ├── frontend.md    React/TS, ONE route-based app (ADR-0020), state
     │   ├── database.md    schema conventions, Alembic, RLS helper
     │   ├── ai.md          Bedrock/Claude, prompts, tenant scoping, cost
     │   ├── security.md    tenant isolation (RLS), auth, secrets, audit

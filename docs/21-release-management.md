@@ -44,7 +44,7 @@ main            always deployable. Protected. No direct commits.
 
 ```
 merge to main
-   → build (backend image, two static frontend builds)
+   → build (backend image — API + jobs worker, one static frontend build)
    → alembic upgrade head  →  STAGING
    → deploy STAGING
    → smoke: /health, the 4 money paths (18-test-strategy.md §2.5)

@@ -43,9 +43,20 @@ python scripts/check_drift.py          # full report
 python scripts/check_drift.py --quiet  # exit code only
 ```
 
-Six checks, each named after the failure it prevents. It is wired to `.git/hooks/pre-commit`. **Do not `--no-verify` past it.** If a finding is wrong, fix the check — a false positive that gets ignored trains everyone to ignore the true ones too.
+**Nine** checks, each named after the failure it prevents. It is wired to `.githooks/pre-commit` (`git config core.hooksPath .githooks`). **Do not `--no-verify` past it.** If a finding is wrong, fix the check — a false positive that gets ignored trains everyone to ignore the true ones too.
 
-Two checks currently fail on **real, known debt** (25 stale gap citations, 2 async violations). That is deliberate: the register (`GAPS.md`) records them, and they are not swept under the rug by weakening the check.
+```bash
+python scripts/check_drift.py --selftest   # the checks' own fixtures
+```
+
+**The checks are themselves tested**, because two of them have already been silently broken:
+
+- `false-gap` reported **0 while eight resurrections sat live** — it had borrowed a burial pattern that matched the word *"was"*, so any line containing the commonest verb in English bought an exemption.
+- `stale-gap` matched the bare word **`gap`** — tautological, since every citation of a gap ID contains it. The moment `CLOSED_GAPS` grew past G1/G2 it produced **9 findings, all false**, including the very section that closes G7.
+
+Every phrasing that beat a check is now a fixture. **When you close a gap, add its ID to `CLOSED_GAPS` in the same commit** — the check then finds the citations for you, and the findings *are* the sweep list.
+
+**The baseline is currently all zeros** (`.drift-baseline.json`) — the 25 stale-gap citations and 2 async violations that used to sit here were swept (tasks `P.4`/`P.5`). **Zero is not "nothing left to check"** — it is the state the gate is meant to hold. Adding drift is what fails a commit (ADR-0016); if you genuinely reduce it, re-baseline with `--accept`. **Lowering the baseline is the only sanctioned direction.**
 
 ## 5. Checkpoint discipline
 

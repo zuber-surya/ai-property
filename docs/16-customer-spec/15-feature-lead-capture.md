@@ -1,6 +1,6 @@
 # Feature: Lead Capture
 
-> **Appears on:** [Property Details](03-property-details.md) (modal), [Contact](05-contact-page.md) (inline), [Chatbot](14-feature-ai-chatbot.md) (conversational), [Favorites](08-portal-favorites.md) ("Ask about this") · **PRD Module:** 6 · **Component:** `public-site/src/components/shared/LeadForm/`
+> **Appears on:** [Property Details](03-property-details.md) (modal), [Contact](05-contact-page.md) (inline), [Chatbot](14-feature-ai-chatbot.md) (conversational), [Favorites](08-portal-favorites.md) ("Ask about this") · **PRD Module:** 6 · **Component:** `frontend/src/components/shared/LeadForm/`
 > Part of [Doc 16 — Customer Spec](README.md).
 
 ---
@@ -217,4 +217,4 @@ Client-side disabling is **not sufficient** — it doesn't survive a double-tap 
 - [ ] **Idempotency mechanism is unspecified** despite being an explicit acceptance criterion (§6). Add an `Idempotency-Key` to `04-api-spec.md` §5.
 - [ ] **Rate limiting / bot protection on `POST /leads`** — not specified for non-AI public endpoints.
 - [ ] **Auto-assignment rule (FR10.2)** — round-robin, rules-based, or manual claim? Open in `01-prd.md` and `14-screen-workflows.md`.
-- [ ] Whether the SMS/email confirmation in FR6.3 ships at MVP — requires a transactional provider not chosen in `10-deployment-devops.md`.
+- [ ] Whether the SMS/email confirmation in FR6.3 ships at MVP — requires a transactional provider, which **has been chosen** (SendGrid for email, Twilio for SMS per 02-architecture.md §3 and 03-database-schema.md §3.21).
